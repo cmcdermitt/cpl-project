@@ -1,3 +1,6 @@
+#imports
+import getopt, sys
+
 #List of keywords
 
 keywords = dict(zip(range (101, 155), ['SYMBOL', 'IDENTIFIER', 'HCON', 'FORWARD', 'REFERENCES',
@@ -11,5 +14,10 @@ keywords = dict(zip(range (101, 155), ['SYMBOL', 'IDENTIFIER', 'HCON', 'FORWARD'
     'THEN', 'ELSE', 'ENDIF', 'WHILE', 'ENDWHILE',
     'LET', 'REPEAT', 'UNTIL', 'ENDREPEAT', 'DISPLAY']))
 
-
+	
+def main(argv):
+	print(sys.argv[1])
+	
 print (keywords) 
+if __name__ == "__main__":
+	main(sys.argv[1])
