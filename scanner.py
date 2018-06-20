@@ -17,7 +17,7 @@ keywords = dict(zip(['SYMBOL', 'IDENTIFIER', 'HCON', 'FORWARD', 'REFERENCES',
 
 tokens = []
 
-def main(argv):
+def main():
   """  print(sys.argv[1])
     linenum = 0
     with open(sys.argv[1]) as infile: #open the file, sys.argv[1] is the first command line argument
