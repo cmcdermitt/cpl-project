@@ -21,15 +21,17 @@ symNum = 0
 
 def processAlphaOr_(line): #if the first character is alphabetic or the underscore
 	global charNumber
-	global symNum 
+	global symNum
+	global identifier 
 	symbol = ''
 	currentChar = line[charNumber] #mark current position in line
 
 	#keep going until you have a character that isn't _ or alphanumeric
 	while((currentChar.isalpha() or currentChar.isdigit() or currentChar == '_') and charNumber < len(line)):
-		currentChar = line[charNumber] #advance index
 		symbol = symbol + currentChar #add character to current token
 		charNumber += 1	#increment
+		if(charNumber < len(line)):
+			currentChar = line[charNumber]
 	
 	if(charNumber < len(line)):	#for nonalphanumeric characters that aren't the end of the line
 		if(line[charNumber] == '+' or line[charNumber] == '-' or line[charNumber] == '*' or
@@ -59,9 +61,10 @@ def processLine(line):
 	line_table = []
 
 	while(charNumber < len(line)):
-		print(charNumber)
 		if(line[charNumber].isalpha() or line[charNumber] == '_'):
 			symbol = processAlphaOr_(line) # Go down the underscore or alpha path
+			line_table.append([symNum, symbol])
+			symNum = symNum + 1
 		elif(line[charNumber].isdigit()):
 			x = 2 #Go down the numeric path
 		elif(line[charNumber] == '\"'):
@@ -71,7 +74,7 @@ def processLine(line):
 			x = 2 #Go down arithmetic path
 		else:
 			x = 2	#Get next character
-		line_table.append([symNum, symbol])
-		symNum = symNum + 1
+			charNumber += 1
+		
 		
 	return line_table	
