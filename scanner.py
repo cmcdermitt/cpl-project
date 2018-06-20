@@ -38,4 +38,4 @@ def main():
 print (keywords) """ 
 print(processLine("Hello Char"))
 if __name__ == "__main__":
-	main("hi")
+	main()
