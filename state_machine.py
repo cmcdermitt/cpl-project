@@ -41,7 +41,9 @@ def processAlphaOr_(line): #if the first character is alphabetic or the undersco
 		lex_type = keywords[token] #give it the keyword's id
 	else:
 		lex_type = identifier #to be expanded later, will give identifiers individual ids
-		
+	
+	if(currentChar == '?' or currentChar == '!'): #This list can be expanded later
+		return "error"
 	return [token, lex_type]
 
 def processNumeric(line):
