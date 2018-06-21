@@ -37,9 +37,10 @@ def main():
 
 print (keywords) """ 
 
-print(processLine("Hellowe232 Cha23r 3222 2.3  3  3   3 char"))
-# print(processLine("Hi Cory and Charlie 1234.4568 ad \"sdsds\""))
-print(processLine("12HI"))
+print(processLine("charlie.work charlie->work\"sd\" 2.3e-32"))
+#print(processLine("Hellowe232 Cha23r 3222 2.3  3  3   3 charlie.wokr"))
+# print(processLine("Hi Cory and Charlie 1234.4568 ad \"sdsds\" charlie.work"))
+#print(processLine("12HI"))
 
 if __name__ == "__main__":
 	main()

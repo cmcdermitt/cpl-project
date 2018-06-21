@@ -33,10 +33,43 @@ def processAlphaOr_(line): #if the first character is alphabetic or the undersco
 		if(charNumber < len(line)):
 			currentChar = line[charNumber]
 	
-	if(charNumber < len(line)):	#for nonalphanumeric characters that aren't the end of the line
+	'''if(charNumber < len(line)):	#for nonalphanumeric characters that aren't the end of the line
 		if(line[charNumber] == '+' or line[charNumber] == '-' or line[charNumber] == '*' or
 		line[charNumber] == '/' or line[charNumber] == '%'): #if it's an arithmetic operator
-			charNumber = charNumber - 1 #Back up for arithmetic operators
+			charNumber = charNumber - 1 #Back up for arithmetic operators'''
+	
+	if(currentChar == "."):
+		if(charNumber < len(line)):
+			token = token + currentChar
+			charNumber += 1
+			currentChar = line[charNumber]
+			if(charNumber >= len(line)):
+				return [token, error]
+			else:
+				while((currentChar.isalpha() or currentChar.isdigit() or currentChar == '_') and charNumber < len(line)):
+					token = token + currentChar #add character to current token
+					charNumber += 1	#increment
+					if(charNumber < len(line)):
+						currentChar = line[charNumber]
+	elif(currentChar == '-'):
+		charNumber+= 1
+		token += currentChar
+		if(charNumber < len(line)):
+			currentChar = line[charNumber]
+			if(currentChar == '>'):
+				token += currentChar
+				charNumber += 1
+				currentChar = line[charNumber]
+				if(charNumber >= len(line)):
+					return [token, error]
+				else:
+					while((currentChar.isalpha() or currentChar.isdigit() or currentChar == '_') and charNumber < len(line)):
+						token = token + currentChar #add character to current token
+						charNumber += 1	#increment
+						if(charNumber < len(line)):
+							currentChar = line[charNumber]
+			else:
+				return [token, error]
 	
 	#print(type(token))
 	lex_type = keywords.get(token.upper()) #give it the keyword's id
@@ -77,7 +110,28 @@ def processNumeric(line):
 					charNumber += 1	#increment
 					if(charNumber < len(line)):
 						currentChar = line[charNumber]
-		lex_type = cnst_float
+			lex_type = cnst_float
+	
+	if(currentChar == 'e' and lex_type == cnst_float):
+		token += currentChar
+		charNumber+= 1
+		if(charNumber < len(line)):
+			currentChar = line[charNumber]
+			if(currentChar == '+' or currentChar == '-'):
+				token += currentChar
+				charNumber += 1
+			if(charNumber < len(line)):
+				currentChar = line[charNumber]
+				while(currentChar.isdigit() and charNumber < len(line)):
+					token = token + currentChar
+					charNumber += 1
+					if(charNumber < len(line)):
+						currentChar = line[charNumber]
+			else:
+				return [token, error]
+		else:
+			return [token, eror]
+						
 	if(currentChar.isalpha()):
 		lex_type = error
 	return [token, lex_type]
@@ -87,7 +141,11 @@ def processQuotes(line): #if first character is "
 	global cnst_string
 	currentChar = line[charNumber]
 	token = ''
-
+	charNumber += 1
+	if(charNumber < len(line)):
+		currentChar = line[charNumber]
+	else:
+		return [token, error]
 	while(currentChar != '\"' and charNumber < len(line)): #while we haven't reached an end quote or the end of the line
 		token = token + currentChar #add character to current token
 		charNumber += 1	#increment
@@ -97,6 +155,7 @@ def processQuotes(line): #if first character is "
 	lex_type = cnst_string
 	if(currentChar != '\"'):
 		lex_type = error	
+	charNumber += 1
 	return [token, lex_type]
 	
 
