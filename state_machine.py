@@ -52,26 +52,31 @@ def processNumeric(line):
 	token = ''
 	currentChar = line[charNumber]
 	
+	# Go through the whole number part of the number (int or float)
 	while(currentChar.isdigit() and charNumber < len(line)):
 		token = token + currentChar #add character to current token
 		charNumber += 1	#increment
 		if(charNumber < len(line)):
 			currentChar = line[charNumber]
 	
+
 	lex_type = cnst_int
 	
+	
 	if(charNumber < len(line)):
-		if(currentChar == '.'):
+		if(currentChar == '.'): # If there is a . character, the token is floating point. 
 			token = token + currentChar
 			charNumber += 1
-			if(charNumber < len(line)):
+			if(charNumber < len(line)): # Check that the floating point number continues
 				currentChar = line[charNumber]
-				while(currentChar.isdigit() and charNumber < len(line)):
+				while(currentChar.isdigit() and charNumber < len(line)): # Add the numbers after the decimal point to the token
 					token = token + currentChar #add character to current token
 					charNumber += 1	#increment
 					if(charNumber < len(line)):
 						currentChar = line[charNumber]
 			lex_type = cnst_float
+	if(currentChar.isalpha()):
+		return "error"
 	return [token, lex_type]
 	
 				
@@ -87,22 +92,14 @@ def processLine(line):
 	currentChar = line[0]
 	token = []
 	line_table = []
-
+	processedToken = False
 	while(charNumber < len(line)):
 		if(line[charNumber].isalpha() or line[charNumber] == '_'):
 			token = processAlphaOr_(line) # Go down the underscore or alpha path
-			token.insert(0,tokenNum)
-			token.insert(0,currentId)
-			line_table.append(token)
-			tokenNum = tokenNum + 1
-			currentId = currentId + 1
+			processedToken = True
 		elif(line[charNumber].isdigit()):
 			token = processNumeric(line) # Go down the underscore or alpha path
-			token.insert(0,tokenNum)
-			token.insert(0,currentId)
-			line_table.append(token)
-			tokenNum = tokenNum + 1
-			currentId = currentId + 1
+			processedToken = True
 		elif(line[charNumber] == '\"'):
 			x = 2 #Go down char path
 		elif(line[charNumber] == '+' or line[charNumber] == '-' or line[charNumber] == '*' or
@@ -111,5 +108,14 @@ def processLine(line):
 		else:
 			x = 2	#Get next character
 			charNumber += 1
+		if(processedToken):
+			if (token == "error"):
+				return token
+			token.insert(0,tokenNum)
+			token.insert(0,currentId)
+			line_table.append(token)
+			tokenNum = tokenNum + 1
+			currentId = currentId + 1
+			processedToken = False
 		
 	return line_table	
