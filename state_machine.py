@@ -9,7 +9,7 @@ keywords = dict(zip(['token', 'IDENTIFIER', 'HCON', 'FORWARD', 'REFERENCES',
 	'DECLARATIONS', 'IMPLEMENTATIONS', 'FUNCTION', 'MAIN', 'PARAMETERS',
 	'COMMA', 'CONSTANT', 'BEGIN', 'ENDFUN', 'IF',
 	'THEN', 'ELSE', 'ENDIF', 'WHILE', 'ENDWHILE',
-	'LET', 'REPEAT', 'UNTIL', 'ENDREPEAT', 'DISPLAY', 'IDENTIFIER', 'CNST_INT', 'CNST_FLOAT', 'CNST_STRING', 'CNST_PLUS', 'CNST_MINUS'], range(1,100)))
+	'LET', 'REPEAT', 'UNTIL', 'ENDREPEAT', 'DISPLAY', 'IDENTIFIER', 'CNST_INT', 'CNST_FLOAT', 'CNST_STRING', '+', '-'], range(1,100)))
 
 error = 0
 currentId = 0
@@ -152,8 +152,18 @@ def processQuotes(line): #if first character is "
 def processArit(line):
 	global charNumber
 	currentChar = line[charNumber]
-	token = ''
+	token = currentChar
 	charNumber += 1
+	if(currentChar == '+' or currentChar == '-'):
+		if(charNumber < len(line)):
+			currentChar = line[charNumber]
+			charNumber += 1
+			if(currentChar == ' '):
+				return [token, keywords[token]]
+			elif(currentChar.isdigit()):
+				val = processNumeric(line)
+				val[0] = token + val[0]
+				return val	
 			
 def processLine(line):
 	if(len(line) == 0):
@@ -178,7 +188,8 @@ def processLine(line):
 			processedToken = True
 		elif(line[charNumber] == '+' or line[charNumber] == '-' or line[charNumber] == '*' or
 		line[charNumber] == '/' or line[charNumber] == '%'): # need to add <, >, etc
-			x = 2 #Go down arithmetic path
+			token =processArit(line) #Go down arithmetic path
+			processedToken = True
 		else:
 			x = 2	#Get next character
 			charNumber += 1

@@ -44,7 +44,7 @@ def main():
 	"""
 
 #print (keywords) 
-#print(processLine("Hellowe232 Cha23r 3222 2.3  3  3   3 charlie.wokr"))
+print(processLine(" -3222"))
 # print(processLine("Hi Cory and Charlie 1234.4568 ad \"sdsds\" charlie.work"))
 #print(processLine("12HI"))
 
