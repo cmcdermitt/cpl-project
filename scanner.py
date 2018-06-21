@@ -36,8 +36,6 @@ def main():
         writer.writerows(tokens) #writes each item in tokens to a row of the .csv
 
 print (keywords) """ 
-
-print(processLine("charlie.work charlie->work\"sd\" 2.3e-32"))
 #print(processLine("Hellowe232 Cha23r 3222 2.3  3  3   3 charlie.wokr"))
 # print(processLine("Hi Cory and Charlie 1234.4568 ad \"sdsds\" charlie.work"))
 #print(processLine("12HI"))
