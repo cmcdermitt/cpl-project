@@ -15,14 +15,12 @@ identifier = 51
 cnst_int = 52
 cnst_float = 53
 cnst_string = 54	
-
+currentId = 0
 charNumber = 0
 tokenNum = 0
 
 def processAlphaOr_(line): #if the first character is alphabetic or the underscore
 	global charNumber
-	global tokenNum
-
 	global identifier 
 	token = ''
 	currentChar = line[charNumber] #mark current position in line
@@ -40,21 +38,50 @@ def processAlphaOr_(line): #if the first character is alphabetic or the undersco
 			charNumber = charNumber - 1 #Back up for arithmetic operators
 	
 	if(token in keywords.keys()): #if the token is a keyword
-		id = keywords[token] #give it the keyword's id
+		lex_type = keywords[token] #give it the keyword's id
 	else:
-		id = identifier #to be expanded later, will give identifiers individual ids
+		lex_type = identifier #to be expanded later, will give identifiers individual ids
 		
-	return [token, id]
-		
+	return [token, lex_type]
+
+def processNumeric(line):
+	global charNumber
+	global cnst_int
+	global cnst_float
 	
+	token = ''
+	currentChar = line[charNumber]
+	
+	while(currentChar.isdigit() and charNumber < len(line)):
+		token = token + currentChar #add character to current token
+		charNumber += 1	#increment
+		if(charNumber < len(line)):
+			currentChar = line[charNumber]
+	
+	lex_type = cnst_int
+	
+	if(charNumber < len(line)):
+		if(currentChar == '.'):
+			token = token + currentChar
+			charNumber += 1
+			if(charNumber < len(line)):
+				currentChar = line[charNumber]
+				while(currentChar.isdigit() and charNumber < len(line)):
+					token = token + currentChar #add character to current token
+					charNumber += 1	#increment
+					if(charNumber < len(line)):
+						currentChar = line[charNumber]
+			lex_type = cnst_float
+	return [token, lex_type]
+	
+				
 	
 def processLine(line):
 	if(len(line) == 0):
 		return #if the line is empty, return
-	
+	global currentId
 	global charNumber
 	global tokenNum
-
 	charNumber = 0
 	tokenNum = 0
 	currentChar = line[0]
@@ -64,10 +91,18 @@ def processLine(line):
 	while(charNumber < len(line)):
 		if(line[charNumber].isalpha() or line[charNumber] == '_'):
 			token = processAlphaOr_(line) # Go down the underscore or alpha path
-			line_table.append([tokenNum, token])
+			token.insert(0,tokenNum)
+			token.insert(0,currentId)
+			line_table.append(token)
 			tokenNum = tokenNum + 1
+			currentId = currentId + 1
 		elif(line[charNumber].isdigit()):
-			x = 2 #Go down the numeric path
+			token = processNumeric(line) # Go down the underscore or alpha path
+			token.insert(0,tokenNum)
+			token.insert(0,currentId)
+			line_table.append(token)
+			tokenNum = tokenNum + 1
+			currentId = currentId + 1
 		elif(line[charNumber] == '\"'):
 			x = 2 #Go down char path
 		elif(line[charNumber] == '+' or line[charNumber] == '-' or line[charNumber] == '*' or

@@ -36,6 +36,6 @@ def main():
         writer.writerows(tokens) #writes each item in tokens to a row of the .csv
 
 print (keywords) """ 
-print(processLine("Hello Char"))
+print(processLine("Hellowe232 Cha23r 3222 2.3"))
 if __name__ == "__main__":
 	main()
