@@ -9,23 +9,18 @@ keywords = dict(zip(['token', 'IDENTIFIER', 'HCON', 'FORWARD', 'REFERENCES',
 	'DECLARATIONS', 'IMPLEMENTATIONS', 'FUNCTION', 'MAIN', 'PARAMETERS',
 	'COMMA', 'CONSTANT', 'BEGIN', 'ENDFUN', 'IF',
 	'THEN', 'ELSE', 'ENDIF', 'WHILE', 'ENDWHILE',
-	'LET', 'REPEAT', 'UNTIL', 'ENDREPEAT', 'DISPLAY'], range(1,51)))
+	'LET', 'REPEAT', 'UNTIL', 'ENDREPEAT', 'DISPLAY', 'IDENTIFIER', 'CNST_INT', 'CNST_FLOAT', 'CNST_STRING', 'CNST_PLUS', 'CNST_MINUS'], range(1,100)))
 
 error = 0
-identifier = 52
-cnst_int = 53
-cnst_float = 54
-cnst_string = 55	
 currentId = 0
 charNumber = 0
 tokenNum = 0
 
-def processAlphaOr_(line): #if the first character is alphabetic or the underscore
+def processAlphaOr_(line): #if the first character is alphabetic or the underscore 
 	global charNumber
-	global identifier 
 	token = ''
 	currentChar = line[charNumber] #mark current position in line
-
+	
 	#keep going until you have a character that isn't _ or alphanumeric
 	while((currentChar.isalpha() or currentChar.isdigit() or currentChar == '_') and charNumber < len(line)):
 		token = token + currentChar #add character to current token
@@ -72,9 +67,9 @@ def processAlphaOr_(line): #if the first character is alphabetic or the undersco
 				return [token, error]
 	
 	#print(type(token))
-	lex_type = keywords.get(token.upper()) #give it the keyword's id
+	lex_type = keywords.get(token) #give it the keyword's id
 	if(lex_type == None):
-		lex_type = identifier #to be expanded later, will give identifiers individual ids
+		lex_type = keywords['IDENTIFIER'] #to be expanded later, will give identifiers individual ids
 	
 	if(currentChar == '?' or currentChar == '!'): #This list can be expanded later
 		lex_type == error
@@ -82,9 +77,6 @@ def processAlphaOr_(line): #if the first character is alphabetic or the undersco
 
 def processNumeric(line):
 	global charNumber
-	global cnst_int
-	global cnst_float
-	
 	token = ''
 	currentChar = line[charNumber]
 	
@@ -96,7 +88,7 @@ def processNumeric(line):
 			currentChar = line[charNumber]
 	
 
-	lex_type = cnst_int
+	lex_type = keywords['CNST_INT']
 	
 	
 	if(charNumber < len(line)):
@@ -110,7 +102,7 @@ def processNumeric(line):
 					charNumber += 1	#increment
 					if(charNumber < len(line)):
 						currentChar = line[charNumber]
-			lex_type = cnst_float
+			lex_type = keywords['CNST_FLOAT']
 	
 	if(currentChar == 'e' and lex_type == cnst_float):
 		token += currentChar
@@ -138,7 +130,6 @@ def processNumeric(line):
 	
 def processQuotes(line): #if first character is "
 	global charNumber
-	global cnst_string
 	currentChar = line[charNumber]
 	token = ''
 	charNumber += 1
@@ -152,23 +143,25 @@ def processQuotes(line): #if first character is "
 		if(charNumber < len(line)):
 			currentChar = line[charNumber] #move up
 
-	lex_type = cnst_string
+	lex_type = keywords['CNST_STRING']
 	if(currentChar != '\"'):
 		lex_type = error	
 	charNumber += 1
 	return [token, lex_type]
 	
-
-				
+def processArit(line):
+	global charNumber
+	currentChar = line[charNumber]
+	token = ''
+	charNumber += 1
+			
 def processLine(line):
 	if(len(line) == 0):
 		return #if the line is empty, return
-	global currentId
+	global currentChar
 	global charNumber
-	global tokenNum
-
+	global currentId
 	charNumber = 0
-	tokenNum = 0
 	currentChar = line[0]
 	token = []
 	line_table = []
@@ -192,10 +185,8 @@ def processLine(line):
 		if(processedToken):
 			if (token[1] == 0):
 				return [token, 0]
-			token.insert(0,tokenNum)
 			token.insert(0,currentId)
 			line_table.append(token)
-			tokenNum = tokenNum + 1
 			currentId = currentId + 1
 			processedToken = False
 		
