@@ -76,7 +76,7 @@ def processNumeric(line):
 					charNumber += 1	#increment
 					if(charNumber < len(line)):
 						currentChar = line[charNumber]
-			lex_type = cnst_float
+		lex_type = cnst_float
 	if(currentChar.isalpha()):
 		return "error"
 	return [token, lex_type]
