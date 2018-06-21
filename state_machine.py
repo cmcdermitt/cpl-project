@@ -1,5 +1,5 @@
 #Move all of this to Scanner.py later 
-
+import string
 keywords = dict(zip(['token', 'IDENTIFIER', 'HCON', 'FORWARD', 'REFERENCES',
 	'MEXTERN', 'FUNCTION', 'MAIN', 'RETURN', 'POINTER', 'ARRAY', 'LB', 'RB','ICON',
 	'TYPE', 'STRUCT', 'STRUCTYPE', 'MVOID', 'INTEGER',
@@ -37,9 +37,9 @@ def processAlphaOr_(line): #if the first character is alphabetic or the undersco
 		line[charNumber] == '/' or line[charNumber] == '%'): #if it's an arithmetic operator
 			charNumber = charNumber - 1 #Back up for arithmetic operators
 	
-	if(token in keywords.keys()): #if the token is a keyword
-		lex_type = keywords[token] #give it the keyword's id
-	else:
+	#print(type(token))
+	lex_type = keywords.get(token.upper()) #give it the keyword's id
+	if(lex_type == None):
 		lex_type = identifier #to be expanded later, will give identifiers individual ids
 	
 	if(currentChar == '?' or currentChar == '!'): #This list can be expanded later
@@ -81,8 +81,23 @@ def processNumeric(line):
 		return "error"
 	return [token, lex_type]
 	
-				
+def processQuotes(line):
+	global charNumber
+	global cnst_string
+	currentChar = line[charNumber]
+	token = ''
+	while(currentChar != '"\"' and charNumber < len(line)):
+		token = token + currentChar #add character to current token
+		charNumber += 1	#increment
+		if(charNumber < len(line)):
+			currentChar = line[charNumber]
+	if(currentChar != '\"'):
+		return "error"
+	lex_type = cnst_string
+	return [token, lex_type]
 	
+
+				
 def processLine(line):
 	if(len(line) == 0):
 		return #if the line is empty, return
@@ -103,7 +118,8 @@ def processLine(line):
 			token = processNumeric(line) # Go down the underscore or alpha path
 			processedToken = True
 		elif(line[charNumber] == '\"'):
-			x = 2 #Go down char path
+			token = processQuotes(line)
+			processedToken = True
 		elif(line[charNumber] == '+' or line[charNumber] == '-' or line[charNumber] == '*' or
 		line[charNumber] == '/' or line[charNumber] == '%'): # need to add <, >, etc
 			x = 2 #Go down arithmetic path
