@@ -104,7 +104,7 @@ def processNumeric(line):
 						currentChar = line[charNumber]
 			lex_type = keywords['CNST_FLOAT']
 	
-	if(currentChar == 'e' and lex_type == cnst_float):
+	if(currentChar == 'e' and lex_type == keywords['CNST_FLOAT']):
 		token += currentChar
 		charNumber+= 1
 		if(charNumber < len(line)):
@@ -122,12 +122,13 @@ def processNumeric(line):
 			else:
 				return [token, error]
 		else:
-			return [token, eror]
+			return [token, error]
 						
 	if(currentChar.isalpha()):
 		lex_type = error
 	return [token, lex_type]
-	
+
+	# Quotes needs support for in string quotation marks.
 def processQuotes(line): #if first character is "
 	global charNumber
 	currentChar = line[charNumber]
@@ -148,7 +149,8 @@ def processQuotes(line): #if first character is "
 		lex_type = error	
 	charNumber += 1
 	return [token, lex_type]
-	
+
+	# Add support for other operators: *, /, Charlie knows what to do :p
 def processArit(line):
 	global charNumber
 	currentChar = line[charNumber]
