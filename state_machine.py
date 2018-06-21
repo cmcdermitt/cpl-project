@@ -9,12 +9,13 @@ keywords = dict(zip(['token', 'IDENTIFIER', 'HCON', 'FORWARD', 'REFERENCES',
 	'DECLARATIONS', 'IMPLEMENTATIONS', 'FUNCTION', 'MAIN', 'PARAMETERS',
 	'COMMA', 'CONSTANT', 'BEGIN', 'ENDFUN', 'IF',
 	'THEN', 'ELSE', 'ENDIF', 'WHILE', 'ENDWHILE',
-	'LET', 'REPEAT', 'UNTIL', 'ENDREPEAT', 'DISPLAY'], range(0,50)))
+	'LET', 'REPEAT', 'UNTIL', 'ENDREPEAT', 'DISPLAY'], range(1,51)))
 
-identifier = 51
-cnst_int = 52
-cnst_float = 53
-cnst_string = 54	
+error = 0
+identifier = 52
+cnst_int = 53
+cnst_float = 54
+cnst_string = 55	
 currentId = 0
 charNumber = 0
 tokenNum = 0
@@ -43,7 +44,7 @@ def processAlphaOr_(line): #if the first character is alphabetic or the undersco
 		lex_type = identifier #to be expanded later, will give identifiers individual ids
 	
 	if(currentChar == '?' or currentChar == '!'): #This list can be expanded later
-		return "error"
+		lex_type == error
 	return [token, lex_type]
 
 def processNumeric(line):
@@ -78,22 +79,24 @@ def processNumeric(line):
 						currentChar = line[charNumber]
 		lex_type = cnst_float
 	if(currentChar.isalpha()):
-		return "error"
+		lex_type = error
 	return [token, lex_type]
 	
-def processQuotes(line):
+def processQuotes(line): #if first character is "
 	global charNumber
 	global cnst_string
 	currentChar = line[charNumber]
 	token = ''
-	while(currentChar != '"\"' and charNumber < len(line)):
+
+	while(currentChar != '\"' and charNumber < len(line)): #while we haven't reached an end quote or the end of the line
 		token = token + currentChar #add character to current token
 		charNumber += 1	#increment
 		if(charNumber < len(line)):
-			currentChar = line[charNumber]
-	if(currentChar != '\"'):
-		return "error"
+			currentChar = line[charNumber] #move up
+
 	lex_type = cnst_string
+	if(currentChar != '\"'):
+		lex_type = error	
 	return [token, lex_type]
 	
 
@@ -104,6 +107,7 @@ def processLine(line):
 	global currentId
 	global charNumber
 	global tokenNum
+
 	charNumber = 0
 	tokenNum = 0
 	currentChar = line[0]
@@ -127,8 +131,8 @@ def processLine(line):
 			x = 2	#Get next character
 			charNumber += 1
 		if(processedToken):
-			if (token == "error"):
-				return token
+			if (token[1] == 0):
+				return [token, 0]
 			token.insert(0,tokenNum)
 			token.insert(0,currentId)
 			line_table.append(token)
