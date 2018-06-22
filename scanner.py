@@ -29,9 +29,10 @@ current_row = 0
 def main():
 	attributes = []
 	symbol_table = [[]]
-	print(sys.argv[1])
+
+	#print(sys.argv[1])
 	linenum = 0
-	with open(sys.argv[1]) as infile: #open the file, sys.argv[1] is the first command line argument
+	with open("sclex1.scl") as infile: #open the file, sys.argv[1] is the first command line argument
 		for i, line in enumerate(infile):
 			linenum += 1
 			#line = textline.split() #splits the line into a list of words wherever there's whitespace
@@ -51,8 +52,8 @@ def main():
 
 			#currentRow = currentRow + 1
 		
-		
-	print(attributes)
+	for i in range (0, len(attributes)):	
+		print(attributes[i])
 	with open('output_scanned.csv', 'w') as outfile: #open output file
 		writer = csv.writer(outfile)
 		writer.writerow (["ID", "Value", "Type", "Line Number", "Line Position"])
