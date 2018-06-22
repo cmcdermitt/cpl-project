@@ -46,11 +46,8 @@ class Types(Enum):
 
 identifiers = {}
 identifier_id = 501
-
-	
-
-
 error = 0
+
 currentId = 0
 charNumber = 0
 tokenNum = 0
@@ -179,6 +176,7 @@ def processQuotes(line): #if first character is "
 	global charNumber
 	currentChar = line[charNumber]
 	token = ''
+
 	charNumber += 1
 	if(charNumber < len(line)):
 		currentChar = line[charNumber]
@@ -208,6 +206,7 @@ def processOperator(line):
 		if(currentChar.isdigit()): #if the next character's a digit, it's a signed number
 			val = processNumeric(line) #process the number
 			val[0] = token + val[0] #add the sign to the processed number
+			val[1] = val[1] + 1 #since the ID of signed numbers (both ints and floats) is 1 more than the id of unsigned numbers, we can just add 1
 			return val
 		elif currentChar != ' ':
 			return [token, token, 0] #error if the next character isn't a number or space

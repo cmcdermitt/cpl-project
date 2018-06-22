@@ -15,8 +15,6 @@ keywords = dict(zip(['SYMBOL', 'IDENTIFIER', 'HCON', 'FORWARD', 'REFERENCES',
 	'THEN', 'ELSE', 'ENDIF', 'WHILE', 'ENDWHILE',
 	'LET', 'REPEAT', 'UNTIL', 'ENDREPEAT', 'DISPLAY'], range(0, 55)))
 
-tokens = [[[4, 5, 6],[3, 4, 1],[3, 4, 4]],[[4, 6, 7],[4, 6, 8],[3, 2, 3]]]
-
 def main():
 	
 
