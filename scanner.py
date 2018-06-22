@@ -4,16 +4,17 @@ import csv
 from state_machine import processLine
 #List of keywords
 
-keywords = dict(zip(['SYMBOL', 'IDENTIFIER', 'HCON', 'FORWARD', 'REFERENCES',
-	'MEXTERN', 'FUNCTION', 'MAIN', 'RETURN', 'POINTER', 'ARRAY', 'LB', 'RB','ICON',
-	'TYPE', 'STRUCT', 'STRUCTYPE', 'MVOID', 'INTEGER',
-	'SHORT', 'REAL', 'FLOAT', 'DOUBLE', 'TBOOL',
-	'CHAR', 'TSTRING', 'OF', 'LENGTH', 'ICON',
-	'TBYTE', 'SPECIFICATIONS', 'ENUM', 'STRUCT', 'GLOBAL',
-	'DECLARATIONS', 'IMPLEMENTATIONS', 'FUNCTION', 'MAIN', 'PARAMETERS',
-	'COMMA', 'CONSTANT', 'BEGIN', 'ENDFUN', 'IF',
-	'THEN', 'ELSE', 'ENDIF', 'WHILE', 'ENDWHILE',
-	'LET', 'REPEAT', 'UNTIL', 'ENDREPEAT', 'DISPLAY'], range(0, 55)))
+# OUT OF DATE - use state_machine keywords list
+# keywords = dict(zip(['SYMBOL', 'IDENTIFIER', 'HCON', 'FORWARD', 'REFERENCES',
+# 	'MEXTERN', 'FUNCTION', 'MAIN', 'RETURN', 'POINTER', 'ARRAY', 'LB', 'RB','ICON',
+# 	'TYPE', 'STRUCT', 'STRUCTYPE', 'MVOID', 'INTEGER',
+# 	'SHORT', 'REAL', 'FLOAT', 'DOUBLE', 'TBOOL',
+# 	'CHAR', 'TSTRING', 'OF', 'LENGTH', 'ICON',
+# 	'TBYTE', 'SPECIFICATIONS', 'ENUM', 'STRUCT', 'GLOBAL',
+# 	'DECLARATIONS', 'IMPLEMENTATIONS', 'FUNCTION', 'MAIN', 'PARAMETERS',
+# 	'COMMA', 'CONSTANT', 'BEGIN', 'ENDFUN', 'IF',
+# 	'THEN', 'ELSE', 'ENDIF', 'WHILE', 'ENDWHILE',
+# 	'LET', 'REPEAT', 'UNTIL', 'ENDREPEAT', 'DISPLAY'], range(0, 55)))
 
 def main():
 	

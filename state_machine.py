@@ -60,7 +60,7 @@ def processAlphaOr_(line): #if the first character is alphabetic or the undersco
 		line[charNumber] == '/' or line[charNumber] == '%'): #if it's an arithmetic operator
 			charNumber = charNumber - 1 #Back up for arithmetic operators'''
 	
-	if(currentChar == "."):
+	if(currentChar == "."): #if there's a dot operator, store the second half of the identifier
 		if(charNumber < len(line)):
 			token = token + currentChar
 			charNumber += 1
@@ -73,12 +73,12 @@ def processAlphaOr_(line): #if the first character is alphabetic or the undersco
 					charNumber += 1	#increment
 					if(charNumber < len(line)):
 						currentChar = line[charNumber]
-	elif(currentChar == '-'):
+	elif(currentChar == '-'): #if there's a hyphen, check whether it's part of an arrow operator
 		charNumber+= 1
 		token += currentChar
 		if(charNumber < len(line)):
 			currentChar = line[charNumber]
-			if(currentChar == '>'):
+			if(currentChar == '>'): #if there's an arrow operator, store the rest of the identifier. Otherwise it's an error.
 				token += currentChar
 				charNumber += 1
 				currentChar = line[charNumber]
@@ -121,7 +121,7 @@ def processNumeric(line):
 			currentChar = line[charNumber]
 	
 
-	lex_type = types['INTEGER']
+	lex_type = types['INTEGER'] #set type to integer
 	
 	
 	if(charNumber < len(line)):
@@ -135,29 +135,30 @@ def processNumeric(line):
 					charNumber += 1	#increment
 					if(charNumber < len(line)):
 						currentChar = line[charNumber]
-			lex_type = types['REAL']
+			lex_type = types['REAL'] #mark the token as floating point
 	
-	if(currentChar == 'e' and lex_type == types['REAL']):
+	if(currentChar == 'e' and lex_type == types['REAL']): #if the next character is the beginning of an exponent
 		token += currentChar
 		charNumber+= 1
+
 		if(charNumber < len(line)):
 			currentChar = line[charNumber]
-			if(currentChar == '+' or currentChar == '-'):
+			if(currentChar == '+' or currentChar == '-'): #if the next character is a sign, track it
 				token += currentChar
 				charNumber += 1
-			if(charNumber < len(line)):
+			if(charNumber < len(line)): #if there isn't a sign
 				currentChar = line[charNumber]
-				while(currentChar.isdigit() and charNumber < len(line)):
+				while(currentChar.isdigit() and charNumber < len(line)): #add all the digits to the token
 					token = token + currentChar
 					charNumber += 1
 					if(charNumber < len(line)):
 						currentChar = line[charNumber]
-			else:
+			else: #if there are no valid characters after the e or the sign, return an error code
 				return [token, error]
-		else:
+		else: #if there are no valid characters after the e, return an error code
 			return [token, error]
 						
-	if(currentChar.isalpha()):
+	if(currentChar.isalpha()): #return an error if there's a letter
 		lex_type = error
 	return [token, lex_type]
 
@@ -169,7 +170,7 @@ def processQuotes(line): #if first character is "
 
 	charNumber += 1
 	if(charNumber < len(line)):
-		currentChar = line[charNumber]
+		currentChar = line[charNumber] #move to the next character if there is one. Otherwise return an error.
 	else:
 		return [token, error]
 	while(currentChar != '\"' and charNumber < len(line)): #while we haven't reached an end quote or the end of the line
@@ -178,8 +179,8 @@ def processQuotes(line): #if first character is "
 		if(charNumber < len(line)):
 			currentChar = line[charNumber] #move up
 
-	lex_type = types['STRING']
-	if(currentChar != '\"'):
+	lex_type = types['STRING'] #set type to string
+	if(currentChar != '\"'): #if the last character isn't a quotation mark, switch type to error instead
 		lex_type = error	
 	charNumber += 1
 	return [token, lex_type]
@@ -190,7 +191,7 @@ def processOperator(line):
 	token = currentChar
 	charNumber += 1
 
-	if currentChar == '+' or currentChar == '-':
+	if currentChar == '+' or currentChar == '-': #these two can be part of signed numbers
 		currentChar = line[charNumber]
 
 		if(currentChar.isdigit()): #if the next character's a digit, it's a signed number
@@ -222,16 +223,16 @@ def processLine(line):
 	global charNumber
 	global currentId
 	charNumber = 0
-	#currentChar = line[0]
 	token = []
 	line_table = []
 	processedToken = False
+
 	while(charNumber < len(line)):
 		if(line[charNumber].isalpha() or line[charNumber] == '_'):
 			token = processAlphaOr_(line) # Go down the underscore or alpha path
 			processedToken = True
 		elif(line[charNumber].isdigit()):
-			token = processNumeric(line) # Go down the underscore or alpha path
+			token = processNumeric(line) # Go down the number
 			processedToken = True
 		elif(line[charNumber] == '\"'):
 			token = processQuotes(line)
@@ -242,12 +243,13 @@ def processLine(line):
 		else:
 			x = 2	#Get next character
 			charNumber += 1
-		if(processedToken):
-			if (token[1] == 0):
-				return [token, 0]
-			token.insert(0,currentId)
-			line_table.append(token)
-			currentId = currentId + 1
-			processedToken = False
 		
-	return line_table	
+		if(processedToken): #once we've processed a token
+			if (token[1] == 0): #if it's an error, just return that token - the line is invalid anyway and this makes it easier to keep track of errors.
+				return [token, 0]
+			token.insert(0,currentId) #add the token's id - fix this later?
+			line_table.append(token) #add the processed token to a line
+			currentId = currentId + 1
+			processedToken = False #get ready for a new token
+		
+	return line_table #return a list of lists, where each sublist represents one token in the line
