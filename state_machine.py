@@ -112,7 +112,9 @@ def processNumeric(line):
 	global charNumber
 	token = ''
 	currentChar = line[charNumber]
-	
+	hexPossible = False
+	if(currentChar == '0'):
+		hexPossible = True
 	# Go through the whole number part of the number (int or float)
 	while(currentChar.isdigit() and charNumber < len(line)):
 		token = token + currentChar #add character to current token
@@ -125,7 +127,37 @@ def processNumeric(line):
 	
 	
 	if(charNumber < len(line)):
-		if(currentChar == '.'): # If there is a . character, the token is floating point. 
+		
+		if(currentChar == 'h'):
+			if(hexPossible):
+				lex_type = types['HEX_INTEGER']
+				token += currentChar
+				charNumber += 1
+				return [token, lex_type]
+			else:
+				return [token, error] 
+		
+		elif(currentChar == 'A' or currentChar == 'B' or currentChar == 'C' or currentChar == 'D' or currentChar == 'E' or currentChar == 'F'):
+			token += currentChar
+			charNumber += 1
+			if(charNumber < len(line)):
+				currentChar = line[charNumber]
+				while(charNumber < len(line) and (currentChar == 'A' or currentChar == 'B' or currentChar == 'C' or currentChar == 'D' or currentChar == 'E' or currentChar == 'F' or currentChar.isdigit())):
+					token += currentChar
+					charNumber += 1
+					if(charNumber < len(line)):
+						currentChar = line[charNumber]
+			if(currentChar == 'h'):
+				token += currentChar
+				charNumber+= 1
+				lex_type = types['HEX_INTEGER']
+				return [token, lex_type]
+			else:
+				return [token, error]
+				
+				
+	
+		elif(currentChar == '.'): # If there is a . character, the token is floating point. 
 			token = token + currentChar
 			charNumber += 1
 			if(charNumber < len(line)): # Check that the floating point number continues
