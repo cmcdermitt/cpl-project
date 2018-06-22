@@ -67,6 +67,7 @@ def main():
 	print(processLine("12HI"))
 	print(processLine("0ACDh 023h"))
 	print(processLine("\'^\'"))
+	print(processLine("ABC\"123\""))
 
 if __name__ == "__main__":
 	main()

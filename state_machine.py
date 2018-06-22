@@ -43,13 +43,18 @@ error = 0
 currentId = 0
 charNumber = 0
 tokenNum = 0
+anyAllowedAfter = True
+spaceRequired = True
+openopenParenthAllowed = True
 
 def processAlphaOr_(line): #if the first character is alphabetic or the underscore 
 	global charNumber
 	global identifier_id
 	token = ''
 	currentChar = line[charNumber] #mark current position in line
-	
+	global anyAllowedAfter 
+	global openParenthAllowed 
+	global closedBracketAllowed 
 	#keep going until you have a character that isn't _ or alphanumeric
 	while((currentChar.isalpha() or currentChar.isdigit() or currentChar == '_') and charNumber < len(line)):
 		token = token + currentChar #add character to current token
@@ -99,7 +104,13 @@ def processAlphaOr_(line): #if the first character is alphabetic or the undersco
 
 	if token in keywords.keys(): #if the token is a keyword, give it the keyword's id
 		lex_type = keywords.get(token)
+		anyAllowedAfter = False
+		openParenthAllowed =  False
+		closedBracketAllowed = False
 	else: #it's an identifier
+		anyAllowedAfter = False
+		openParenthAllowed =  True
+		closedBracketAllowed = True
 		if token in identifiers.keys(): #if the identifier has already been used, look up its id
 			lex_type = identifiers.get(token)
 		else: #if it hasn't been used before, give it a new id
@@ -112,6 +123,12 @@ def processAlphaOr_(line): #if the first character is alphabetic or the undersco
 
 def processNumeric(line):
 	global charNumber
+	global anyAllowedAfter 
+	global openParenthAllowed 
+	global closedBracketAllowed 
+	anyAllowedAfter = False
+	openParenthAllowed =  False
+	closedBracketAllowed = True
 	token = ''
 	currentChar = line[charNumber]
 	hexPossible = False
@@ -132,6 +149,7 @@ def processNumeric(line):
 		
 		if(currentChar == 'h'):
 			if(hexPossible):
+				closedBracketAllowed = False
 				lex_type = types['HEX_INTEGER']
 				token += currentChar
 				charNumber += 1
@@ -152,6 +170,7 @@ def processNumeric(line):
 			if(currentChar == 'h'):
 				token += currentChar
 				charNumber+= 1
+				closedBracketAllowed = False
 				lex_type = types['HEX_INTEGER']
 				return [token, lex_type]
 			else:
@@ -160,6 +179,7 @@ def processNumeric(line):
 				
 	
 		elif(currentChar == '.'): # If there is a . character, the token is floating point. 
+			closedBracketAllowed = False
 			token = token + currentChar
 			charNumber += 1
 			if(charNumber < len(line)): # Check that the floating point number continues
@@ -199,7 +219,12 @@ def processNumeric(line):
 	# Quotes needs support for in string quotation marks.
 def processQuotes(line): #if first character is "
 	global charNumber
-
+	global anyAllowedAfter 
+	global openParenthAllowed 
+	global closedBracketAllowed
+	anyAllowedAfter = False
+	openopenParenthAllowed = True
+	closedBracketAllowed = False
 	currentChar = line[charNumber]
 	token = currentChar
 
@@ -222,7 +247,12 @@ def processQuotes(line): #if first character is "
 
 def processSingleQuote(line): #if first character is '
 	global charNumber
-	
+	global anyAllowedAfter 
+	global openParenthAllowed 
+	global closedBracketAllowed
+	anyAllowedAfter = False
+	openParenthAllowed = False
+	closedBracketAllowed = False
 	currentChar = line[charNumber]
 	token = currentChar
 
@@ -253,6 +283,12 @@ def processSingleQuote(line): #if first character is '
 	
 def processOperator(line):
 	global charNumber
+	global anyAllowedAfter 
+	global openParenthAllowed 
+	global closedBracketAllowed
+	anyAllowedAfter = False
+	openParenthAllowed = False
+	closedBracketAllowed = False
 	currentChar = line[charNumber]
 	token = currentChar
 	charNumber += 1
@@ -266,9 +302,11 @@ def processOperator(line):
 			val[1] = val[1] + 1 #since the ID of signed numbers (both ints and floats) is 1 more than the id of unsigned numbers, we can just add 1
 			return val
 		elif currentChar != ' ':
+			openParenthAllowed = True
 			return [token, token, 0] #error if the next character isn't a number or space
 
 	elif currentChar != '*' and currentChar != '/': #if it's one of these we can just return
+		openParenthAllowed = True
 		if charNumber < len(line):
 			nextChar = line[charNumber]
 			if (currentChar + nextChar in keywords.keys()): #if the next two characters combined form a keyword
@@ -277,13 +315,19 @@ def processOperator(line):
 				return [token, token, 0] #error if it isn't, otherwise return it
 		else:
 			if currentChar not in keywords.keys(): #check if this one character is a keyword
-					return [token, token, 0] #error if it isn't, otherwise return it
+				return [token, token, 0] #error if it isn't, otherwise return it
 				
 	return [token, token, keywords[token]]
 
 def processGrouping(line):
 	global charNumber
 	global identifier_id
+	global anyAllowedAfter 
+	global openParenthAllowed 
+	global closedBracketAllowed
+	anyAllowedAfter = False
+	openParenthAllowed = True
+	closedBracketAllowed = False
 	currentChar = line[charNumber]
 	token = currentChar
 	processToken = []
@@ -333,32 +377,54 @@ def processLine(line):
 	global currentChar
 	global charNumber
 	global currentId
-	charNumber = 0
+	global anyAllowedAfter 
+	global openParenthAllowed 
+	global closedBracketAllowed
+	anyAllowedAfter = True
+	parenthAllowed = True
+	bracketAllowed = True
+	charNumber = 0 
 	token = []
 	line_table = []
 	processedToken = False
 
 	while(charNumber < len(line)):
 		if(line[charNumber].isalpha() or line[charNumber] == '_'):
+			if(not anyAllowedAfter):
+				return [token, 0]
 			token = processAlphaOr_(line) # Go down the underscore or alpha path
 			processedToken = True
 		elif(line[charNumber].isdigit()):
+			if(not anyAllowedAfter):
+				return [token, 0]
 			token = processNumeric(line) # Go down the number
 			processedToken = True
 		elif(line[charNumber] == '\"'):
+			if(not anyAllowedAfter):
+				return [token, 0]
 			token = processQuotes(line)
 			processedToken = True
 		elif(line[charNumber] == '\''):
+			if(not anyAllowedAfter):
+				return [token, 0]
 			token = processSingleQuote(line)
 			processedToken  = True
 		elif(line[charNumber] in operator_characters): # if it's an operator
+			if(not anyAllowedAfter):
+				return [token, 0]
 			token = processOperator(line) #Go down operator path
 			processedToken = True
 		elif(line[charNumber] in grouping_characters): # if character is a brace, bracket, or parenthesis
+			if(currentChar == ']' and not closedBracketAllowed):
+				return [token, 0]
+			if(currentChar == '(' and not openParenthAllowed):
+				return [token, 0]
 			token = processGrouping(line) #Go down grouping path
 			processedToken = True
 		else:
-			x = 2	#Get next character
+			anyAllowedAfter = True
+			parenthAllowed =  True
+			bracketAllowed =  True	#Get next character
 			charNumber += 1
 		
 		if(processedToken): #once we've processed a token
