@@ -33,8 +33,7 @@ types = dict(zip(['INTEGER', 'SIGNED_INTEGER', 'HEX_INTEGER', 'REAL', 'SIGNED_RE
 grouping_characters = dict(zip(['(', ')', '[', ']', '{', '}'], range(701,706)))
 
 #list which characters are parts of operators
-operator_characters = ['+', '-', '*', '/', '=', ':', '<', '>']
-
+operator_characters = ['+', '-', '*', '/', '=', ':', '<', '>', ',']
 #list types and their possible ids
 
 identifiers = {}
@@ -200,8 +199,9 @@ def processNumeric(line):
 	# Quotes needs support for in string quotation marks.
 def processQuotes(line): #if first character is "
 	global charNumber
+
 	currentChar = line[charNumber]
-	token = ''
+	token = currentChar
 
 	charNumber += 1
 	if(charNumber < len(line)):
@@ -219,6 +219,37 @@ def processQuotes(line): #if first character is "
 		lex_type = error	
 	charNumber += 1
 	return [token, lex_type]
+
+def processSingleQuote(line): #if first character is '
+	global charNumber
+	
+	currentChar = line[charNumber]
+	token = currentChar
+
+	#check whether there is another token
+	charNumber += 1
+	if charNumber < len(line):
+		currentChar = line[charNumber]
+	else:
+		return [token, error]
+	if currentChar.isalpha() or currentChar.isdigit(): #check whether the next token is alphanumeric (which is required for char)
+		token = token + currentChar
+		charNumber += 1
+		
+		#check whether there is another token
+		if charNumber < len(line):
+			currentChar = line[charNumber]
+		else:
+			return [token, error]
+		if currentChar == '\'': #check whether there's an ending quote, return the char if so, otherwise error
+			token = token + currentChar
+			lexType = types['CHAR']
+			charNumber += 1
+			return [token, lexType]
+		else:
+			return [token, error]
+	else: #if the character after the ' isn't alphanumeric, it's an error
+		return [token, error]
 	
 def processOperator(line):
 	global charNumber
@@ -317,6 +348,9 @@ def processLine(line):
 		elif(line[charNumber] == '\"'):
 			token = processQuotes(line)
 			processedToken = True
+		elif(line[charNumber] == '\''):
+			token = processSingleQuote(line)
+			processedToken  = True
 		elif(line[charNumber] in operator_characters): # if it's an operator
 			token = processOperator(line) #Go down operator path
 			processedToken = True
