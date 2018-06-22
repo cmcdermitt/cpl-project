@@ -44,6 +44,7 @@ class Types(Enum):
 	CONST_SIGNED_REAL = 405
 	CONST_CHAR = 406
 	CONST_STRING = 407
+	IDENTIFIER = 666 #this way we'll remember to change it
 
 identifiers = {}
 identifier_id = 200
@@ -109,7 +110,7 @@ def processAlphaOr_(line): #if the first character is alphabetic or the undersco
 	#print(type(token))
 	lex_type = keywords.get(token) #give it the keyword's id
 	if(lex_type == None):
-		lex_type = keywords['IDENTIFIER'] #to be expanded later, will give identifiers individual ids
+		lex_type = Types.IDENTIFIER.value #to be expanded later, will give identifiers individual ids
 	
 	if(currentChar == '?' or currentChar == '!'): #This list can be expanded later
 		lex_type == error
@@ -167,7 +168,8 @@ def processNumeric(line):
 	if(currentChar.isalpha()):
 		lex_type = error
 	return [token, lex_type]
-	
+
+	# Quotes needs support for in string quotation marks.
 def processQuotes(line): #if first character is "
 	global charNumber
 	currentChar = line[charNumber]
