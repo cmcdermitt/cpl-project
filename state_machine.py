@@ -29,13 +29,16 @@ keywords = dict(zip(['(', ')', '[', ']', 'IMPLEMENTATION',
 types = dict(zip(['INTEGER', 'SIGNED_INTEGER', 'HEX_INTEGER', 'REAL', 'SIGNED_REAL', 'CHAR', 'STRING',
  	'CONST_INTEGER', 'CONST_SIGNED_INTEGER', 'CONST_HEX_INTEGER', 'CONST_REAL', 'CONST_SIGNED_REAL', 'CONST_CHAR', 'CONST_STRING'], range(501, 520)))
 
+#dictionary of characters used for grouping
+grouping_characters = dict(zip(['(', ')', '[', ']', '{', '}'], range(701,706)))
+
 #list which characters are parts of operators
 operator_characters = ['+', '-', '*', '/', '=', ':', '<', '>']
 
 #list types and their possible ids
 
 identifiers = {}
-identifier_id = 501
+identifier_id = 601
 error = 0
 
 currentId = 0
@@ -213,9 +216,54 @@ def processOperator(line):
 			if currentChar not in keywords.keys(): #check if this one character is a keyword
 					return [token, token, 0] #error if it isn't, otherwise return it
 				
-	return [token, token, keywords[token]]			
-				
-			
+	return [token, token, keywords[token]]
+
+def processGrouping(line):
+	global charNumber
+	global identifier_id
+	currentChar = line[charNumber]
+	token = currentChar
+	processToken = []
+	charNumber += 1
+
+	#Check for parentheses, curly braces, or opening square bracket return token
+	if(currentChar == '(' or currentChar == ')' or currentChar == '{' or currentChar == '}' or currentChar == '['):
+		token = currentChar
+		return [token, grouping_characters[token]]
+	#currentChar is a closing sqaure bracket.
+	#Keep scanning until space to catch all components of a indexing operation
+	else:
+		token = currentChar
+		while(charNumber < len(line)):
+			nextChar = line[charNumber]
+			if(nextChar == " "): #end of line reached
+				return [token, grouping_characters[token]]
+			elif (nextChar == '(' or nextChar == ')' or nextChar == '[' or nextChar == ']'):
+				currentChar = nextChar
+				token = token + currentChar
+			elif(nextChar == "."): #next character is dot operator. add to token
+				currentChar = nextChar
+				token = token + currentChar
+				if(charNumber + 1 >= len(line)):
+					return [token,error]
+			elif(nextChar.isalpha() or nextChar == "_"): #Catch letter or underscore parts of identifier
+				currentChar = nextChar
+				token = token + currentChar
+			elif(nextChar.isdigit()):
+				token = token + nextChar
+				if(currentChar == "."): #digit follows a letter
+					return [token, error]
+				currentChar = nextChar
+			charNumber += 1
+
+	if token in identifiers.keys(): #if the identifier has already been used, look up its id
+		lex_type = identifiers.get(token)
+	else: #if it hasn't been used before, give it a new id
+		lex_type = identifier_id
+		identifier_id += 1
+		return [token, lex_type]
+
+
 def processLine(line):
 	if(len(line) == 0):
 		return #if the line is empty, return
@@ -239,6 +287,9 @@ def processLine(line):
 			processedToken = True
 		elif(line[charNumber] in operator_characters): # if it's an operator
 			token = processOperator(line) #Go down operator path
+			processedToken = True
+		elif(line[charNumber] in grouping_characters): # if character is a brace, bracket, or parenthesis
+			token = processGrouping(line) #Go down grouping path
 			processedToken = True
 		else:
 			x = 2	#Get next character
