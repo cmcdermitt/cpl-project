@@ -27,7 +27,6 @@ keywords = dict(zip(['(', ')', '[', ']', 'IMPLEMENTATION',
 
 
 operator_characters = dict(zip(['+', '-', '*', '/', '=', ':', '<', '>'], range(201, 209)))
-print(operator_characters)
 
 class Types(Enum):
 	INTEGER = 301
@@ -44,10 +43,9 @@ class Types(Enum):
 	CONST_SIGNED_REAL = 405
 	CONST_CHAR = 406
 	CONST_STRING = 407
-	IDENTIFIER = 666 #this way we'll remember to change it
 
 identifiers = {}
-identifier_id = 200
+identifier_id = 501
 
 	
 
@@ -59,6 +57,7 @@ tokenNum = 0
 
 def processAlphaOr_(line): #if the first character is alphabetic or the underscore 
 	global charNumber
+	global identifier_id
 	token = ''
 	currentChar = line[charNumber] #mark current position in line
 	
@@ -108,9 +107,15 @@ def processAlphaOr_(line): #if the first character is alphabetic or the undersco
 				return [token, error]
 	
 	#print(type(token))
-	lex_type = keywords.get(token) #give it the keyword's id
-	if(lex_type == None):
-		lex_type = Types.IDENTIFIER.value #to be expanded later, will give identifiers individual ids
+
+	if token in keywords.keys(): #if the token is a keyword, give it the keyword's id
+		lex_type = keywords.get(token)
+	else: #it's an identifier
+		if token in identifiers.keys(): #if the identifier has already been used, look up its id
+			lex_type = identifiers.get(token)
+		else: #if it hasn't been used before, give it a new id
+			lex_type = identifier_id
+			identifier_id += 1
 	
 	if(currentChar == '?' or currentChar == '!'): #This list can be expanded later
 		lex_type == error
