@@ -45,8 +45,8 @@ def main():
 
 #print (keywords) 
 print(processLine(" -3222"))
-# print(processLine("Hi Cory and Charlie 1234.4568 ad \"sdsds\" charlie.work"))
-#print(processLine("12HI"))
+print(processLine("Hi Cory and Charlie 1234.4568 ad \"sdsds\" charlie.work"))
+print(processLine("12HI"))
 
 if __name__ == "__main__":
 	main()

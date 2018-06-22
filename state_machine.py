@@ -1,15 +1,55 @@
 #Move all of this to Scanner.py later 
 import string
-keywords = dict(zip(['token', 'IDENTIFIER', 'HCON', 'FORWARD', 'REFERENCES',
-	'MEXTERN', 'FUNCTION', 'MAIN', 'RETURN', 'POINTER', 'ARRAY', 'LB', 'RB','ICON',
-	'TYPE', 'STRUCT', 'STRUCTYPE', 'MVOID', 'INTEGER',
-	'SHORT', 'REAL', 'FLOAT', 'DOUBLE', 'TBOOL',
-	'CHAR', 'TSTRING', 'OF', 'LENGTH', 'ICON',
-	'TBYTE', 'SPECIFICATIONS', 'ENUM', 'STRUCT', 'GLOBAL',
-	'DECLARATIONS', 'IMPLEMENTATIONS', 'FUNCTION', 'MAIN', 'PARAMETERS',
-	'COMMA', 'CONSTANT', 'BEGIN', 'ENDFUN', 'IF',
-	'THEN', 'ELSE', 'ENDIF', 'WHILE', 'ENDWHILE',
-	'LET', 'REPEAT', 'UNTIL', 'ENDREPEAT', 'DISPLAY', 'IDENTIFIER', 'CNST_INT', 'CNST_FLOAT', 'CNST_STRING', '+', '-'], range(1,100)))
+from enum import Enum
+
+keywords = dict(zip(['(', ')', '[', ']', 'IMPLEMENTATION',
+	'MAIN', 'DESCRIPTION', 'PARAMETERS', 'OF', 'IDENTIFIER',
+  	'VALUE', 'ARRAY', 'ICON', '+', '-',
+   	'BAND', 'BOR', 'BXOR', '*', '/',
+    'MOD', 'LSHIFT', 'RSHIFT', 'NEGATE', ',',
+	':=', 'POINTER', 'STRUCT', 'STRUCTYPE', 'ARRAY',
+	'RETURN', '[empty]', 'FUNCTION', 'IS', 'BEGIN',
+	'ENDFUN', 'PRECONDITION', 'MTRUE', 'MFALSE', 'CONSTANTS',
+	'VARIABLES', 'DEFINE', 'NOT', 'AND', 'OR',
+	'SET', 'READ', 'INPUT', 'DISPLAY', 'DISPLAYN',
+	'MCLOSE', 'MOPEN', 'MFILE', 'INCREMENT', 'DECREMENT',
+	'CALL', 'IF', 'THEN', 'ENDIF', 'FOR',
+	'DO', 'ENDFOR', 'REPEAT', 'UNTIL', 'ENDREPEAT',
+	'WHILE', 'ENDWHILE', 'CASE', 'MENDCASE', 'MBREAK',
+	'MEXIT', 'POTCONDITION', 'ELSEIF', 'WRITE', 'TO',
+	'FROM', ':', '.', 'DOWNTO', 'DEFAULT',
+	'USING', 'MVOID', 'INTEGER', 'SHORT', 'REAL',
+	'FLOAT', 'DOUBLE', 'TBOOL', 'CHAR', 'TSTRING',
+	'LENGTH', 'TBYTE', 'TUNSIGNED', 'MTRUE', 'LETTER',
+	'HCON', 'FCON', 'RELOP', '==', '>', 
+	'<', '>=', '<=', 'OUTPUT'], range(1,120)))
+
+
+
+operator_characters = dict(zip(['+', '-', '*', '/', '=', ':', '<', '>'], range(201, 209)))
+print(operator_characters)
+
+class Types(Enum):
+	INTEGER = 301
+	SIGNED_INTEGER = 302
+	HEX_INTEGER = 303
+	REAL = 304
+	SIGNED_REAL = 305
+	CHAR = 306
+	STRING = 307
+	CONST_INTEGER = 401
+	CONST_SIGNED_INTEGER = 402
+	CONST_HEX_INTEGER = 403
+	CONST_REAL = 404
+	CONST_SIGNED_REAL = 405
+	CONST_CHAR = 406
+	CONST_STRING = 407
+
+identifiers = {}
+identifier_id = 200
+
+	
+
 
 error = 0
 currentId = 0
@@ -88,7 +128,7 @@ def processNumeric(line):
 			currentChar = line[charNumber]
 	
 
-	lex_type = keywords['CNST_INT']
+	lex_type = Types.INTEGER.value
 	
 	
 	if(charNumber < len(line)):
@@ -102,9 +142,9 @@ def processNumeric(line):
 					charNumber += 1	#increment
 					if(charNumber < len(line)):
 						currentChar = line[charNumber]
-			lex_type = keywords['CNST_FLOAT']
+			lex_type = Types.REAL.value
 	
-	if(currentChar == 'e' and lex_type == cnst_float):
+	if(currentChar == 'e' and lex_type == Types.REAL.value):
 		token += currentChar
 		charNumber+= 1
 		if(charNumber < len(line)):
@@ -122,7 +162,7 @@ def processNumeric(line):
 			else:
 				return [token, error]
 		else:
-			return [token, eror]
+			return [token, error]
 						
 	if(currentChar.isalpha()):
 		lex_type = error
@@ -143,27 +183,41 @@ def processQuotes(line): #if first character is "
 		if(charNumber < len(line)):
 			currentChar = line[charNumber] #move up
 
-	lex_type = keywords['CNST_STRING']
+	lex_type = Types.STRING.value
 	if(currentChar != '\"'):
 		lex_type = error	
 	charNumber += 1
 	return [token, lex_type]
 	
-def processArit(line):
+def processOperator(line):
 	global charNumber
 	currentChar = line[charNumber]
 	token = currentChar
 	charNumber += 1
-	if(currentChar == '+' or currentChar == '-'):
-		if(charNumber < len(line)):
-			currentChar = line[charNumber]
-			charNumber += 1
-			if(currentChar == ' '):
-				return [token, keywords[token]]
-			elif(currentChar.isdigit()):
-				val = processNumeric(line)
-				val[0] = token + val[0]
-				return val	
+
+	if currentChar == '+' or currentChar == '-':
+		currentChar = line[charNumber]
+
+		if(currentChar.isdigit()): #if the next character's a digit, it's a signed number
+			val = processNumeric(line) #process the number
+			val[0] = token + val[0] #add the sign to the processed number
+			return val
+		elif currentChar != ' ':
+			return [token, token, 0] #error if the next character isn't a number or space
+
+	elif currentChar != '*' and currentChar != '/': #if it's one of these we can just return
+		if charNumber < len(line):
+			nextChar = line[charNumber]
+			if (currentChar + nextChar in keywords.keys()): #if the next two characters combined form a keyword
+				token = currentChar + nextChar #return that
+			elif currentChar not in keywords.keys(): #check if this one character is a keyword
+				return [token, token, 0] #error if it isn't, otherwise return it
+		else:
+			if currentChar not in keywords.keys(): #check if this one character is a keyword
+					return [token, token, 0] #error if it isn't, otherwise return it
+				
+	return [token, token, keywords[token]]			
+				
 			
 def processLine(line):
 	if(len(line) == 0):
@@ -172,7 +226,7 @@ def processLine(line):
 	global charNumber
 	global currentId
 	charNumber = 0
-	currentChar = line[0]
+	#currentChar = line[0]
 	token = []
 	line_table = []
 	processedToken = False
@@ -186,9 +240,8 @@ def processLine(line):
 		elif(line[charNumber] == '\"'):
 			token = processQuotes(line)
 			processedToken = True
-		elif(line[charNumber] == '+' or line[charNumber] == '-' or line[charNumber] == '*' or
-		line[charNumber] == '/' or line[charNumber] == '%'): # need to add <, >, etc
-			token =processArit(line) #Go down arithmetic path
+		elif(line[charNumber] in operator_characters): # if it's an operator
+			token = processOperator(line) #Go down operator path
 			processedToken = True
 		else:
 			x = 2	#Get next character
