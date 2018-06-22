@@ -30,14 +30,14 @@ types = dict(zip(['INTEGER', 'SIGNED_INTEGER', 'HEX_INTEGER', 'REAL', 'SIGNED_RE
  	'CONST_INTEGER', 'CONST_SIGNED_INTEGER', 'CONST_HEX_INTEGER', 'CONST_REAL', 'CONST_SIGNED_REAL', 'CONST_CHAR', 'CONST_STRING'], range(501, 520)))
 
 #dictionary of characters used for grouping
-grouping_characters = dict(zip(['(', ')', '[', ']', '{', '}'], range(701,706)))
+grouping_characters = dict(zip(['(', ')', '[', ']', '{', '}'], range(601,606)))
 
 #list which characters are parts of operators
 operator_characters = ['+', '-', '*', '/', '=', ':', '<', '>', ',']
 #list types and their possible ids
 
 identifiers = {}
-identifier_id = 601
+identifier_id = 701
 error = 0
 
 currentId = 0
@@ -45,7 +45,7 @@ charNumber = 0
 tokenNum = 0
 anyAllowedAfter = True
 spaceRequired = True
-openopenParenthAllowed = True
+openParenthAllowed = True
 
 def processAlphaOr_(line): #if the first character is alphabetic or the underscore 
 	global charNumber
@@ -99,8 +99,6 @@ def processAlphaOr_(line): #if the first character is alphabetic or the undersco
 							currentChar = line[charNumber]
 			else:
 				return [token, error]
-	
-	#print(type(token))
 
 	if token.upper() in keywords.keys(): #if the token is a keyword, give it the keyword's id
 		lex_type = keywords.get(token.upper())
@@ -223,7 +221,7 @@ def processQuotes(line): #if first character is "
 	global openParenthAllowed 
 	global closedBracketAllowed
 	anyAllowedAfter = False
-	openopenParenthAllowed = True
+	openParenthAllowed = True
 	closedBracketAllowed = False
 	currentChar = line[charNumber]
 	token = currentChar
@@ -381,7 +379,7 @@ def processLine(line):
 	global openParenthAllowed 
 	global closedBracketAllowed
 	anyAllowedAfter = True
-	parenthAllowed = True
+	openParenthAllowed = True
 	bracketAllowed = True
 	charNumber = 0 
 	token = []
@@ -424,7 +422,7 @@ def processLine(line):
 			processedToken = True
 		else:
 			anyAllowedAfter = True
-			parenthAllowed =  True
+			openParenthAllowed =  True
 			bracketAllowed =  True	#Get next character
 			charNumber += 1
 		
