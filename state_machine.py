@@ -2,6 +2,7 @@
 import string
 from enum import Enum
 
+#list possible keywords and their ids
 keywords = dict(zip(['(', ')', '[', ']', 'IMPLEMENTATION',
 	'MAIN', 'DESCRIPTION', 'PARAMETERS', 'OF', 'IDENTIFIER',
   	'VALUE', 'ARRAY', 'ICON', '+', '-',
@@ -24,25 +25,14 @@ keywords = dict(zip(['(', ')', '[', ']', 'IMPLEMENTATION',
 	'HCON', 'FCON', 'RELOP', '==', '>', 
 	'<', '>=', '<=', 'OUTPUT'], range(1,120)))
 
+#
+types = dict(zip(['INTEGER', 'SIGNED_INTEGER', 'HEX_INTEGER', 'REAL', 'SIGNED_REAL', 'CHAR', 'STRING',
+ 	'CONST_INTEGER', 'CONST_SIGNED_INTEGER', 'CONST_HEX_INTEGER', 'CONST_REAL', 'CONST_SIGNED_REAL', 'CONST_CHAR', 'CONST_STRING'], range(501, 520)))
 
+#list which characters are parts of operators
+operator_characters = ['+', '-', '*', '/', '=', ':', '<', '>']
 
-operator_characters = dict(zip(['+', '-', '*', '/', '=', ':', '<', '>'], range(201, 209)))
-
-class Types(Enum):
-	INTEGER = 301
-	SIGNED_INTEGER = 302
-	HEX_INTEGER = 303
-	REAL = 304
-	SIGNED_REAL = 305
-	CHAR = 306
-	STRING = 307
-	CONST_INTEGER = 401
-	CONST_SIGNED_INTEGER = 402
-	CONST_HEX_INTEGER = 403
-	CONST_REAL = 404
-	CONST_SIGNED_REAL = 405
-	CONST_CHAR = 406
-	CONST_STRING = 407
+#list types and their possible ids
 
 identifiers = {}
 identifier_id = 501
@@ -131,7 +121,7 @@ def processNumeric(line):
 			currentChar = line[charNumber]
 	
 
-	lex_type = Types.INTEGER.value
+	lex_type = types['INTEGER']
 	
 	
 	if(charNumber < len(line)):
@@ -145,9 +135,9 @@ def processNumeric(line):
 					charNumber += 1	#increment
 					if(charNumber < len(line)):
 						currentChar = line[charNumber]
-			lex_type = Types.REAL.value
+			lex_type = types['REAL']
 	
-	if(currentChar == 'e' and lex_type == Types.REAL.value):
+	if(currentChar == 'e' and lex_type == types['REAL']):
 		token += currentChar
 		charNumber+= 1
 		if(charNumber < len(line)):
@@ -188,7 +178,7 @@ def processQuotes(line): #if first character is "
 		if(charNumber < len(line)):
 			currentChar = line[charNumber] #move up
 
-	lex_type = Types.STRING.value
+	lex_type = types['STRING']
 	if(currentChar != '\"'):
 		lex_type = error	
 	charNumber += 1
