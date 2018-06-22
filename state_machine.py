@@ -1,4 +1,5 @@
 #Move all of this to Scanner.py later 
+
 import string
 from enum import Enum
 
@@ -303,21 +304,22 @@ def processOperator(line):
 			return val
 		elif currentChar != ' ':
 			openParenthAllowed = True
-			return [token, token, 0] #error if the next character isn't a number or space
+			return [token, 0] #error if the next character isn't a number or space
 
 	elif currentChar != '*' and currentChar != '/': #if it's one of these we can just return
 		openParenthAllowed = True
 		if charNumber < len(line):
 			nextChar = line[charNumber]
 			if (currentChar + nextChar in keywords.keys()): #if the next two characters combined form a keyword
+				charNumber += 1
 				token = currentChar + nextChar #return that
 			elif currentChar not in keywords.keys(): #check if this one character is a keyword
-				return [token, token, 0] #error if it isn't, otherwise return it
+				return [token, 0] #error if it isn't, otherwise return it
 		else:
 			if currentChar not in keywords.keys(): #check if this one character is a keyword
-				return [token, token, 0] #error if it isn't, otherwise return it
+				return [token, 0] #error if it isn't, otherwise return it
 				
-	return [token, token, keywords[token]]
+	return [token, keywords[token]]
 
 def processGrouping(line):
 	global charNumber
@@ -325,16 +327,16 @@ def processGrouping(line):
 	global anyAllowedAfter 
 	global openParenthAllowed 
 	global closedBracketAllowed
-	anyAllowedAfter = False
+	anyAllowedAfter = True
 	openParenthAllowed = True
-	closedBracketAllowed = False
+	closedBracketAllowed = True
 	currentChar = line[charNumber]
 	token = currentChar
 	processToken = []
 	charNumber += 1
 
 	#Check for parentheses, curly braces, or opening square bracket return token
-	if(currentChar == '(' or currentChar == ')' or currentChar == '{' or currentChar == '}' or currentChar == '['):
+	if(currentChar == '(' or currentChar == ')' or currentChar == ']' or currentChar == '['):
 		token = currentChar
 		return [token, grouping_characters[token]]
 	#currentChar is a closing sqaure bracket.
@@ -411,7 +413,7 @@ def processLine(line):
 			token = processSingleQuote(line)
 			processedToken  = True
 		elif(line[charNumber] in operator_characters): # if it's an operator
-			if(not anyAllowedAfter):
+			if(not anyAllowedAfter and not line[charNumber] == ','):
 				return [token, 0]
 			token = processOperator(line) #Go down operator path
 			processedToken = True
