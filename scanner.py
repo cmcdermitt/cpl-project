@@ -64,12 +64,11 @@ def main():
 			writer.writerows(tokens[i]) #writes each item in tokens to a row of the .csv
 
 	"""
-
-#print (keywords)
-print(processLine("thing1[1].thing2[2].dothing()"))
-print(processLine("-3222 + 3"))
-print(processLine("Hi Cory and Charlie 1234.4568 ad \"sdsds\" charlie.work"))
+#print (keywords) 
+print(processLine(" -3222"))
+print(processLine(" Hi Cory and Charlie 1234.4568 ad \"sdsds\" charlie.work"))
 print(processLine("12HI"))
+print(processLine("0ACDh 023h"))
 
 if __name__ == "__main__":
 	main()
