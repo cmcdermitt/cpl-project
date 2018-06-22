@@ -102,8 +102,8 @@ def processAlphaOr_(line): #if the first character is alphabetic or the undersco
 	
 	#print(type(token))
 
-	if token in keywords.keys(): #if the token is a keyword, give it the keyword's id
-		lex_type = keywords.get(token)
+	if token.upper() in keywords.keys(): #if the token is a keyword, give it the keyword's id
+		lex_type = keywords.get(token.upper())
 		anyAllowedAfter = False
 		openParenthAllowed =  False
 		closedBracketAllowed = False
@@ -389,6 +389,7 @@ def processLine(line):
 	processedToken = False
 
 	while(charNumber < len(line)):
+		currentChar = line[charNumber]
 		if(line[charNumber].isalpha() or line[charNumber] == '_'):
 			if(not anyAllowedAfter):
 				return [token, 0]

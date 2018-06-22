@@ -27,8 +27,8 @@ attributes = []
 current_row = 0
 
 def main():
-	
-	"""
+	attributes = []
+	symbol_table = [[]]
 	print(sys.argv[1])
 	linenum = 0
 	with open(sys.argv[1]) as infile: #open the file, sys.argv[1] is the first command line argument
@@ -40,34 +40,34 @@ def main():
 			# Structure of single index: [ID, Value, Type]
 			# Note: "Type" is represented by the int equivalent of its
 			# position in the keywords dictionary
-			attributes = processLine(line)
+			
+			attributes += processLine(line)
+			
+			#for sub_list in attributes:
+			#	if len(sub_list) > 1:
+			#		position = attributes.index(sub_list), 0, len(attributes))
+			#		position = i
+			#		symbol_table[current_row][position] = sub_list
 
-			for sub_list in attributes:
-				if len(sub_list) > 1:
-					# position = attributes.index(sub_list), 0, len(attributes))
-					position = i
-					symbol_table[current_row][position] = sub_list
-
-			currentRow = currentRow + 1
-
-			for word in line:
-				tokens.append([word, linenum])
-
+			#currentRow = currentRow + 1
+		
+		
+	print(attributes)
 	with open('output_scanned.csv', 'w') as outfile: #open output file
 		writer = csv.writer(outfile)
 		writer.writerow (["ID", "Value", "Type", "Line Number", "Line Position"])
 		for i in range(0, len(tokens)):
 			for j in range(0, len(tokens[i])):
 				tokens[i][j].extend([i, j]) #adds line number and position to each entry
-			writer.writerows(tokens[i]) #writes each item in tokens to a row of the .csv"""
+			writer.writerows(tokens[i]) #writes each item in tokens to a row of the .csv
 
 	#print (keywords) 
-	print(processLine(" -3222"))
+"""	print(processLine(" -3222"))
 	print(processLine(" Hi Cory and Charlie 1234.4568 ad \"sdsds\" charlie.work \'f\' \'5\'"))
 	print(processLine("12HI"))
 	print(processLine("0ACDh 023h"))
 	print(processLine("\'^\'"))
-	print(processLine("ABC\"123\""))
+	print(processLine("ABC\"123\""))"""
 
 if __name__ == "__main__":
 	main()
