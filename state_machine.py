@@ -31,7 +31,7 @@ types = dict(zip(['INTEGER', 'SIGNED_INTEGER', 'HEX_INTEGER', 'REAL', 'SIGNED_RE
  	'CONST_INTEGER', 'CONST_SIGNED_INTEGER', 'CONST_HEX_INTEGER', 'CONST_REAL', 'CONST_SIGNED_REAL', 'CONST_CHAR', 'CONST_STRING'], range(501, 520)))
 
 #dictionary of characters used for grouping
-grouping_characters = dict(zip(['(', ')', '[', ']', '{', '}'], range(601,606)))
+grouping_characters = dict(zip(['(', ')', '[', ']', '{', '}'], range(701,706)))
 
 #list which characters are parts of operators
 operator_characters = ['+', '-', '*', '/', '=', ':', '<', '>', ',']
