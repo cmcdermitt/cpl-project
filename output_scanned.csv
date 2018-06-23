@@ -89,7 +89,7 @@ ID,Value,Type,Line Number,Line Position
 87,integer,83,21,4
 88,begin,35,22,0
 89,input,48,23,0
-90,"""Number of elements to process: ",507,23,1
+90,"""Number of elements to process: """,507,23,1
 91,",",25,23,2
 92,kelements,736,23,3
 93,for,60,24,0
@@ -101,7 +101,7 @@ ID,Value,Type,Line Number,Line Position
 99,-1,502,24,6
 100,do,61,24,7
 101,input,48,25,0
-102,"""Enter element int value: ",507,25,1
+102,"""Enter element int value: """,507,25,1
 103,",",25,25,2
 104,marray,739,25,3
 105,[,703,25,4
@@ -118,7 +118,7 @@ ID,Value,Type,Line Number,Line Position
 116,kelements,744,27,7
 117,),702,27,8
 118,display,49,28,0
-119,"""Max Integer found: ",507,28,1
+119,"""Max Integer found: """,507,28,1
 120,",",25,28,2
 121,max_val,745,28,3
 122,exit,746,29,0
@@ -172,7 +172,7 @@ ID,Value,Type,Line Number,Line Position
 170,0,501,42,5
 171,],704,42,6
 172,display,49,43,0
-173,"""initial max_elem: ",507,43,1
+173,"""initial max_elem: """,507,43,1
 174,",",25,43,2
 175,max_elem,762,43,3
 176,while,66,44,0
@@ -205,7 +205,7 @@ ID,Value,Type,Line Number,Line Position
 203,+,14,48,7
 204,3,501,48,8
 205,display,49,49,0
-206,"""max_elem: ",507,49,1
+206,"""max_elem: """,507,49,1
 207,",",25,49,2
 208,max_elem,774,49,3
 209,endif,59,50,0

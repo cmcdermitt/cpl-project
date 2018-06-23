@@ -242,6 +242,7 @@ def processQuotes(line): #if first character is "
 	if(currentChar != '\"'): #if the last character isn't a quotation mark, switch type to error instead
 		lex_type = error	
 	charNumber += 1
+	token += currentChar
 	return [token, lex_type]
 
 def processSingleQuote(line): #if first character is '
@@ -339,36 +340,7 @@ def processGrouping(line):
 		return [token, grouping_characters[token]]
 	#currentChar is a closing sqaure bracket.
 	#Keep scanning until space to catch all components of a indexing operation
-	else:
-		token = currentChar
-		while(charNumber < len(line)):
-			nextChar = line[charNumber]
-			if(nextChar == " "): #end of line reached
-				return [token, grouping_characters[token]]
-			elif (nextChar == '(' or nextChar == ')' or nextChar == '[' or nextChar == ']'):
-				currentChar = nextChar
-				token = token + currentChar
-			elif(nextChar == "."): #next character is dot operator. add to token
-				currentChar = nextChar
-				token = token + currentChar
-				if(charNumber + 1 >= len(line)):
-					return [token,error]
-			elif(nextChar.isalpha() or nextChar == "_"): #Catch letter or underscore parts of identifier
-				currentChar = nextChar
-				token = token + currentChar
-			elif(nextChar.isdigit()):
-				token = token + nextChar
-				if(currentChar == "."): #digit follows a letter
-					return [token, error]
-				currentChar = nextChar
-			charNumber += 1
-
-	if token in identifiers.keys(): #if the identifier has already been used, look up its id
-		lex_type = identifiers.get(token)
-	else: #if it hasn't been used before, give it a new id
-		lex_type = identifier_id
-		identifier_id += 1
-		return [token, lex_type]
+	
 
 
 def processLine(line):

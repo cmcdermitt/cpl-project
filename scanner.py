@@ -43,14 +43,6 @@ def main():
 				symbol_table[i][j].extend([i, j]) #adds line number and position to each entry
 			writer.writerows(symbol_table[i]) #writes each item in tokens to a row of the .csv
 
-""" Test cases
-	#print (keywords) 
-	print(processLine(" -3222"))
-	print(processLine(" Hi Cory and Charlie 1234.4568 ad \"sdsds\" charlie.work \'f\' \'5\'"))
-	print(processLine("12HI"))
-	print(processLine("0ACDh 023h"))
-	print(processLine("\'^\'"))
-	print(processLine("ABC\"123\""))"""
 
 if __name__ == "__main__":
 	main()
