@@ -1,0 +1,8 @@
+function main is
+	variables
+		define j of type real
+		define k of type int
+	begin
+		j := 2.2
+		k := 3
+		j := j + k

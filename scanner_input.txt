@@ -1,4 +1,4 @@
- symbol MM 45
+symbol MM 45
 forward declarations
 function max_array return type integer 
  parameters 

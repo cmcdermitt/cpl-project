@@ -17,9 +17,11 @@ def main():
 
 	#print(sys.argv[1])
 	linenum = 0
-	with open("sclex1.scl") as infile: #open the file, sys.argv[1] is the first command line argument
+	with open(sys.argv[1]) as infile: #open the file, sys.argv[1] is the first command line argument
+		print (sys.argv[1])
 		for line in infile:
 			linenum += 1
+
 			# ProcessLine returns list of lists containing keyword attributes
 			# Structure of single index: [ID, Value, Type]
 			# Note: "Type" is represented by the int equivalent of its
@@ -36,10 +38,10 @@ def main():
 	with open('output_scanned.csv', 'w') as outfile: #open output file
 		writer = csv.writer(outfile)
 		writer.writerow (["ID", "Value", "Type", "Line Number", "Line Position"])
-		for i in range(0, len(tokens)):
-			for j in range(0, len(tokens[i])):
-				tokens[i][j].extend([i, j]) #adds line number and position to each entry
-			writer.writerows(tokens[i]) #writes each item in tokens to a row of the .csv
+		for i in range(0, len(symbol_table)):
+			for j in range(0, len(symbol_table[i])):
+				symbol_table[i][j].extend([i, j]) #adds line number and position to each entry
+			writer.writerows(symbol_table[i]) #writes each item in tokens to a row of the .csv
 
 """ Test cases
 	#print (keywords) 

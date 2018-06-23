@@ -146,7 +146,7 @@ def processNumeric(line):
 	
 	if(charNumber < len(line)):
 		
-		if(currentChar == 'h'):
+		if(currentChar == 'h'): # Determine if a number is in hex; a hex number might not contain A,B,C,D,E or F
 			if(hexPossible):
 				closedBracketAllowed = False
 				lex_type = types['HEX_INTEGER']
@@ -156,7 +156,7 @@ def processNumeric(line):
 			else:
 				return [token, error] 
 		
-		elif(currentChar == 'A' or currentChar == 'B' or currentChar == 'C' or currentChar == 'D' or currentChar == 'E' or currentChar == 'F'):
+		elif(currentChar == 'A' or currentChar == 'B' or currentChar == 'C' or currentChar == 'D' or currentChar == 'E' or currentChar == 'F'): # Add characters to hex number also determine if number is hex
 			token += currentChar
 			charNumber += 1
 			if(charNumber < len(line)):
@@ -166,7 +166,7 @@ def processNumeric(line):
 					charNumber += 1
 					if(charNumber < len(line)):
 						currentChar = line[charNumber]
-			if(currentChar == 'h'):
+			if(currentChar == 'h'): # Complete hex number with the character h
 				token += currentChar
 				charNumber+= 1
 				closedBracketAllowed = False
@@ -400,7 +400,7 @@ def processLine(line):
 				return [token, 0]
 			token = processNumeric(line) # Go down the number
 			processedToken = True
-		elif(line[charNumber] == '\"'):
+		elif(line[charNumber] == '\"'): # Go down the quotation path 
 			if(not anyAllowedAfter):
 				return [token, 0]
 			token = processQuotes(line)
