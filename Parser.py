@@ -48,21 +48,22 @@ def currentLex():
 def prevLex():
 		return [] #Will return the last lex 
 	
-
+	
 # Prints out the tree using tabs to represent children
 # 
 def printTree(tree_list, tab):
-	if(len(tree_list) == 0):
+	if(len(tree_list) == 0): 
 		return
-	print(returnTabs(tab) + tree_list[0])
+	print(returnTabs(tab) + tree_list[0]) # Print out the first item in the list; this is the parent node
 	if(len(tree_list) == 1):
 		return
-	for x in range(1,len(tree_list)):
-		if(isinstance(tree_list[x], str)):
+	for x in range(1,len(tree_list)): # Print out all of its children
+		if(isinstance(tree_list[x], str)): # If the child is a string, print it out
 			print(returnTabs(tab) + tree_list[x])
-		else:
+		elif(isinstance(tree_list[x], list)): #If the child is a list, indent by 1 and print out that list
 			printTree(tree_list[x],tab + 1)
-	
+		else:
+			print(returnTabs(tab + 1) + str(tree_list[x]))
 
 # Starting point for parse tree 
 # Initially, lex_list is ['Program']
@@ -80,14 +81,14 @@ def func_main():
 	lex_list = ['func_main']
 	lex = nextLex()
 	if(lex[lex_en['value']] == 'MAIN'):
-		lex_list.append(lex)
+		lex_list.append(tuple(lex))
 		lex_list.append(oper_type())
 		return lex_list
 	elif(lex[lex_en['value']] == 'FUNCTION'):
-		lex_list.append(lex)
+		lex_list.append(tuple(lex))
 		lex = nextLex()
 		if(lex[lex_en['type']] == 'IDENTIFIER'):
-			lex_list.append(lex)
+			lex_list.append(tuple(lex))
 			lex = nextLex()
 		else:
 			lex_list.append(['Error: Identifer was expected'])
@@ -102,7 +103,7 @@ def func_main():
 	
 def oper_type():
 	lex_list = ['oper_type']	
-	lex_list.append(currentLex())
+	lex_list.append(tuple(currentLex()))
 	lex = nextLex()
 	if(lex[lex_en['value']] == 'POINTER'):
 		lex_list.append(chk_ptr())
