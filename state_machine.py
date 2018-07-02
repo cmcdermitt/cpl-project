@@ -102,7 +102,8 @@ def processAlphaOr_(line): #if the first character is alphabetic or the undersco
 				return [token, error]
 
 	if token.upper() in keywords.keys(): #if the token is a keyword, give it the keyword's id
-		lex_type = keywords.get(token.upper())
+		lex_type = "KEYWORD"
+		#lex_type = keywords.get(token.upper())
 		anyAllowedAfter = False
 		openParenthAllowed =  False
 		closedBracketAllowed = False
@@ -111,9 +112,12 @@ def processAlphaOr_(line): #if the first character is alphabetic or the undersco
 		openParenthAllowed =  True
 		closedBracketAllowed = True
 		if token in identifiers.keys(): #if the identifier has already been used, look up its id
-			lex_type = identifiers.get(token)
+			lex_type = "IDENTIFIER"
+			#lex_type = identifiers.get(token)
 		else: #if it hasn't been used before, give it a new id
-			lex_type = identifier_id
+			identifiers[token] = identifier_id
+			lex_type =  "IDENTIFIER"
+			#lex_type = identifier_id
 			identifier_id += 1
 	
 	if(currentChar == '?' or currentChar == '!'): #This list can be expanded later
@@ -139,17 +143,16 @@ def processNumeric(line):
 		charNumber += 1	#increment
 		if(charNumber < len(line)):
 			currentChar = line[charNumber]
-	
 
-	lex_type = types['INTEGER'] #set type to integer
-	
+	#lex_type = types['INTEGER'] #set type to integer
+	lex_type = "TYPE"
 	
 	if(charNumber < len(line)):
-		
 		if(currentChar == 'h'): # Determine if a number is in hex; a hex number might not contain A,B,C,D,E or F
 			if(hexPossible):
 				closedBracketAllowed = False
-				lex_type = types['HEX_INTEGER']
+				#lex_type = types['HEX_INTEGER']
+				lex_type = "TYPE"
 				token += currentChar
 				charNumber += 1
 				return [token, lex_type]
@@ -170,7 +173,8 @@ def processNumeric(line):
 				token += currentChar
 				charNumber+= 1
 				closedBracketAllowed = False
-				lex_type = types['HEX_INTEGER']
+				#lex_type = types['HEX_INTEGER']
+				lex_type = "TYPES"
 				return [token, lex_type]
 			else:
 				return [token, error]
@@ -188,9 +192,11 @@ def processNumeric(line):
 					charNumber += 1	#increment
 					if(charNumber < len(line)):
 						currentChar = line[charNumber]
-			lex_type = types['REAL'] #mark the token as floating point
+			#lex_type = types['REAL'] #mark the token as floating point
+			lex_type = "TYPE"
 	
-	if(currentChar == 'e' and lex_type == types['REAL']): #if the next character is the beginning of an exponent
+	#if(currentChar == 'e' and lex_type == types['REAL']): #if the next character is the beginning of an exponent
+	if currentChar == 'e' and lex_type == "TYPE":
 		token += currentChar
 		charNumber+= 1
 
@@ -238,7 +244,8 @@ def processQuotes(line): #if first character is "
 		if(charNumber < len(line)):
 			currentChar = line[charNumber] #move up
 
-	lex_type = types['STRING'] #set type to string
+	#lex_type = types['STRING'] #set type to string
+	lex_type = "TYPE"
 	if(currentChar != '\"'): #if the last character isn't a quotation mark, switch type to error instead
 		lex_type = error	
 	charNumber += 1
@@ -273,7 +280,8 @@ def processSingleQuote(line): #if first character is '
 			return [token, error]
 		if currentChar == '\'': #check whether there's an ending quote, return the char if so, otherwise error
 			token = token + currentChar
-			lexType = types['CHAR']
+			#lexType = types['CHAR']
+			lexType = "TYPE"
 			charNumber += 1
 			return [token, lexType]
 		else:
@@ -317,8 +325,8 @@ def processOperator(line):
 		else:
 			if currentChar not in keywords.keys(): #check if this one character is a keyword
 				return [token, 0] #error if it isn't, otherwise return it
-				
-	return [token, keywords[token]]
+	return [token, "OPERATOR"]
+	#return [token, keywords[token]]
 
 def processGrouping(line):
 	global charNumber
@@ -337,7 +345,8 @@ def processGrouping(line):
 	#Check for parentheses, curly braces, or opening square bracket return token
 	if(currentChar == '(' or currentChar == ')' or currentChar == ']' or currentChar == '['):
 		token = currentChar
-		return [token, grouping_characters[token]]
+		#return [token, grouping_characters[token]]
+		return [token, "GROUPING"]
 	#currentChar is a closing sqaure bracket.
 	#Keep scanning until space to catch all components of a indexing operation
 	

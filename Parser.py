@@ -1,5 +1,5 @@
 from enum import Enum
-
+from scanner import Scanner
 '''
 Parser.py
 The parser uses the recursive-descent method of parsing, 
@@ -28,7 +28,10 @@ Sorry for globals, but every function needs these, (unless we pass object?):
 '''
 
 
-lex_en = {'ID' : 0, 'Pos' : 1, 'type' : 2, 'value': 3}
+#lex_en = {'ID' : 0, 'Pos' : 1, 'type' : 2, 'value': 3}
+lex_en = {'value' : 0, 'type' : 1}
+scanner = Scanner()
+
 
 # Returns number of tabs
 def returnTabs(tabNum):
@@ -79,7 +82,7 @@ def program_start():
 def func_main():
 	
 	lex_list = ['func_main']
-	lex = nextLex()
+	lex = scanner.getNextToken()
 	if(lex[lex_en['value']] == 'MAIN'):
 		lex_list.append(tuple(lex))
 		lex_list.append(oper_type())
@@ -89,7 +92,7 @@ def func_main():
 		lex = nextLex()
 		if(lex[lex_en['type']] == 'IDENTIFIER'):
 			lex_list.append(tuple(lex))
-			lex = nextLex()
+			lex = scanner.getNextToken()
 		else:
 			lex_list.append(['Error: Identifer was expected'])
 		if(lex[lex_en['value']] == 'RETURN'):
