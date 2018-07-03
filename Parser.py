@@ -1,5 +1,6 @@
 from enum import Enum
 from scanner import Scanner
+
 '''
 Parser.py
 The parser uses the recursive-descent method of parsing, 
@@ -25,6 +26,12 @@ POSSIBLE SOLUTION: We call the scanner and get all of the lexemes at once. We th
 Sorry for globals, but every function needs these, (unless we pass object?):
 	global c_lex
 	global t_lex
+'''
+
+'''
+NOTES:
+Every time you go into a function, the first lexeme
+Every time you add a lexeme, put it in a tuple.
 '''
 
 
@@ -60,7 +67,7 @@ def printTree(tree_list, tab):
 	print(returnTabs(tab) + tree_list[0]) # Print out the first item in the list; this is the parent node
 	if(len(tree_list) == 1):
 		return
-	for x in range(1,len(tree_list)): # Print out all of its children
+	for x in range(1,	len(tree_list)): # Print out all of its children
 		if(isinstance(tree_list[x], str)): # If the child is a string, print it out
 			print(returnTabs(tab) + tree_list[x])
 		elif(isinstance(tree_list[x], list)): #If the child is a list, indent by 1 and print out that list
@@ -101,6 +108,9 @@ def func_main():
 	else:
 		lex_list.append(['\tError Main function missing'])
 	return lex_list
+
+def globals():
+	lex_list = ['globals']
 	
 	
 def oper_type():
@@ -187,5 +197,6 @@ def type_name():
 	global t_lex
 	temp_c_lex
 	lexeme_list = []
-	
-program_start()
+
+if __name__ == '__main__':
+	program_start()
