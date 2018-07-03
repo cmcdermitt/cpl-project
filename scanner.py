@@ -14,19 +14,25 @@ class Scanner:
     # Integer counter for current row current attribute
     current_row = 0
     current_attribute = 0
-
+    last_token = ()
     def getNextToken(self):
+        global last_token
         target_token = []
-        if len(self.symbol_table) == 0:
+        if (len(self.symbol_table) == 0):
             self.fillSymbolTable()
+        if (self.current_row >= len(self.symbol_table)):
+             return (None, None, None, None)
         target_token = self.symbol_table[self.current_row][self.current_attribute]
+        self.last_token = target_token
         self.current_attribute = self.current_attribute + 1
-        if self.current_attribute > len(self.symbol_table[self.current_row]):
+        if self.current_attribute >= len(self.symbol_table[self.current_row]):
             self.current_row = self.current_row + 1
             self.current_attribute = 0
         return target_token
 
-
+    def getCurrentToken(self):
+        return self.last_token
+	
     def fillSymbolTable(self):
         linenum = 0
         with open(sys.argv[1]) as infile:  # open the file, sys.argv[1] is the first command line argument

@@ -29,9 +29,9 @@ Sorry for globals, but every function needs these, (unless we pass object?):
 
 
 #lex_en = {'ID' : 0, 'Pos' : 1, 'type' : 2, 'value': 3}
-lex_en = {'value' : 0, 'type' : 1}
+lex_en = {'value' : 1, 'type' : 2}
 scanner = Scanner()
-
+c_lex = []
 
 # Returns number of tabs
 def returnTabs(tabNum):
@@ -77,64 +77,98 @@ def program_start():
 	lex_list = ['Program']
 	lex_list.append(func_main())
 	printTree(lex_list, 0)
-	print(lex_list)
+	print(scanner.getCurrentToken())
 	
 def func_main():
-	
 	lex_list = ['func_main']
 	lex = scanner.getNextToken()
 	if(lex[lex_en['value']] == 'MAIN'):
 		lex_list.append(tuple(lex))
-		lex_list.append(oper_type())
 		return lex_list
 	elif(lex[lex_en['value']] == 'FUNCTION'):
 		lex_list.append(tuple(lex))
-		lex = nextLex()
+		lex = scanner.getNextToken()
+		print(lex)
 		if(lex[lex_en['type']] == 'IDENTIFIER'):
 			lex_list.append(tuple(lex))
 			lex = scanner.getNextToken()
 		else:
-			lex_list.append(['Error: Identifer was expected'])
+			lex_list.append(['\tError: Identifer was expected'])
 		if(lex[lex_en['value']] == 'RETURN'):
 			lex_list.append(oper_type())
 		else:
-			lex_list.append(['Error: Keyword Return was expected'])
+			lex_list.append(['\tError: Keyword Return was expected'])
 	else:
-		lex_list.append(['Error Main function missing'])
+		lex_list.append(['\tError Main function missing'])
 	return lex_list
 	
 	
 def oper_type():
 	lex_list = ['oper_type']	
-	lex_list.append(tuple(currentLex()))
-	lex = nextLex()
+	lex_list.append(tuple(scanner.getCurrentToken()))
+	lex = scanner.getNextToken()
 	if(lex[lex_en['value']] == 'POINTER'):
 		lex_list.append(chk_ptr())
-		lex = nextLex()
+		lex = scanner.getNextToken()
 	if(lex[lex_en['value']] == 'ARRAY'):
-		lex_list.append(chk_array)
-		lex = nextLex()
+		lex_list.append(chk_array())
+		lex = scanner.getNextToken()
+	word = lex[lex_en['value']]
+	if(word == 'TYPE' or 'STRUCT' or 'IDENTIFIER'):
+		lex_list.append(ret_type())
 	# Not done yet
 	return lex_list
 	
 	
 def chk_ptr():
-	global c_lex
-	global t_lex
-	temp_c_lex
-	lexeme_list = []	
-	
+	lex_list = ['chk_ptr']
+	lex_list.append(tuple(scanner.getCurrentToken()))
+	lex = scanner.getNextToken()
+	if(lex[lex_en['value']] == 'OF'):
+		lex_list.append(tuple(lex))
+	else:
+		lex_list.append('\tERROR: Keyword OF was expected')
+	return lex_list
+
 def chk_array():
-	global c_lex
-	global t_lex
-	temp_c_lex
-	lexeme_list = []	
+	lex_list = ['chk_array']
+	lex_list.append(tuple(scanner.getCurrentToken()))
+	lex = scanner.getNextToken()
+	while(lex[lex_en['value']] == 'LB'):
+		lex_list.append(array_index())
+		lex = scanner.getNextToken()
+	return lex_list
+
+def array_index():
+	lex_list = ['array_index']
+	lex = scanner.getCurrentToken()
+	lex_list.append(tuple(lex))
+	lex = scanner.getNextToken()
+	if(lex[lex_en['type']] == 'IDENTIFIER'):
+		lex_list.append(tuple(lex))
+		lex = scanner.getNextToken()
+	else:
+		lex_list.append('\tError: Identifier was expected')
+	if(lex[lex_en['value']] == 'RB'):
+		lex_list.append(tuple(lex))
+	else:
+		lex_list.append('\tError: KEYWORD RB was expected')
+	return lex_list
 	
 def ret_type():
-	global c_lex
-	global t_lex
-	temp_c_lex
-	lexeme_list = []	
+	lex_list = []
+	lex = scanner.getCurrentToken()
+	word = lex[lex_en['value']]
+	lex_list.append(tuple(lex))
+	lex = scanner.getNextToken()
+	if(word == 'TYPE'):
+		type = lex[lex_en['type']]
+		if(type == 'MVOID' or type == 'INTEGER' or type == 'REAL' or type == 'TBOOL' or type == 'CHAR' or type == 'TSTRING'):
+			lex_list.append(type_name())
+			return lex_list
+
+
+		
 	
 def array_dim_list():
 	global c_lex

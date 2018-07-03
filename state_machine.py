@@ -24,7 +24,7 @@ keywords = dict(zip(['(', ')', '[', ']', 'IMPLEMENTATION',
 	'FLOAT', 'DOUBLE', 'TBOOL', 'CHAR', 'TSTRING',
 	'LENGTH', 'TBYTE', 'TUNSIGNED', 'MTRUE', 'LETTER',
 	'HCON', 'FCON', 'RELOP', '==', '>', 
-	'<', '>=', '<=', 'OUTPUT'], range(1,120)))
+	'<', '>=', '<=', 'OUTPUT', 'LB', 'RB'], range(1,120)))
 
 #
 types = dict(zip(['INTEGER', 'SIGNED_INTEGER', 'HEX_INTEGER', 'REAL', 'SIGNED_REAL', 'CHAR', 'STRING',
