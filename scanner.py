@@ -3,18 +3,24 @@ import sys
 from state_machine import processLine
 
 class Scanner:
-    # List of output tokens and line numbers
-    tokens = []
-    # 2D symbol table array to hold attribute data
-    # Rows correspond to line number, and columns to line position
-    # Initialized as one-dimensional list. Rows added for each attribute list
-    symbol_table = []
-    # Attributes list to hold ID, Value, and Type of each keyword in a line
-    attributes = []
-    # Integer counter for current row current attribute
-    current_row = 0
-    current_attribute = 0
-    last_token = ()
+    
+
+    def __init__(self, variables):
+        # List of output tokens and line numbers
+        self.tokens = []
+        # 2D symbol table array to hold attribute data
+        # Rows correspond to line number, and columns to line position
+        # Initialized as one-dimensional list. Rows added for each attribute list
+        self.symbol_table = []
+        # Attributes list to hold ID, Value, and Type of each keyword in a line
+        self.attributes = []
+        # Integer counter for current row current attribute
+        self.current_row = 0
+        self.current_attribute = 0
+        self.last_token = ()
+        self.var_table = variables
+
+
     def getNextToken(self):
         global last_token
         target_token = []

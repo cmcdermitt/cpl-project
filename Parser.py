@@ -37,7 +37,8 @@ Every time you add a lexeme, put it in a tuple.
 
 #lex_en = {'ID' : 0, 'Pos' : 1, 'type' : 2, 'value': 3}
 lex_en = {'value' : 1, 'type' : 2}
-scanner = Scanner()
+var_table = {} #global variable table, will be passed to Scanner
+scanner = Scanner(var_table)
 c_lex = []
 
 # Returns number of tabs
