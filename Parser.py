@@ -84,8 +84,18 @@ def printTree(tree_list, tab):
 def program_start():
 	lex_list = ['Program']
 	lex_list.append(func_main())
+	lex = scanner.getNextToken()
 	printTree(lex_list, 0)
+	if(lex[lex_en['value']] == 'GLOBAL'):
+		lex_list.append(f_globals()) #called f_globals becasue globals is a fucntion
+		lex = scanner.getNextToken()
+	if(lex[lex_en['value']] == 'IMPLEMENTATIONS'):
+		lex_list.append(implementations())
+	else:
+		lex_list.append('\tError: Keyword IMPLEMENTATIONS expected')
 
+
+# Functions for func_main
 def func_main():
 	lex_list = ['func_main']
 	lex = scanner.getNextToken()
@@ -107,9 +117,6 @@ def func_main():
 	else:
 		lex_list.append(['\tError Main function missing'])
 	return lex_list
-
-def globals():
-	lex_list = ['globals']
 
 
 def oper_type():
@@ -148,19 +155,16 @@ def chk_array():
 	if(lex[lex_en['value']] != 'LB'):
 		lex_list.append('\t Error Keyword LB expected')
 		return lex_list
-	while(lex[lex_en['value']] == 'LB'):
-		lex_list.append(array_index())
-		lex = scanner.getNextToken()
-	scanner.rewindCurrentToken()
+	lex_list.append(array_dim_list())
 	return lex_list
 
-def array_index():
-	lex_list = ['array_index']
+def array_dim_list():
+	lex_list = ['array_dim_list']
 	lex = scanner.getCurrentToken()
 	lex_list.append(tuple(lex))
 	lex = scanner.getNextToken()
 	if(lex[lex_en['type']] == 'IDENTIFIER'):
-		lex_list.append(tuple(lex))
+		lex_list.append(array_index())
 		lex = scanner.getNextToken()
 	else:
 		lex_list.append('\tError: Identifier was expected')
@@ -168,6 +172,20 @@ def array_index():
 		lex_list.append(tuple(lex))
 	else:
 		lex_list.append('\tError: Keyword RB was expected')
+	lex = scanner.getNextToken()
+	if(lex[lex_en['value']] == 'LB'):
+		lex_list.insert(1,array_dim_list())
+	else:
+		scanner.rewindCurrentToken()
+	return lex_list
+
+
+
+
+def array_index():
+	lex_list = ['array_index']
+	lex = scanner.getCurrentToken()
+	lex_list.append(tuple(lex))
 	return lex_list
 
 def ret_type():
@@ -202,14 +220,40 @@ def type_name():
 		if(lex[lex_en['value']] == 'OF'):  Is TSTRING relevant? ICON is an
 		unknown keyword'''
 
+def f_globals():
+	lex_list = ['globals']
+	lex = scanner.getCurrentToken()
+	lex_list.append(tuple(lex))
+	lex = scanner.getNextToken()
+	if(lex[lex_en['value']] == 'DECLARATIONS'):
+		lex_list.appedn(tuple(lex))
+		lex = scanner.getNextToken()
+	else:
+		lex_list.append('Error Keyworkd DECLARATIONS was expected')
+	if(lex[lex_en['value']] == 'CONSTANTS'):
+		lex_list.append(const_dec())
+		lex = scanner.getNextToken()
+	if(lex[lex_en['value']] == 'VARIABLES'):
+		lex_list.append(var_dec())
+		lex = scanner.getNextToken()
+	#if(lex[lex_en['value']] == 'STRUCT'):
+	#lex_list.append(struct_dec())
+
+def const_dec():
+	lex_list = ['const_dec']
+	lex = scanner.getCurrentToken()
+	lex_list.append(tuple(lex))
+	lex = scanner.getNextToken()
+	if(lex[lex_en['value']] == 'DEFINE'):
+		lex_list.append(data_declarations())
+	return lex_list
+
+def data_declarations():
+	lex_list = ['data_declarations']
+	lex = scanner.getCurrentToken()
 
 
 
-def array_dim_list():
-	global c_lex
-	global t_lex
-	temp_c_lex
-	lexeme_list = []
 
 
 
