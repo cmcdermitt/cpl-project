@@ -36,9 +36,26 @@ class Scanner:
             self.current_attribute = 0
         return target_token
 
+# A recursive definition always has to peak one ahead to
+# decide if it is going to continue repeating its right hand
+# definition. When a recursive definition finishes, it is
+# one token past where it should be. Thus, all recursive definitions
+# should rewind one token after completion
+    def rewindCurrentToken(self):
+        if(self.current_attribute > 0):
+            self.current_attribute -= 1
+        elif(self.current_attribute == 0 and self.current_row > 0):
+            self.current_row -= 1
+            self.current_attribute = len(self.symbol_table[self.current_row]) - 1
+        else:
+            print('Invalid rewind')
+
+        self.last_token = self.symbol_table[self.current_row][self.current_attribute]
+
+
     def getCurrentToken(self):
         return self.last_token
-	
+
     def fillSymbolTable(self):
         linenum = 0
         with open(self.input_file) as infile:  # open the file, sys.argv[1] is the first command line argument
