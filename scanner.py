@@ -1,28 +1,28 @@
 #imports
 import sys
 from state_machine import processLine
+import csv
 
 class Scanner:
-    
 
-    def __init__(self, variables):
+    def __init__(self, infile, outfile='output_scanned.csv'):
         # List of output tokens and line numbers
         self.tokens = []
         # 2D symbol table array to hold attribute data
         # Rows correspond to line number, and columns to line position
         # Initialized as one-dimensional list. Rows added for each attribute list
         self.symbol_table = []
-        # Attributes list to hold ID, Value, and Type of each keyword in a line
+        # Attributes list to hold value and type of each keyword in a line
         self.attributes = []
         # Integer counter for current row current attribute
         self.current_row = 0
         self.current_attribute = 0
         self.last_token = ()
-        self.var_table = variables
+        self.input_file = infile
+        self.output_file = outfile
 
 
     def getNextToken(self):
-        global last_token
         target_token = []
         if (len(self.symbol_table) == 0):
             self.fillSymbolTable()
@@ -41,8 +41,8 @@ class Scanner:
 	
     def fillSymbolTable(self):
         linenum = 0
-        with open(sys.argv[1]) as infile:  # open the file, sys.argv[1] is the first command line argument
-            print(sys.argv[1])
+        with open(self.input_file) as infile:  # open the file, sys.argv[1] is the first command line argument
+            print(self.input_file)
             for line in infile:
                 linenum += 1
                 # ProcessLine returns list of lists containing keyword attributes
@@ -58,9 +58,9 @@ class Scanner:
                             print(attributes[i])
 
     def writeChangeLog(self):
-        with open('output_scanned.csv', 'w') as outfile:  # open output file
-            # writer = csv.writer(outfile)
-            writer.writerow(["ID", "Value", "Type", "Line Number", "Line Position"])
+        with open(self.output_file, 'w') as outfile:  # open output file
+            writer = csv.writer(outfile)
+            writer.writerow(["Value", "Type", "Line Number", "Line Position"])
             for i in range(0, len(self.symbol_table)):
                 for j in range(0, len(self.symbol_table[i])):
                     self.symbol_table[i][j].extend([i, j])  # adds line number and position to each entry

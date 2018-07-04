@@ -41,7 +41,6 @@ identifiers = {}
 identifier_id = 701
 error = 0
 
-currentId = 0
 charNumber = 0
 tokenNum = 0
 anyAllowedAfter = True
@@ -357,7 +356,6 @@ def processLine(line):
 		return #if the line is empty, return
 	global currentChar
 	global charNumber
-	global currentId
 	global anyAllowedAfter 
 	global openParenthAllowed 
 	global closedBracketAllowed
@@ -412,9 +410,7 @@ def processLine(line):
 		if(processedToken): #once we've processed a token
 			if (token[1] == 0): #if it's an error, just return that token - the line is invalid anyway and this makes it easier to keep track of errors.
 				return [token, 0]
-			token.insert(0,currentId) #add the token's id - fix this later?
 			line_table.append(token) #add the processed token to a line
-			currentId = currentId + 1
 			processedToken = False #get ready for a new token
 		
 	return line_table #return a list of lists, where each sublist represents one token in the line

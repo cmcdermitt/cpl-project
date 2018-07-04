@@ -1,5 +1,6 @@
 from enum import Enum
 from scanner import Scanner
+import sys
 
 '''
 Parser.py
@@ -36,9 +37,8 @@ Every time you add a lexeme, put it in a tuple.
 
 
 #lex_en = {'ID' : 0, 'Pos' : 1, 'type' : 2, 'value': 3}
-lex_en = {'value' : 1, 'type' : 2}
-var_table = {} #global variable table, will be passed to Scanner
-scanner = Scanner(var_table)
+lex_en = {'value' : 0, 'type' : 1}
+scanner = Scanner(sys.argv[1])
 c_lex = []
 
 # Returns number of tabs
@@ -46,7 +46,7 @@ def returnTabs(tabNum):
 	tabs = ''
 	for i in range(tabNum):
 		tabs = tabs + '\t'
-	return tabs 
+	return tabs
 
 # Returns the current lex	
 def nextLex():
