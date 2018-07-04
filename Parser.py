@@ -85,7 +85,6 @@ def program_start():
 	lex_list = ['Program']
 	lex_list.append(func_main())
 	lex = scanner.getNextToken()
-	printTree(lex_list, 0)
 	if(lex[lex_en['value']] == 'GLOBAL'):
 		lex_list.append(f_globals()) #called f_globals becasue globals is a fucntion
 		lex = scanner.getNextToken()
@@ -93,7 +92,7 @@ def program_start():
 		lex_list.append(implementations())
 	else:
 		lex_list.append('\tError: Keyword IMPLEMENTATIONS expected')
-
+	printTree(lex_list, 0)
 
 # Functions for func_main
 def func_main():
@@ -226,10 +225,10 @@ def f_globals():
 	lex_list.append(tuple(lex))
 	lex = scanner.getNextToken()
 	if(lex[lex_en['value']] == 'DECLARATIONS'):
-		lex_list.appedn(tuple(lex))
+		lex_list.append(tuple(lex))
 		lex = scanner.getNextToken()
 	else:
-		lex_list.append('Error Keyworkd DECLARATIONS was expected')
+		lex_list.append('\tError Keyworkd DECLARATIONS was expected')
 	if(lex[lex_en['value']] == 'CONSTANTS'):
 		lex_list.append(const_dec())
 		lex = scanner.getNextToken()
@@ -238,7 +237,7 @@ def f_globals():
 		lex = scanner.getNextToken()
 	#if(lex[lex_en['value']] == 'STRUCT'):
 	#lex_list.append(struct_dec())
-
+	return lex_list
 def const_dec():
 	lex_list = ['const_dec']
 	lex = scanner.getCurrentToken()
@@ -246,15 +245,95 @@ def const_dec():
 	lex = scanner.getNextToken()
 	if(lex[lex_en['value']] == 'DEFINE'):
 		lex_list.append(data_declarations())
+	else:
+		lex_list.append('\tError Keyword DEFINE expected')
 	return lex_list
 
 def data_declarations():
 	lex_list = ['data_declarations']
+	lex_list.append(comp_declare())
+	lex = scanner.getNextToken()
+	if(lex[lex_en['value']] == 'DEFINE'):
+		lex_list.insert(1,data_declarations())
+	else:
+		scanner.rewindCurrentToken()
+	return lex_list
+
+def comp_declare():
+	lex_list = ['comp_declare']
+	lex_list.append(tuple(scanner.getCurrentToken()))
+	lex = scanner.getNextToken()
+	if(lex[lex_en['type']] == 'IDENTIFIER'):
+		lex_list.append(data_declaration())
+	else:
+		lex_list.append('\tError IDENTIFIER expected')
+	return lex_list
+
+def data_declaration():
+	lex_list = ['data_declaration']
+	lex_list.append(tuple(scanner.getCurrentToken()))
+	lex = scanner.getNextToken()
+	word = lex[lex_en['value']]
+	if(word == 'ARRAY' or word == 'LB' or word == 'VALUE' or word == 'EQUOP'):
+		lex_list.append(parray_dec())
+		lex = scanner.getNextToken()
+	if(lex[lex_en['value']] == 'OF'):
+		lex_list.append(tuple(lex))
+		lex = scanner.getNextToken()
+	else:
+		lex_list.append('\tError Keyword OF expected')
+	word = lex[lex_en['value']]
+	if(word == 'TUNSIGNED' or word == 'CHAR' or word == 'INTEGER' or
+	word == 'MVOID' or word == 'REAL' or word == 'TSTRING' or word == 'TBOOL'):
+		lex_list.append(data_type())
+	else:
+		lex_list.append('\tError Type expected')
+	return lex_list
+
+def parray_dec():
+	lex_list = ['parray_dec']
 	lex = scanner.getCurrentToken()
+	if(lex[lex_en['value']] == 'ARRAY'):
+		lex = scanner.getNextToken()
+		if(lex[lex_en['value']] == 'LB'):
+			lex_list.append(plist_const())
+			lex = scanner.getNextToken()
+		else:
+			lex_list.append('\tError Keyword LB was expected')
+	else:
+		lex_list.append(tuple(lex))
+	return lex_list
+
+def plist_const():
+	lex_list = ['plist_const']
+	lex_list.append(tuple(scanner.getCurrentToken()))
+	lex = scanner.getNextToken()
+	if(lex[lex_en['type']] == 'IDENTIFIER'):
+		lex_list.append(iconst_ident())
+		lex = scanner.getNextToken()
+	else:
+		lex_list.append('\tError Identifier was expected')
+	if(lex[lex_en['value']] == 'RB'):
+		lex_list.append(tuple(lex))
+		lex = scanner.getNextToken()
+	else:
+		lex_list.append('\tError Keyword RB was expected')
+	if(lex[lex_en['value']] == 'LB'):
+		lex_list.append(plist_const())
+	else:
+		scanner.rewindCurrentToken()
+	return lex_list
 
 
+def iconst_ident():
+	lex_list = ['iconst_ident']
+	lex_list.append(scanner.getCurrentToken())
+	return lex_list
 
-
+def data_type():
+	lex_list = ['data_type']
+	lex_list.append(tuple(scanner.getCurrentToken()))
+	return lex_list
 
 
 if __name__ == '__main__':
