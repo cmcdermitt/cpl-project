@@ -225,19 +225,25 @@ def f_globals():
 	lex = scanner.getCurrentToken()
 	lex_list.append(tuple(lex))
 	lex = scanner.getNextToken()
-	if(lex[lex_en['value']] == 'DECLARATIONS'):
-		lex_list.appedn(tuple(lex))
+	if(lex[lex_en['value']] == 'GLOBAL'):
+		lex_list.append(tuple(lex))
 		lex = scanner.getNextToken()
 	else:
-		lex_list.append('Error Keyworkd DECLARATIONS was expected')
+		lex_list.append('Error Keyword GLOBAL was expected')
+	if(lex[lex_en['value']] == 'DECLARATIONS'):
+		lex_list.append(tuple(lex))
+		lex = scanner.getNextToken()
+	else:
+		lex_list.append('Error Keyword DECLARATIONS was expected')
 	if(lex[lex_en['value']] == 'CONSTANTS'):
 		lex_list.append(const_dec())
 		lex = scanner.getNextToken()
 	if(lex[lex_en['value']] == 'VARIABLES'):
 		lex_list.append(var_dec())
 		lex = scanner.getNextToken()
-	#if(lex[lex_en['value']] == 'STRUCT'):
-	#lex_list.append(struct_dec())
+	if(lex[lex_en['value']] == 'STRUCT'):
+		lex_list.append(struct_dec())
+		lex = scanner.getNextToken()
 
 def const_dec():
 	lex_list = ['const_dec']
@@ -248,11 +254,38 @@ def const_dec():
 		lex_list.append(data_declarations())
 	return lex_list
 
-def data_declarations():
+def var_dec():
+	lex_list = ['var_dec']
+	lex = scanner.getCurrentToken()
+	lex_list.append(tuple(lex))
+	lex = scanner.getNextToken()
+	if(lex[lex_en['value']] == 'DEFINE'):
+		lex_list.append(data_declarations())
+	return lex_list
+
+def struct_dec():
+	lex_list = ['struct_dec']
+	lex = scanner.getCurrentToken()
+	lex_list.append(tuple(lex))
+	lex = scanner.getNextToken()
+	if(lex[lex_en['value']] == 'DEFINE'):
+		lex_list.append(data_declarations())
+	return lex_list
+
+def data_declarations(): #unfinished
 	lex_list = ['data_declarations']
 	lex = scanner.getCurrentToken()
 
-
+def struct_enum():
+	lex_list = ['struct_enum']
+	lex = scanner.getCurrentToken()
+	lex_list.append(tuple(lex))
+	lex = scanner.getNextToken()
+	if lex[lex_en['value']] 	== 'STRUCT' or lex[lex_en['value']] == 'ENUM':
+		lex_list.append(tuple(lex))
+	else:	
+		lex_list.append('Error: Keyword STRUCT or ENUM expected')
+	return lex_list 
 
 
 
