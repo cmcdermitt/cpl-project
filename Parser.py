@@ -76,12 +76,15 @@ def printTree(tree_list, tab):
 		else:
 			print(returnTabs(tab + 1) + str(tree_list[x]))
 
-def recursiveAppend(x):
+def recursiveAppend(x, type = ''):
 	y = True
 	while(y):
 		if(len(x) > 0):
 			if(isinstance(x[1], list)):
-				x = x[1]
+				if(x[1][0] == type or type == ''):
+					x = x[1]
+				else:
+					y = False
 			else:
 				y = False
 		else:
@@ -188,7 +191,7 @@ def array_dim_list(n = 0):
 	lex = scanner.getNextToken()
 	if(lex[lex_en['value']] == 'LB'):
 		n_lex = array_dim_list()
-		x = recursiveAppend(n_lex)
+		x = recursiveAppend(n_lex, 'array_dim_list')
 		x.insert(1, lex_list)
 		lex_list = n_lex
 		#lex_list.insert(1,array_dim_list())
@@ -208,8 +211,11 @@ def ret_type():
 	word = lex[lex_en['value']]
 	lex_list.append(tuple(lex))
 	if(word == 'TYPE'):
-		type = lex[lex_en['type']]
-		if(type == 'MVOID' or type == 'INTEGER' or type == 'REAL' or type == 'TBOOL' or type == 'CHAR' or type == 'TSTRING'):
+		lex = scanner.getNextToken()
+		print(lex)
+		type = lex[lex_en['value']]
+		if(type == 'MVOID' or type == 'INTEGER' or type == 'REAL' or type == 'TBOOL'
+		 or type == 'CHAR' or type == 'TSTRING'):
 			lex_list.append(type_name())
 			return lex_list
 	if(lex[lex_en['value']] == 'STRUCT' or lex[lex_en['value']] == 'STRUCTYPE'): #STRUCTTYPE?
@@ -224,15 +230,10 @@ def ret_type():
 	return lex_list
 
 def type_name():
-	lex_list = []
+	lex_list = ['type_name']
 	lex = scanner.getCurrentToken()
 	lex_list.append(tuple(lex))
 	return lex_list
-'''	if(lex[lex_en['value']] == 'TSTRING'):
-		lex_list.append(lex)
-		lex = scanner.getNextToken()
-		if(lex[lex_en['value']] == 'OF'):  Is TSTRING relevant? ICON is an
-		unknown keyword'''
 
 def f_globals():
 	lex_list = ['globals']
@@ -269,7 +270,11 @@ def data_declarations():
 	lex_list.append(comp_declare())
 	lex = scanner.getNextToken()
 	if(lex[lex_en['value']] == 'DEFINE'):
-		lex_list.insert(1,data_declarations())
+		#lex_list.insert(1,data_declarations())
+		n_lex = data_declarations()
+		x = recursiveAppend(n_lex,'data_declarations')
+		x.insert(1,lex_list)
+		lex_list = n_lex
 	else:
 		scanner.rewindCurrentToken()
 	return lex_list
@@ -336,7 +341,11 @@ def plist_const():
 	else:
 		lex_list.append('\tError Keyword RB was expected')
 	if(lex[lex_en['value']] == 'LB'):
-		lex_list.insert(1,plist_const())
+		n_lex = plist_const()
+		x = recursiveAppend(n_lex, 'plist_const')
+		x.insert(1,lex_list)
+		lex_list = n_lex
+		#lex_list.insert(1,plist_const())
 	else:
 		scanner.rewindCurrentToken()
 	return lex_list
@@ -392,10 +401,8 @@ def arg_list():
 	lex = scanner.getNextToken()
 	word = lex[lex_en['value']]
 	type = lex[lex_en['type']]
-	if(word == 'MINUS' or word == 'NEGATE' or word == 'STRING'
-	or word == 'CHAR' or word == 'MTRUE' or word == 'MFASLE' or
-	word == 'LP'):
-		lex_list.insert(1,)
+
+
 
 
 def data_type():
