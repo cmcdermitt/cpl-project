@@ -76,6 +76,18 @@ def printTree(tree_list, tab):
 		else:
 			print(returnTabs(tab + 1) + str(tree_list[x]))
 
+def recursiveAppend(x):
+	y = True
+	while(y):
+		if(len(x) > 0):
+			if(isinstance(x[1], list)):
+				x = x[1]
+			else:
+				y = False
+		else:
+			y = False
+	return x
+
 # Starting point for parse tree
 # Initially, lex_list is ['Program']
 # After appending func_main(), lex_list might be ['Program',[func_main, ['0','0','KEYWORD','FUNCTION'], ['1','1',IDENTIFER, 'MAIN'], [oper_type,['2','2','KEYWORD','RETURN']]]]
@@ -88,11 +100,13 @@ def program_start():
 	if(lex[lex_en['value']] == 'GLOBAL'):
 		lex_list.append(f_globals()) #called f_globals becasue globals is a fucntion
 		lex = scanner.getNextToken()
-	if(lex[lex_en['value']] == 'IMPLEMENTATIONS'):
-		lex_list.append(implementations())
+	#if(lex[lex_en['value']] == 'IMPLEMENTATIONS'):
+		#lex_list.append(implementations())
 	else:
 		lex_list.append('\tError: Keyword IMPLEMENTATIONS expected')
 	printTree(lex_list, 0)
+
+	print(lex_list)
 
 # Functions for func_main
 def func_main():
@@ -157,7 +171,7 @@ def chk_array():
 	lex_list.append(array_dim_list())
 	return lex_list
 
-def array_dim_list():
+def array_dim_list(n = 0):
 	lex_list = ['array_dim_list']
 	lex = scanner.getCurrentToken()
 	lex_list.append(tuple(lex))
@@ -173,13 +187,14 @@ def array_dim_list():
 		lex_list.append('\tError: Keyword RB was expected')
 	lex = scanner.getNextToken()
 	if(lex[lex_en['value']] == 'LB'):
-		lex_list.insert(1,array_dim_list())
+		n_lex = array_dim_list()
+		x = recursiveAppend(n_lex)
+		x.insert(1, lex_list)
+		lex_list = n_lex
+		#lex_list.insert(1,array_dim_list())
 	else:
 		scanner.rewindCurrentToken()
 	return lex_list
-
-
-
 
 def array_index():
 	lex_list = ['array_index']
@@ -300,6 +315,8 @@ def parray_dec():
 			lex = scanner.getNextToken()
 		else:
 			lex_list.append('\tError Keyword LB was expected')
+		if(lex[lex_en['value']] == 'VALUE'):
+			lex_list.append(popt_array_val())
 	else:
 		lex_list.append(tuple(lex))
 	return lex_list
@@ -319,16 +336,67 @@ def plist_const():
 	else:
 		lex_list.append('\tError Keyword RB was expected')
 	if(lex[lex_en['value']] == 'LB'):
-		lex_list.append(plist_const())
+		lex_list.insert(1,plist_const())
 	else:
 		scanner.rewindCurrentToken()
 	return lex_list
-
 
 def iconst_ident():
 	lex_list = ['iconst_ident']
 	lex_list.append(scanner.getCurrentToken())
 	return lex_list
+
+def popt_array_val():
+	lex_list = ['popt_array_val']
+	lex_list.append(value_eq())
+	lex = scanner.getNextToken()
+	if(lex[lex_en['value']] == 'LB'):
+		lex_list.append(array_val())
+	else:
+		lex_list.append('\tError Keyword LB expected')
+
+def value_eq():
+	lex_list = ['value_eq']
+	lex_list.append(tuple(scanner.getCurrentToken()))
+	return lex_list
+
+def array_val():
+	lex_list = ['array_val']
+	lex = scanner.getNextToken()
+	if(lex[lex_en['value']] != 'LB'):
+		lex_list.append('\tError Keyword LB expected')
+		return lex_list
+	lex_list.append(simp_arr_val())
+	return lex_list
+
+def simp_arr_val():
+	lex_list = ['simp_arr_val']
+	lex_list.append(tuple(scanner.getCurrentToken()))
+	lex = scanner.getNextToken()
+	word = lex[lex_en['value']]
+	type = lex[lex_en['type']]
+	if(word == 'MINUS' or word == 'NEGATE' or word == 'STRING'
+	or word == 'CHAR' or word == 'MTRUE' or word == 'MFASLE' or
+	word == 'LP'):
+		lex_list.append(arg_list())
+		lex = scanner.getNextToken()
+	else:
+		lex_list.append('\tError Type or Identifier was expected')
+	if(lex[lex_en['value']] == 'RB'):
+		lex_list.append(tuple(lex))
+	return lex_list
+
+def arg_list():
+	lex_list = ['arg_list']
+	lex_list.append(expr())
+	lex = scanner.getNextToken()
+	word = lex[lex_en['value']]
+	type = lex[lex_en['type']]
+	if(word == 'MINUS' or word == 'NEGATE' or word == 'STRING'
+	or word == 'CHAR' or word == 'MTRUE' or word == 'MFASLE' or
+	word == 'LP'):
+		lex_list.insert(1,)
+
 
 def data_type():
 	lex_list = ['data_type']
