@@ -23,6 +23,7 @@ ISSUE: When do we decide to add more lexemes to the initial pool of lexemes.
 POSSIBLE SOLUTION: We call the scanner and get all of the lexemes at once. We then append Nothing to the end to signify the last lexeme has been read. RESOLVED: Addded as needed with look back functions
 '''
 
+#Now each function is expected to start on the first token in it, but we don't assume that it's already checked.
 '''
 Sorry for globals, but every function needs these, (unless we pass object?):
 	global c_lex
@@ -98,34 +99,36 @@ def recursiveAppend(input, type = ''):
 # The third pair in this case, represents the individual lexeme (there could be more in this list)
 def program_start():
 	lex_list = ['Program']
+
+	scanner.start() #fills symbol table and sets scanner.lex
 	lex_list.append(func_main())
-	lex = scanner.getNextToken()
-	if(lex[lex_en['value']] == 'GLOBAL'):
-		lex_list.append(f_globals()) #called f_globals becasue globals is a fucntion
-		lex = scanner.getNextToken()
-	#if(lex[lex_en['value']] == 'IMPLEMENTATIONS'):
+
+	if(scanner.lex[lex_en['value']] == 'GLOBAL'):
+		lex_list.append(f_globals()) #called f_globals becasue globals is a function
+	#if(scanner.lex[lex_en['value']] == 'IMPLEMENTATIONS'):
 		#lex_list.append(implementations())
 	else:
 		lex_list.append('\tError: Keyword IMPLEMENTATIONS expected')
+		scanner.next()
 	printTree(lex_list, 0)
 
 
 # Functions for func_main
 def func_main():
 	lex_list = ['func_main']
-	lex = scanner.getNextToken()
-	if(lex[lex_en['value']] == 'MAIN'):
-		lex_list.append(tuple(lex))
+	if(scanner.lex[lex_en['value']] == 'MAIN'):
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
 		return lex_list
-	elif(lex[lex_en['value']] == 'FUNCTION'):
-		lex_list.append(tuple(lex))
-		lex = scanner.getNextToken()
-		if(lex[lex_en['type']] == 'IDENTIFIER'):
-			lex_list.append(tuple(lex))
-			lex = scanner.getNextToken()
+	elif(scanner.lex[lex_en['value']] == 'FUNCTION'):
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
+		if(scanner.lex[lex_en['type']] == 'IDENTIFIER'):
+			lex_list.append(tuple(scanner.lex))
+			scanner.next()
 		else:
 			lex_list.append(['\tError: Identifer was expected'])
-		if(lex[lex_en['value']] == 'RETURN'):
+		if(scanner.lex[lex_en['value']] == 'RETURN'):
 			lex_list.append(oper_type())
 		else:
 			lex_list.append(['\tError: Keyword Return was expected'])
@@ -136,15 +139,18 @@ def func_main():
 
 def oper_type():
 	lex_list = ['oper_type']
-	lex_list.append(tuple(scanner.getCurrentToken()))
-	lex = scanner.getNextToken()
-	if(lex[lex_en['value']] == 'POINTER'):
+	lex_list.append(tuple(scanner.lex))
+	scanner.next()
+	print (scanner.lex)
+	if(scanner.lex[lex_en['value']] == 'POINTER'):
 		lex_list.append(chk_ptr())
-		lex = scanner.getNextToken()
-	if(lex[lex_en['value']] == 'ARRAY'):
+		scanner.next()
+	if(scanner.lex[lex_en['value']] == 'ARRAY'):
 		lex_list.append(chk_array())
-		lex = scanner.getNextToken()
-	word = lex[lex_en['value']]
+		print(scanner.lex)
+	print (scanner.lex)
+	word = scanner.lex[lex_en['value']]
+	print(word)
 	if(word == 'TYPE' or word == 'STRUCT' or word == 'IDENTIFIER'):
 		lex_list.append(ret_type())
 	else:
@@ -155,71 +161,88 @@ def oper_type():
 
 def chk_ptr():
 	lex_list = ['chk_ptr']
-	lex_list.append(tuple(scanner.getCurrentToken()))
-	lex = scanner.getNextToken()
-	if(lex[lex_en['value']] == 'OF'):
-		lex_list.append(tuple(lex))
+	lex_list.append(tuple(scanner.lex))
+	scanner.next()
+	if(scanner.lex[lex_en['value']] == 'OF'):
+		lex_list.append(tuple(scanner.lex))
 	else:
 		lex_list.append('\tERROR: Keyword OF was expected')
 	return lex_list
 
 def chk_array():
 	lex_list = ['chk_array']
-	lex_list.append(tuple(scanner.getCurrentToken()))
-	lex = scanner.getNextToken()
-	if(lex[lex_en['value']] != 'LB'):
+	lex_list.append(tuple(scanner.lex))
+	scanner.next()
+	if(scanner.lex[lex_en['value']] != 'LB'):
 		lex_list.append('\t Error Keyword LB expected')
 		return lex_list
-	lex_list.append(array_dim_list())
+	else:
+		lex_list.append(array_dim_list())
 	return lex_list
 
-def array_dim_list(n = 0):
+# def array_dim_list(): Old but modified since last working
+# 	lex_list = ['array_dim_list']
+# 	lex_list.append(tuple(scanner.lex))
+# 	scanner.next()
+# 	if(scanner.lex[lex_en['type']] == 'IDENTIFIER'):
+# 		lex_list.append(array_index())
+# 		scanner.next()
+# 	else:
+# 		lex_list.append('\tError: Identifier was expected')
+# 	if(scanner.lex[lex_en['value']] == 'RB'):
+# 		lex_list.append(tuple(scanner.lex))
+# 		scanner.next()
+# 	else:
+# 		lex_list.append('\tError: Keyword RB was expected')
+# 	if(scanner.peek()[lex_en['value']] == 'LB'):
+# 		scanner.next()
+# 		n_lex = array_dim_list()
+# 		x = recursiveAppend(n_lex, 'array_dim_list')
+# 		x.insert(1, lex_list)
+# 		lex_list = n_lex
+# 		#lex_list.insert(1,array_dim_list())
+# 	return lex_list
+
+def array_dim_list():
 	lex_list = ['array_dim_list']
-	lex = scanner.getCurrentToken()
-	lex_list.append(tuple(lex))
-	lex = scanner.getNextToken()
-	if(lex[lex_en['type']] == 'IDENTIFIER'):
-		lex_list.append(array_index())
-		lex = scanner.getNextToken()
-	else:
-		lex_list.append('\tError: Identifier was expected')
-	if(lex[lex_en['value']] == 'RB'):
-		lex_list.append(tuple(lex))
-	else:
-		lex_list.append('\tError: Keyword RB was expected')
-	lex = scanner.getNextToken()
-	if(lex[lex_en['value']] == 'LB'):
-		n_lex = array_dim_list()
-		x = recursiveAppend(n_lex, 'array_dim_list')
-		x.insert(1, lex_list)
-		lex_list = n_lex
-		#lex_list.insert(1,array_dim_list())
-	else:
-		scanner.rewindCurrentToken()
+	while scanner.lex[lex_en['value']] == 'LB': #use while for multiple array_dim_lists instead of recursion
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
+		if scanner.lex[lex_en['type']] == 'IDENTIFIER' or scanner.lex[lex_en['value']] == 'ICON':
+			lex_list.append(array_index())
+			if scanner.lex[lex_en['value']] == 'RB':
+				lex_list.append(tuple(scanner.lex))
+				scanner.next()
+			else:
+				scanner.next()
+				lex_list.append('Error: Keyword RB expected')
+		else:
+			scanner.next()
+			lex_list.append('Error: IDENTIFIER or ICON expected')
 	return lex_list
+		
+		
 
 def array_index():
 	lex_list = ['array_index']
-	lex = scanner.getCurrentToken()
-	lex_list.append(tuple(lex))
+	lex_list.append(tuple(scanner.lex))
+	scanner.next()
 	return lex_list
 
 def ret_type():
 	lex_list = ['ret_type']
-	lex = scanner.getCurrentToken()
-	word = lex[lex_en['value']]
-	lex_list.append(tuple(lex))
-	if(word == 'TYPE'):
-		lex = scanner.getNextToken()
-		type = lex[lex_en['value']]
+	lex_list.append(tuple(scanner.lex[lex_en['value']]))
+	if(scanner.lex[lex_en['value']] == 'TYPE'):
+		scanner.next()
+		type = scanner.lex[lex_en['value']]
 		if(type == 'MVOID' or type == 'INTEGER' or type == 'REAL' or type == 'TBOOL'
 		 or type == 'CHAR' or type == 'TSTRING'):
 			lex_list.append(type_name())
 			return lex_list
-	if(lex[lex_en['value']] == 'STRUCT' or lex[lex_en['value']] == 'STRUCTYPE'): #STRUCTTYPE?
-		lex = scanner.getNextToken()
-		if(lex[lex_en['type']] == 'IDENTIFIER'):
-			lex_list.append(tuple(lex))
+	if(scanner.lex[lex_en['value']] == 'STRUCT' or scanner.lex[lex_en['value']] == 'STRUCTYPE'): #STRUCTTYPE?
+		scanner.next()
+		if(scanner.lex[lex_en['type']] == 'IDENTIFIER'):
+			lex_list.append(tuple(scanner.lex))
 			return lex_list
 		else:
 			lex_list.append('\tError: Identifier was expected')
@@ -228,34 +251,32 @@ def ret_type():
 
 def type_name():
 	lex_list = ['type_name']
-	lex = scanner.getCurrentToken()
-	lex_list.append(tuple(lex))
+	lex_list.append(tuple(scanner.lex))
 	return lex_list
 
 def f_globals():
 	lex_list = ['globals']
-	lex = scanner.getCurrentToken()
-	lex_list.append(tuple(lex))
-	lex = scanner.getNextToken()
-	if(lex[lex_en['value']] == 'DECLARATIONS'):
-		lex_list.append(tuple(lex))
-		lex = scanner.getNextToken()
+	lex_list.append(tuple(scanner.lex))
+	scanner.next()
+	if(scanner.lex[lex_en['value']] == 'DECLARATIONS'):
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
 	else:
-		lex_list.append('\tError Keyworkd DECLARATIONS was expected')
-	if(lex[lex_en['value']] == 'CONSTANTS'):
+		lex_list.append('\tError Keyword DECLARATIONS was expected')
+	if(scanner.lex[lex_en['value']] == 'CONSTANTS'):
 		lex_list.append(const_dec())
-		lex = scanner.getNextToken()
-	if(lex[lex_en['value']] == 'VARIABLES'):
-		lex_list.append(var_dec())
-		lex = scanner.getNextToken()
+		scanner.next()
+	# if(scanner.lex[lex_en['value']] == 'VARIABLES'):
+	# 	lex_list.append(var_dec())
+	# 	scanner.next()
+	#struct dec goes here
 	return lex_list
 
 def const_dec():
 	lex_list = ['const_dec']
-	lex = scanner.getCurrentToken()
-	lex_list.append(tuple(lex))
-	lex = scanner.getNextToken()
-	if(lex[lex_en['value']] == 'DEFINE'):
+	lex_list.append(tuple(scanner.lex))
+	scanner.next()
+	if(scanner.lex[lex_en['value']] == 'DEFINE'):
 		lex_list.append(data_declarations())
 	else:
 		lex_list.append('\tError Keyword DEFINE expected')
@@ -264,22 +285,21 @@ def const_dec():
 def data_declarations():
 	lex_list = ['data_declarations']
 	lex_list.append(comp_declare())
-	lex = scanner.getNextToken()
-	if(lex[lex_en['value']] == 'DEFINE'):
+	scanner.next()
+	if(scanner.peek()[lex_en['value']] == 'DEFINE'):
+		scanner.next()
 		#lex_list.insert(1,data_declarations())
 		n_lex = data_declarations()
 		x = recursiveAppend(n_lex,'data_declarations')
 		x.insert(1,lex_list)
 		lex_list = n_lex
-	else:
-		scanner.rewindCurrentToken()
 	return lex_list
 
 def comp_declare():
 	lex_list = ['comp_declare']
-	lex_list.append(tuple(scanner.getCurrentToken()))
-	lex = scanner.getNextToken()
-	if(lex[lex_en['type']] == 'IDENTIFIER'):
+	lex_list.append(tuple(scanner.lex))
+	scanner.next()
+	if(scanner.lex[lex_en['type']] == 'IDENTIFIER'):
 		lex_list.append(data_declaration())
 	else:
 		lex_list.append('\tError IDENTIFIER expected')
@@ -287,18 +307,18 @@ def comp_declare():
 
 def data_declaration():
 	lex_list = ['data_declaration']
-	lex_list.append(tuple(scanner.getCurrentToken()))
-	lex = scanner.getNextToken()
-	word = lex[lex_en['value']]
+	lex_list.append(tuple(scanner.lex))
+	scanner.next()
+	word = scanner.lex[lex_en['value']]
 	if(word == 'ARRAY' or word == 'LB' or word == 'VALUE' or word == 'EQUOP'):
 		lex_list.append(parray_dec())
-		lex = scanner.getNextToken()
-	if(lex[lex_en['value']] == 'OF'):
-		lex_list.append(tuple(lex))
-		lex = scanner.getNextToken()
+		scanner.next()
+	if(scanner.lex[lex_en['value']] == 'OF'):
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
 	else:
 		lex_list.append('\tError Keyword OF expected')
-	word = lex[lex_en['value']]
+	word = scanner.lex[lex_en['value']]
 	if(word == 'TUNSIGNED' or word == 'CHAR' or word == 'INTEGER' or
 	word == 'MVOID' or word == 'REAL' or word == 'TSTRING' or word == 'TBOOL'):
 		lex_list.append(data_type())
@@ -308,54 +328,52 @@ def data_declaration():
 
 def parray_dec():
 	lex_list = ['parray_dec']
-	lex = scanner.getCurrentToken()
-	if(lex[lex_en['value']] == 'ARRAY'):
-		lex = scanner.getNextToken()
-		if(lex[lex_en['value']] == 'LB'):
+	if(scanner.lex[lex_en['value']] == 'ARRAY'):
+		scanner.next()
+		if(scanner.lex[lex_en['value']] == 'LB'):
 			lex_list.append(plist_const())
-			lex = scanner.getNextToken()
+			scanner.next()
 		else:
 			lex_list.append('\tError Keyword LB was expected')
-		if(lex[lex_en['value']] == 'VALUE'):
+		if(scanner.lex[lex_en['value']] == 'VALUE'):
 			lex_list.append(popt_array_val())
 	else:
-		lex_list.append(tuple(lex))
+		lex_list.append(tuple(scanner.lex))
 	return lex_list
 
 def plist_const():
 	lex_list = ['plist_const']
-	lex_list.append(tuple(scanner.getCurrentToken()))
-	lex = scanner.getNextToken()
-	if(lex[lex_en['type']] == 'IDENTIFIER'):
+	lex_list.append(tuple(scanner.lex))
+	scanner.next()
+	if(scanner.lex[lex_en['type']] == 'IDENTIFIER'):
 		lex_list.append(iconst_ident())
-		lex = scanner.getNextToken()
+		scanner.next()
 	else:
 		lex_list.append('\tError Identifier was expected')
-	if(lex[lex_en['value']] == 'RB'):
-		lex_list.append(tuple(lex))
-		lex = scanner.getNextToken()
+	if(scanner.lex[lex_en['value']] == 'RB'):
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
 	else:
 		lex_list.append('\tError Keyword RB was expected')
-	if(lex[lex_en['value']] == 'LB'):
+	if(scanner.peek()[lex_en['value']] == 'LB'):
+		scanner.next()
 		n_lex = plist_const()
 		x = recursiveAppend(n_lex, 'plist_const')
 		x.insert(1,lex_list)
 		lex_list = n_lex
 		#lex_list.insert(1,plist_const())
-	else:
-		scanner.rewindCurrentToken()
 	return lex_list
 
 def iconst_ident():
 	lex_list = ['iconst_ident']
-	lex_list.append(tuple(scanner.getCurrentToken()))
+	lex_list.append(tuple(scanner.lex))
 	return lex_list
 
 def popt_array_val():
 	lex_list = ['popt_array_val']
 	lex_list.append(value_eq())
-	lex = scanner.getNextToken()
-	if(lex[lex_en['value']] == 'LB'):
+	scanner.next()
+	if(scanner.lex[lex_en['value']] == 'LB'):
 		lex_list.append(array_val())
 	else:
 		lex_list.append('\tError Keyword LB expected')
@@ -363,13 +381,12 @@ def popt_array_val():
 
 def value_eq():
 	lex_list = ['value_eq']
-	lex_list.append(tuple(scanner.getCurrentToken()))
+	lex_list.append(tuple(scanner.lex))
 	return lex_list
 
 def array_val():
 	lex_list = ['array_val']
-	lex = scanner.getCurrentToken()
-	if(lex[lex_en['value']] != 'LB'):
+	if(scanner.lex[lex_en['value']] != 'LB'):
 		lex_list.append('\tError Keyword LB expected')
 		return lex_list
 	lex_list.append(simp_arr_val())
@@ -377,19 +394,19 @@ def array_val():
 
 def simp_arr_val():
 	lex_list = ['simp_arr_val']
-	lex_list.append(tuple(scanner.getCurrentToken()))
-	lex = scanner.getNextToken()
-	word = lex[lex_en['value']]
-	type = lex[lex_en['type']]
+	lex_list.append(tuple(scanner.lex))
+	scanner.next()
+	word = scanner.lex[lex_en['value']]
+	type = scanner.lex[lex_en['type']]
 	if(word == 'MINUS' or word == 'NEGATE' or word == 'STRING'
 	or word == 'CHAR' or word == 'MTRUE' or word == 'MFASLE' or
 	word == 'LP'):
 		lex_list.append(arg_list())
-		lex = scanner.getNextToken()
+		scanner.next()
 	else:
 		lex_list.append('\tError Type or Identifier was expected')
-	if(lex[lex_en['value']] == 'RB'):
-		lex_list.append(tuple(lex))
+	if(scanner.lex[lex_en['value']] == 'RB'):
+		lex_list.append(tuple(scanner.lex))
 	else:
 		lex_list.append('\tError, RB was expected')
 	return lex_list
@@ -397,14 +414,12 @@ def simp_arr_val():
 def arg_list():
 	lex_list = ['arg_list']
 	lex_list.append(expr())
-	lex = scanner.getNextToken()
-	comma = 0
-	if(lex[lex_en['value']] == 'COMMA'):
-		comma = lex
-		lex_list.append(lex)
-		lex = scanner.getNextToken()
-		word = lex[lex_en['value']]
-		type = lex[lex_en['type']]
+	scanner.next()
+	if(scanner.lex[lex_en['value']] == 'COMMA'):
+		lex_list.append(scanner.lex)
+		scanner.next()
+		word = scanner.lex[lex_en['value']]
+		type = scanner.lex[lex_en['type']]
 		if(word == 'MINUS' or word == 'NEGATE' or word == 'STRING'
 		or word == 'CHAR' or word == 'MTRUE' or word == 'MFASLE' or
 		word == 'LP'):
@@ -413,12 +428,12 @@ def arg_list():
 			x.insert(1,lex_list)
 			lex_list = n_lex
 	else:
-		scanner.rewindCurrentToken()
+		scanner.last()
 	return lex_list
 
 def data_type():
 	lex_list = ['data_type']
-	lex_list.append(tuple(scanner.getCurrentToken()))
+	lex_list.append(tuple(scanner.lex))
 	return lex_list
 
 def expr():

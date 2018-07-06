@@ -18,30 +18,40 @@ class Scanner:
         self.current_row = 0
         self.current_attribute = 0
         self.last_token = ()
+        self.lex = ()
         self.input_file = infile
         self.output_file = outfile
 
 
-    def getNextToken(self):
-        target_token = []
+    def next(self): #advances lex
         if (len(self.symbol_table) == 0):
             self.fillSymbolTable()
         if (self.current_row >= len(self.symbol_table)):
              return (None, None, None, None)
-        target_token = self.symbol_table[self.current_row][self.current_attribute]
-        self.last_token = target_token
+        self.last_token = self.lex
         self.current_attribute = self.current_attribute + 1
         if self.current_attribute >= len(self.symbol_table[self.current_row]):
             self.current_row = self.current_row + 1
             self.current_attribute = 0
-        return target_token
+        self.lex = self.symbol_table[self.current_row][self.current_attribute]
+    
+    def peek(self): #returns next token, but doesn't advance lex - doesn't currently work
+        if (len(self.symbol_table) == 0):
+            self.fillSymbolTable()
+        if (self.current_row >= len(self.symbol_table)):
+             return (None, None, None, None)
+        if self.current_attribute + 1 >= len(self.symbol_table[self.current_row]):
+            return self.symbol_table[self.current_row + 1][0]
+        else:
+            return self.symbol_table[self.current_row][self.current_attribute + 1]
+    
 
-# A recursive definition always has to peak one ahead to
+# A recursive definition always has to peek one ahead to
 # decide if it is going to continue repeating its right hand
 # definition. When a recursive definition finishes, it is
 # one token past where it should be. Thus, all recursive definitions
-# should rewind one token after completion
-    def rewindCurrentToken(self):
+# should rewind one token after completion <-- THIS IS OLD
+    def last(self):
         if(self.current_attribute > 0):
             self.current_attribute -= 1
         elif(self.current_attribute == 0 and self.current_row > 0):
@@ -51,10 +61,6 @@ class Scanner:
             print('Invalid rewind')
 
         self.last_token = self.symbol_table[self.current_row][self.current_attribute]
-
-
-    def getCurrentToken(self):
-        return self.last_token
 
     def fillSymbolTable(self):
         linenum = 0
@@ -73,6 +79,11 @@ class Scanner:
                         self.symbol_table.remove(list)
                         for i in range(0, len(attributes)):
                             print(attributes[i])
+
+    
+    def start(self):
+        self.fillSymbolTable()
+        self.lex = self.symbol_table[0][0]
 
     def writeChangeLog(self):
         with open(self.output_file, 'w') as outfile:  # open output file
