@@ -137,7 +137,6 @@ def oper_type():
 	# Not done yet
 	return lex_list
 
-
 def chk_ptr():
 	lex_list = ['chk_ptr']
 	lex_list.append(tuple(scanner.getCurrentToken()))
@@ -179,9 +178,6 @@ def array_dim_list():
 		scanner.rewindCurrentToken()
 	return lex_list
 
-
-
-
 def array_index():
 	lex_list = ['array_index']
 	lex = scanner.getCurrentToken()
@@ -195,7 +191,14 @@ def ret_type():
 	lex_list.append(tuple(lex))
 	if(word == 'TYPE'):
 		type = lex[lex_en['type']]
-		if(type == 'MVOID' or type == 'INTEGER' or type == 'REAL' or type == 'TBOOL' or type == 'CHAR' or type == 'TSTRING'):
+		if(
+			type == 'MVOID' or
+			type == 'INTEGER' or
+			type == 'REAL' or
+			type == 'TBOOL' or
+			type == 'CHAR' or
+			type == 'TSTRING'
+		):
 			lex_list.append(type_name())
 			return lex_list
 	if(lex[lex_en['value']] == 'STRUCT' or lex[lex_en['value']] == 'STRUCTYPE'): #STRUCTTYPE?
@@ -219,6 +222,49 @@ def type_name():
 		lex = scanner.getNextToken()
 		if(lex[lex_en['value']] == 'OF'):  Is TSTRING relevant? ICON is an
 		unknown keyword'''
+
+def struct_enum():
+	lex_list = ['struct_enum']
+	lex = scanner.getCurrentToken()
+	lex_list.append(tuple(lex))
+	lex = scanner.getNextToken()
+	if lex[lex_en['value']] 	== 'STRUCT' or lex[lex_en['value']] == 'ENUM':
+		lex_list.append(tuple(lex))
+	else:	
+		lex_list.append('Error: Keyword STRUCT or ENUM expected')
+	return lex_list 
+
+def specifications():
+	lex_list = ['specifications']
+	lex = scanner.getCurrentToken()
+	lex_list.append(tuple(lex))
+	lex = scanner.getNextToken()
+	if (
+		lex[lex_en['value']] == 'ENUM' or
+		lex[lex_en['value']] == 'STRUCT' or
+		lex[lex_en['value']] == 'DESCRIPTION'
+	):
+		lex_list.append(spec_list())
+	else:
+		lex_list.append('Error: Keyword ENUM, STRUCT, or DESCRIPTION expected')'' \
+	return lex_list
+
+def spec_list():
+	lex_list = ['spec_list']
+	lex = scanner.getCurrentToken()
+	lex_list.append(spec_def())
+	lex = scanner.getNextToken()
+	if (lex[lex_en['value']] == 'ENUM' or lex[lex_en['value']] == 'STRUCT' or
+	    lex[lex_en['value']] == 'DESCRIPTION'):
+		lex_list.append(spec_def())
+	else:
+		return lex_list
+
+def spec_def():
+	lex_list = ['spec_def']
+	lex = scanner.getCurrentToken()
+	lex_list.append(tuple(lex))
+	return lex_list
 
 def f_globals():
 	lex_list = ['globals']
@@ -275,17 +321,78 @@ def struct_dec():
 def data_declarations(): #unfinished
 	lex_list = ['data_declarations']
 	lex = scanner.getCurrentToken()
-
-def struct_enum():
-	lex_list = ['struct_enum']
-	lex = scanner.getCurrentToken()
 	lex_list.append(tuple(lex))
 	lex = scanner.getNextToken()
-	if lex[lex_en['value']] 	== 'STRUCT' or lex[lex_en['value']] == 'ENUM':
+	value = lex[lex_en['value']]
+	if (
+		value == 'ARRAY' or
+		value == 'LB' or
+		value == 'VALUE' or
+		value == 'EQUOP'
+	):
+		lex_list.append(parray_dec())
+	else:
+		return lex_list.append('Error: Keyword ARRAY, LB, VALUE, or EQUOP expected')
+	lex = scanner.getNextToken()
+	if lex[lex_en['value']] == 'OF':
 		lex_list.append(tuple(lex))
-	else:	
-		lex_list.append('Error: Keyword STRUCT or ENUM expected')
-	return lex_list 
+	else:
+		return lex_list.append('ERROR: Keyword OF expected')
+	lex = scanner.getNextToken()
+	value = lex[lex_en['value']]
+	if (
+		value == 'TUNSIGNED' or
+		value == 'CHAR' or
+		value == 'INTEGER' or
+		value == 'MVOID' or
+		value == 'DOUBLE' or
+		value == 'LONG' or
+		value == 'SHORT' or
+		value == 'FLOAT' or
+		value == 'REAL' or
+		value == 'TSTRING' or
+		value == 'TBOOL' or
+		value == 'TBYTE'
+	):
+		lex_list.append(data_type())
+	else:
+		return lex_list.append('Error: Data_type keyword expected')
+	return lex_list
+
+def parray_dec():
+	lex_list = ['parray_dec']
+	lex = scanner.getCurrentToken()
+	lex_list.append(tuple(lex))
+	if lex[lex_end['value']] == 'ARRAY':
+		lex = scanner.getNextToken()
+		if lex[lex_en['value']] == 'LB':
+			lex_list.append(tuple(lex))
+			lex = scanner.getNextToken()
+			if lex[lex_en['value']] == 'ICON' or lex[lex_en['value']] == 'IDENTIFIER':
+				lex_list.append(plist_const())
+			elif (
+					lex[lex_en['value']] == 'IDENTIFIER' or
+					lex[lex_en['value']] == 'STRING' or
+					lex[lex_en['value']] == 'LETTER' or
+					lex[lex_en['value']] == 'ICON' or
+					lex[lex_en['value']] == 'HCON' or
+					lex[lex_en['value']] == 'FCON' or
+					lex[lex_en['value']] == 'MTRUE' or
+					lex[lex_en['value']] == 'MFALSE' or
+					lex[lex_en['value']] == 'LP' or
+					lex[lex_en['value']] == 'MINUS' or
+					lex[lex_en['value']] == 'NEGATE'
+			):
+				lex_list.append(expr())
+		else:
+			lex_list.append('Error: Keyword LB expected')
+
+
+def data_type():
+	lex_list = ['data_type']
+	lex = scanner.getCurrentToken()
+	lex_list.append(tuple(lex))
+	return lex_list
 
 
 
