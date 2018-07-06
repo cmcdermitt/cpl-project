@@ -76,19 +76,19 @@ def printTree(tree_list, tab):
 		else:
 			print(returnTabs(tab + 1) + str(tree_list[x]))
 
-def recursiveAppend(x, type = ''):
-	y = True
-	while(y):
-		if(len(x) > 0):
-			if(isinstance(x[1], list)):
-				if(x[1][0] == type or type == ''):
-					x = x[1]
+def recursiveAppend(input, type = ''):
+	is_valid = True
+	while(is_valid):
+		if(len(input) > 0):
+			if(isinstance(input[1], list)):
+				if(input[1][0] == type or type == ''):
+					input = input[1]
 				else:
-					y = False
+					is_valid = False
 			else:
-				y = False
+				is_valid = False
 		else:
-			y = False
+			is_valid = False
 	return x
 
 # Starting point for parse tree
