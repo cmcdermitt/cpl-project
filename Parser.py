@@ -24,6 +24,7 @@ POSSIBLE SOLUTION: We call the scanner and get all of the lexemes at once. We th
 '''
 
 #Now each function is expected to start on the first token in it, but we don't assume that it's already checked.
+
 '''
 Sorry for globals, but every function needs these, (unless we pass object?):
 	global c_lex
@@ -62,7 +63,6 @@ def prevLex():
 
 
 # Prints out the tree using tabs to represent children
-
 def printTree(tree_list, tab):
 	if(len(tree_list) == 0):
 		return
@@ -265,22 +265,53 @@ def f_globals():
 		lex_list.append('\tError Keyword DECLARATIONS was expected')
 	if(scanner.lex[lex_en['value']] == 'CONSTANTS'):
 		lex_list.append(const_dec())
-		scanner.next()
-	# if(scanner.lex[lex_en['value']] == 'VARIABLES'):
-	# 	lex_list.append(var_dec())
-	# 	scanner.next()
-	#struct dec goes here
+	if(scanner.lex[lex_en['value']] == 'VARIABLES'):
+	 	lex_list.append(var_dec())
+	if(scanner.lex[lex_en['value']] == 'STRUCT'):
+	 	lex_list.append(struct_dec())
 	return lex_list
 
 def const_dec():
 	lex_list = ['const_dec']
-	lex_list.append(tuple(scanner.lex))
-	scanner.next()
+	if scanner.lex[lex_en['value']] == 'CONSTANTS':
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
+	else:
+		lex_list.append('Error: Keyword CONSTANTS expected')
+		return lex_list
 	if(scanner.lex[lex_en['value']] == 'DEFINE'):
 		lex_list.append(data_declarations())
 	else:
 		lex_list.append('\tError Keyword DEFINE expected')
 	return lex_list
+
+def var_dec():
+	lex_list = ['var_dec']
+	if scanner.lex[lex_en['value']] == 'VARIABLES':
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
+	else:
+		lex_list.append('Error: Keyword VARIABLES expected')
+		return lex_list
+	if(scanner.lex[lex_en['value']] == 'DEFINE'):
+		lex_list.append(data_declarations())
+	else:
+		lex_list.append('\tError Keyword DEFINE expected')
+	return lex_list
+
+def struct_dec():
+	lex_list = ['struct_dec']
+	if scanner.lex[lex_en['value']] == 'STRUCT':	
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
+	else:
+		lex_list.append('Error: Keyword STRUCT expected in struct_dec')
+	if(scanner.lex[lex_en['value']] == 'DEFINE'):
+		lex_list.append(data_declarations())
+	else:
+		lex_list.append('\tError Keyword DEFINE expected')
+	return lex_list
+
 
 def data_declarations():
 	lex_list = ['data_declarations']
@@ -439,6 +470,16 @@ def data_type():
 def expr():
 	lex_list = ['expr']
 	return lex_list
+
+def struct_enum():
+	lex_list = ['struct_enum']
+	lex_list.append(tuple(scanner.lex))
+	scanner.next()
+	if scanner.lex[lex_en['value']] == 'STRUCT' or scanner.lex[lex_en['value']] == 'ENUM':
+		lex_list.append(tuple(lex))
+	else:	
+		lex_list.append('Error: Keyword STRUCT or ENUM expected')
+	return lex_list 
 
 if __name__ == '__main__':
 	program_start()
