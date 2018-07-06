@@ -141,18 +141,15 @@ def oper_type():
 	lex_list = ['oper_type']
 	lex_list.append(tuple(scanner.lex))
 	scanner.next()
-	print (scanner.lex)
 	if(scanner.lex[lex_en['value']] == 'POINTER'):
 		lex_list.append(chk_ptr())
 		scanner.next()
 	if(scanner.lex[lex_en['value']] == 'ARRAY'):
 		lex_list.append(chk_array())
-		print(scanner.lex)
-	print (scanner.lex)
 	word = scanner.lex[lex_en['value']]
-	print(word)
 	if(word == 'TYPE' or word == 'STRUCT' or word == 'IDENTIFIER'):
 		lex_list.append(ret_type())
+		print (scanner.lex)
 	else:
 		lex_list.append('\tError: The keywords STRUCT or TYPE or an IDENTIFIER was expected')
 	# Not done yet
@@ -238,11 +235,13 @@ def ret_type():
 		if(type == 'MVOID' or type == 'INTEGER' or type == 'REAL' or type == 'TBOOL'
 		 or type == 'CHAR' or type == 'TSTRING'):
 			lex_list.append(type_name())
+			scanner.next()
 			return lex_list
 	if(scanner.lex[lex_en['value']] == 'STRUCT' or scanner.lex[lex_en['value']] == 'STRUCTYPE'): #STRUCTTYPE?
 		scanner.next()
 		if(scanner.lex[lex_en['type']] == 'IDENTIFIER'):
 			lex_list.append(tuple(scanner.lex))
+			scanner.next()
 			return lex_list
 		else:
 			lex_list.append('\tError: Identifier was expected')
