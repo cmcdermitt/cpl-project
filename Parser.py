@@ -314,21 +314,22 @@ def struct_dec():
 
 def data_declarations():
 	lex_list = ['data_declarations']
-	lex_list.append(comp_declare())
-	scanner.next()
-	if(scanner.peek()[lex_en['value']] == 'DEFINE'):
-		scanner.next()
-		#lex_list.insert(1,data_declarations())
-		n_lex = data_declarations()
-		x = recursiveAppend(n_lex,'data_declarations')
-		x.insert(1,lex_list)
-		lex_list = n_lex
+	if scanner.lex[lex_en['value']] == 'DEFINE': #check validity before starting while loop
+		while(scanner.lex[lex_en['value']] == 'DEFINE'):
+			lex_list.append(comp_declare())
+			print ('end of while: ' + str(scanner.lex))
+
+	else:
+		lex_list.append('Error: keyword DEFINE expected in data_declarations')
 	return lex_list
 
 def comp_declare():
 	lex_list = ['comp_declare']
-	lex_list.append(tuple(scanner.lex))
-	scanner.next()
+	if scanner.lex[lex_en['value']] == 'DEFINE':
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
+	else:
+		lex_list.append('Error: keyword DEFINE expected in comp_declare')
 	if(scanner.lex[lex_en['type']] == 'IDENTIFIER'):
 		lex_list.append(data_declaration())
 	else:
