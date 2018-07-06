@@ -50,6 +50,14 @@ def returnTabs(tabNum):
 		tabs = tabs + '\t'
 	return tabs
 
+#convenience function returning an error message
+#first parameter is what was expected, second is optional location
+def error(expected, location = ''):
+	if location == '':
+		return 'Error: {} expected'.format(expected)
+	else:
+		return 'Error: {} expected in {}'.format(expected, location)
+
 # Returns the current lex
 def nextLex():
 	return ['1','2','KEYWORD','MAIN'] # Will be implemented later with scanner
@@ -262,12 +270,23 @@ def f_globals():
 		scanner.next()
 	else:
 		lex_list.append('\tError Keyword DECLARATIONS was expected')
+
 	if(scanner.lex[lex_en['value']] == 'CONSTANTS'):
 		lex_list.append(const_dec())
+	else:
+		lex_list.append(error('DECLARATIONS', 'f_globals'))
+		return lex_list
+
 	if(scanner.lex[lex_en['value']] == 'VARIABLES'):
 	 	lex_list.append(var_dec())
+	else:
+		lex_list.append(error('VARIABLES', 'f_globals'))
+		return lex_list
+
 	if(scanner.lex[lex_en['value']] == 'STRUCT'):
 	 	lex_list.append(struct_dec())
+	else:
+		lex_list.append(error('STRUCT', 'f_globals'))
 	return lex_list
 
 def const_dec():
@@ -338,12 +357,18 @@ def comp_declare():
 
 def data_declaration():
 	lex_list = ['data_declaration']
-	lex_list.append(tuple(scanner.lex))
-	scanner.next()
+	if scanner.lex[lex_en['value']] == 'DEFINE':
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
+	else:
+		lex_list.append(error('DEFINE', 'data_declaration'))
+
 	word = scanner.lex[lex_en['value']]
 	if(word == 'ARRAY' or word == 'LB' or word == 'VALUE' or word == 'EQUOP'):
 		lex_list.append(parray_dec())
 		scanner.next()
+	else:
+		lex_list.append(error('ARRAY or LB or VALYE or EQUOP', 'data_declaration'))
 	if(scanner.lex[lex_en['value']] == 'OF'):
 		lex_list.append(tuple(scanner.lex))
 		scanner.next()
@@ -353,6 +378,7 @@ def data_declaration():
 	if(word == 'TUNSIGNED' or word == 'CHAR' or word == 'INTEGER' or
 	word == 'MVOID' or word == 'REAL' or word == 'TSTRING' or word == 'TBOOL'):
 		lex_list.append(data_type())
+		scanner.next()
 	else:
 		lex_list.append('\tError Type expected')
 	return lex_list
@@ -370,6 +396,7 @@ def parray_dec():
 			lex_list.append(popt_array_val())
 	else:
 		lex_list.append(tuple(scanner.lex))
+		scanner.next()
 	return lex_list
 
 def plist_const():
@@ -412,7 +439,11 @@ def popt_array_val():
 
 def value_eq():
 	lex_list = ['value_eq']
-	lex_list.append(tuple(scanner.lex))
+	if scanner.lex[lex_en['value']] == 'EQUOP' or scanner.lex[lex_en['value']] == 'VALUE':
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
+	else:
+		lex_list.append(error('EQUOP or VALUE', 'value_eq'))
 	return lex_list
 
 def array_val():
@@ -420,13 +451,18 @@ def array_val():
 	if(scanner.lex[lex_en['value']] != 'LB'):
 		lex_list.append('\tError Keyword LB expected')
 		return lex_list
-	lex_list.append(simp_arr_val())
+	else:
+		lex_list.append(simp_arr_val())
 	return lex_list
 
 def simp_arr_val():
 	lex_list = ['simp_arr_val']
-	lex_list.append(tuple(scanner.lex))
-	scanner.next()
+
+	if scanner.lex[lex_en['value']] == 'LB':
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
+	else:
+		lex_list.append(error('LB', 'simp_arr_val'))
 	word = scanner.lex[lex_en['value']]
 	type = scanner.lex[lex_en['type']]
 	if(word == 'MINUS' or word == 'NEGATE' or word == 'STRING'
@@ -438,11 +474,12 @@ def simp_arr_val():
 		lex_list.append('\tError Type or Identifier was expected')
 	if(scanner.lex[lex_en['value']] == 'RB'):
 		lex_list.append(tuple(scanner.lex))
+		scanner.next()
 	else:
 		lex_list.append('\tError, RB was expected')
 	return lex_list
 
-def arg_list():
+def arg_list(): #correct recursion later
 	lex_list = ['arg_list']
 	lex_list.append(expr())
 	scanner.next()
