@@ -89,7 +89,7 @@ def recursiveAppend(input, type = ''):
 				is_valid = False
 		else:
 			is_valid = False
-	return x
+	return input
 
 # Starting point for parse tree
 # Initially, lex_list is ['Program']
