@@ -220,8 +220,8 @@ def array_dim_list():
 			scanner.next()
 			lex_list.append('Error: IDENTIFIER or ICON expected')
 	return lex_list
-		
-		
+
+
 
 def array_index():
 	lex_list = ['array_index']
@@ -231,7 +231,7 @@ def array_index():
 
 def ret_type():
 	lex_list = ['ret_type']
-	lex_list.append(tuple(scanner.lex[lex_en['value']]))
+	lex_list.append(tuple(scanner.lex))
 	if(scanner.lex[lex_en['value']] == 'TYPE'):
 		scanner.next()
 		type = scanner.lex[lex_en['value']]
