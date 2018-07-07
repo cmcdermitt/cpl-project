@@ -1,7 +1,8 @@
-#imports
+# imports
 import sys
 from state_machine import processLine
 import csv
+
 
 class Scanner:
 
@@ -22,39 +23,39 @@ class Scanner:
         self.input_file = infile
         self.output_file = outfile
 
-
-    def next(self): #advances lex
+    def next(self):  # advances lex
         if (len(self.symbol_table) == 0):
             self.fillSymbolTable()
         if (self.current_row >= len(self.symbol_table)):
-             return (None, None, None, None)
+            return (None, None, None, None)
         self.last_token = self.lex
         self.current_attribute = self.current_attribute + 1
         if self.current_attribute >= len(self.symbol_table[self.current_row]):
             self.current_row = self.current_row + 1
             self.current_attribute = 0
+        if(self.current_row >= len(self.symbol_table)):
+            return(None,None,None,None)
         self.lex = self.symbol_table[self.current_row][self.current_attribute]
-    
-    def peek(self): #returns next token, but doesn't advance lex - doesn't currently work
+
+    def peek(self):  # returns next token, but doesn't advance lex - doesn't currently work
         if (len(self.symbol_table) == 0):
             self.fillSymbolTable()
         if (self.current_row >= len(self.symbol_table)):
-             return (None, None, None, None)
+            return (None, None, None, None)
         if self.current_attribute + 1 >= len(self.symbol_table[self.current_row]):
             return self.symbol_table[self.current_row + 1][0]
         else:
             return self.symbol_table[self.current_row][self.current_attribute + 1]
-    
 
-# A recursive definition always has to peek one ahead to
-# decide if it is going to continue repeating its right hand
-# definition. When a recursive definition finishes, it is
-# one token past where it should be. Thus, all recursive definitions
-# should rewind one token after completion <-- THIS IS OLD
+    # A recursive definition always has to peek one ahead to
+    # decide if it is going to continue repeating its right hand
+    # definition. When a recursive definition finishes, it is
+    # one token past where it should be. Thus, all recursive definitions
+    # should rewind one token after completion <-- THIS IS OLD
     def last(self):
-        if(self.current_attribute > 0):
+        if (self.current_attribute > 0):
             self.current_attribute -= 1
-        elif(self.current_attribute == 0 and self.current_row > 0):
+        elif (self.current_attribute == 0 and self.current_row > 0):
             self.current_row -= 1
             self.current_attribute = len(self.symbol_table[self.current_row]) - 1
         else:
@@ -80,7 +81,6 @@ class Scanner:
                         for i in range(0, len(attributes)):
                             print(attributes[i])
 
-    
     def start(self):
         self.fillSymbolTable()
         self.lex = self.symbol_table[0][0]

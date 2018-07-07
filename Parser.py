@@ -357,7 +357,7 @@ def comp_declare():
 
 def data_declaration():
 	lex_list = ['data_declaration']
-	if scanner.lex[lex_en['value']] == 'DEFINE':
+	if scanner.lex[lex_en['type']] == 'IDENTIFIER':
 		lex_list.append(tuple(scanner.lex))
 		scanner.next()
 	else:
