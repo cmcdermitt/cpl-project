@@ -54,9 +54,9 @@ def returnTabs(tabNum):
 #first parameter is what was expected, second is optional location
 def error(expected, location = ''):
 	if location == '':
-		return 'Error: {} expected'.format(expected)
+		return '\tError: {} expected'.format(expected)
 	else:
-		return 'Error: {} expected in {}'.format(expected, location)
+		return '\tError: {} expected in {}'.format(expected, location)
 
 # Returns the current lex
 def nextLex():
@@ -118,6 +118,7 @@ def program_start():
 	else:
 		lex_list.append('\tError: Keyword IMPLEMENTATIONS expected')
 		scanner.next()
+	lex_list.append(implement())
 	printTree(lex_list, 0)
 
 
@@ -329,7 +330,7 @@ def var_dec():
 
 def struct_dec():
 	lex_list = ['struct_dec']
-	if scanner.lex[lex_en['value']] == 'STRUCT':	
+	if scanner.lex[lex_en['value']] == 'STRUCT':
 		lex_list.append(tuple(scanner.lex))
 		scanner.next()
 	else:
@@ -370,7 +371,7 @@ def data_declaration():
 		lex_list.append(tuple(scanner.lex))
 		scanner.next()
 	else:
-		lex_list.append(error('DEFINE', 'data_declaration'))
+		lex_list.append(error('IDENTIFIER', 'data_declaration'))
 
 	word = scanner.lex[lex_en['value']]
 	if(word == 'ARRAY' or word == 'LB' or word == 'VALUE' or word == 'EQUOP'):
@@ -511,6 +512,8 @@ def arg_list():
 		if(scanner.lex[lex_en['value']] == 'COMMA'):
 			lex_list.append(scanner.lex)
 			scanner.next()
+		else:
+			return lex_list
 	return lex_list
 
 def data_type():
@@ -562,7 +565,8 @@ def element():
 	elif scanner.lex[lex_en['type']] == 'IDENTIFIER':
 		lex_list.append(tuple(scanner.lex))
 		scanner.next()
-		lex_list.append(popt_ref())
+		if scanner.lex[lex_en['value']] == 'LB' or scanner.lex[lex_en['value']] == 'LB':
+			lex_list.append(popt_ref())
 	elif scanner.lex[lex_en['value']] == 'LP':
 		lex_list.append(tuple(scanner.lex))
 		scanner.next()
@@ -573,6 +577,9 @@ def element():
 		else:
 			lex_list.append(error('RP', 'element'))
 			return lex_list
+	else:
+		lex_list.append(error('IDENTIFIER or LP or TYPE or MTRUE or MFALSE', 'element'))
+
 	return lex_list
 
 def popt_ref():
@@ -635,13 +642,14 @@ def parameters():
 	scanner.next()
 	lex_list.append(param_def())
 	while scanner.lex[lex_en['value']] == 'COMMA':
-		lex_list.append(tuple(lex))
+		lex_list.append(tuple(scanner.lex))
 		scanner.next()
 		lex_list.append(param_def())
 	return lex_list
 
 def param_def():
 	lex_list = ['param_def']
+	print(scanner.lex)
 	lex_list.append(data_declaration())
 	return lex_list
 
@@ -695,10 +703,12 @@ def pother_oper():
 	lex_list = ['pother_oper']
 	if scanner.lex[lex_en['type']] == 'IDENTIFIER':
 		lex_list.append(tuple(scanner.lex))
+		scanner.next()
 	else:
 		lex_list.append(error('IDENTIFIER','pother_oper'))
 	if scanner.lex[lex_en['value']] == 'DESCRIPTION':
 		lex_list.append(tuple(scanner.lex))
+		scanner.next()
 	else:
 		lex_list.append(error('DESCRIPTION', 'pother_oper'))
 	if scanner.lex[lex_en['value']] == 'RETURN':
@@ -709,16 +719,11 @@ def pother_oper():
 
 def const_var_struct():
 	lex_list = ['const_var_struct']
-	if(scanner.lex[lex_en['value']] == 'DECLARATIONS'):
-		lex_list.append(tuple(scanner.lex))
-		scanner.next()
-	else:
-		lex_list.append(error('STRUCT', 'DECLARATIONS'))
 
 	if(scanner.lex[lex_en['value']] == 'CONSTANTS'):
 		lex_list.append(const_dec())
 	else:
-		lex_list.append(error('DECLARATIONS', 'const_var_struct'))
+		lex_list.append(error('CONSTANTS', 'const_var_struct'))
 		return lex_list
 
 	if(scanner.lex[lex_en['value']] == 'VARIABLES'):
@@ -785,6 +790,7 @@ def pcond2():
 		scanner.next()
 	elif scanner.lex[lex_en['value']] == 'NOT':
 		lex_list.append(opt_not())
+		lex_list.append(true_false())
 	else:
 		lex_list.append(eq_v())
 	lex_list.append(expr())
@@ -797,6 +803,15 @@ def opt_not():
 		scanner.next()
 	else:
 		lex_list.append(error('NOT', 'opt_not'))
+	return lex_list
+
+def true_false():
+	lex_list = ['true_false']
+	if(scanner.lex[lex_en['value']] == 'MTRUE' or scanner.lex[lex_en['value']] == 'MFALSE'):
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
+	else:
+		lex_list.append(error('MTrue or MFalse', 'true_false'))
 	return lex_list
 
 def eq_v():
@@ -829,8 +844,7 @@ def eq_v():
 
 def pactions():
     lex_list = ['pactions']
-    scanner.next()
-    valid_values = ['SET, READ', 'INPUT', 'DISPLAY', 'DISPLAYN', 'MCLOSE', MOPEN', 'MFILE', '
+    valid_values = ['SET', 'READ', 'INPUT', 'DISPLAY', 'DISPLAYN', 'MCLOSE', 'MOPEN', 'MFILE',
                     'INCREMENT', 'DECREMENT', 'RETURN', 'CALL', 'IF', 'FOR', 'REPEAT',
                     'WHILE', 'CASE', 'MBREAK', 'MEXIT', 'ENDFUN', 'POSCONDITION']
     while scanner.lex[lex_en['value']] in valid_values:
@@ -850,12 +864,14 @@ def action_def():
     lex_list.append(tuple(scanner.lex))
     # Determine path of execution for action_def group
     # Following 'SET' path
-    if scanner.lex == 'SET':
+    if scanner.lex[lex_en['value']] == 'SET':
         scanner.next()
-        if scanner.lex[lex_en['value']] == 'IDENTIFIER':
+        if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             lex_list.append(tuple(scanner.lex))
             scanner.next()
             lex_list.append(name_ref())
+            print('at name_rref')
+            print(scanner.lex)
         else:
             lex_list.append(error('IDENTIFIER', 'action_def'))
         if scanner.lex[lex_en['value']] == 'EQUOP':
@@ -868,16 +884,16 @@ def action_def():
         else:
             lex_list.append(error('expr keyword', 'action_def'))
     # Following 'READ' path
-    elif scanner.lex == 'READ':
+    elif scanner.lex[lex_en['value']] == 'READ':
         scanner.next()
         if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
             lex_list.append(pvar_value_list())
         else:
             lex_list.append(error('expr keyword', 'action_def'))
     # Following 'INPUT' path
-    elif scanner.lex == 'INPUT':
+    elif scanner.lex[lex_en['value']] == 'INPUT':
         scanner.next()
-        if scanner.lex[lex_en['value']] == 'IDENTIFIER':
+        if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             lex_list.append(tuple(scanner.lex))
             scanner.next()
             lex_list.append(name_ref())
@@ -894,8 +910,8 @@ def action_def():
     # Following 'MCLOSE' path
     elif scanner.lex[lex_en['value']] == 'MCLOSE':
         scanner.next()
-        if scanner.lex[lex_en['value']] == 'IDENTIFIER':
-            lex_list.append('IDENTIFIER')
+        if scanner.lex[lex_en['type']] == 'IDENTIFIER':
+            lex_list.append(tuple(scanner.lex))
         else:
             lex_list.append(error('IDENTIFIER','action_def'))
     # Following 'MOPEN' path
@@ -918,7 +934,7 @@ def action_def():
     elif (scanner.lex[lex_en['value']] == 'INCREMENT' or
             scanner.lex[lex_en['value']] == 'DECREMENT'):
         scanner.next()
-        if scanner.lex[lex_en['value']] == 'IDENTIFIER':
+        if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             lex_list.append(tuple(scanner.lex))
             scanner.next()
             lex_list.append(name_ref())
@@ -934,7 +950,7 @@ def action_def():
     # Following 'CALL' path
     elif scanner.lex[lex_en['value']] == 'CALL':
         scanner.next()
-        if scanner.lex[lex_en['value']] == 'IDENTIFIER':
+        if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             lex_list.append(tuple(scanner.lex))
             scanner.next()
             lex_list.append(name_ref())
@@ -976,7 +992,7 @@ def action_def():
     # Following 'FOR' path
     elif scanner.lex[lex_en['value']] == 'FOR':
         scanner.next()
-        if scanner.lex[lex_en['value']] == 'IDENTIFIER':
+        if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             lex_list.append(tuple(scanner.lex))
             scanner.next()
             lex_list.append(name_ref())
@@ -1052,7 +1068,7 @@ def action_def():
     # Following 'CASE' path
     elif scanner.lex[lex_en['value']] == 'CASE':
         scanner.next()
-        if scanner.lex[lex_en['value']] == 'IDENTIFIER':
+        if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             lex_list.append(tuple(scanner.lex))
             scanner.next()
             lex_list.append(name_ref())
@@ -1073,7 +1089,7 @@ def action_def():
     # Following 'ENDFUN' path
     elif scanner.lex[lex_en['value']] == 'ENDFUN':
         scanner.next()
-        if scanner.lex[lex_en['value']] == 'IDENTIFIER':
+        if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             lex_list.append(tuple(scanner.lex))
             scanner.next()
             lex_list.append(name_ref())
@@ -1096,17 +1112,14 @@ def name_ref():
     lex_list = ['name_ref']
     if (scanner.lex[lex_en['value']] == 'LB'):
         lex_list.append(opt_ref())
-        scanner.next()
     else:
         lex_list.append(error('LB', 'name_ref'))
     if scanner.lex[lex_en['value']] == 'OF':
         lex_list.append(pmember_opt())
-        scanner.next()
     else:
         lex_list.append(error('OF', 'name_ref'))
     if scanner.lex[lex_en['value']] == 'DOT':
         lex_list.append(popt_dot())
-        scanner.next()
     else:
         lex_list.append(error('DOT', 'name_ref'))
     return lex_list
@@ -1125,14 +1138,13 @@ def pmember_of():
     lex_list = ['pmember_of']
     lex_list.append(tuple(scanner.lex))
     scanner.next()
-    if scanner.lex[lex_en['value']] == 'IDENTIFIER':
+    if scanner.lex[lex_en['type']] == 'IDENTIFIER':
         lex_list.append(tuple(scanner.lex))
         scanner.next()
     else:
         lex_list.append(error('IDENTIFIER', 'pmember_of'))
     if scanner.lex[lex_en['value']] == 'LB':
         lex_list.append(opt_ref())
-        scanner.next()
     else:
         lex_list.append(error('LB', 'pmember_of'))
     while scanner.lex[lex_en['value']] == 'OF':
@@ -1145,7 +1157,6 @@ def pmember_of():
             lex_list.append(error('IDENTIFIER', 'pmember_of'))
         if scanner.lex[lex_en['value']] == 'LB':
             lex_list.append(opt_ref())
-            scanner.next()
         else:
             lex_list.append(error('LB', 'pmember_of'))
     else:
@@ -1160,14 +1171,13 @@ def proc_dot():
     lex_list = ['proc_dot']
     lex_list.append(tuple(scanner.lex))
     scanner.next()
-    if scanner.lex[lex_en['value']] == 'IDENTIFIER':
+    if scanner.lex[lex_en['type']] == 'IDENTIFIER':
         lex_list.append(tuple(scanner.lex))
         scanner.next()
     else:
         lex_list.append(error('IDENTIFIER', 'proc_dot'))
     if scanner.lex[lex_en['value']] == 'LB':
         lex_list.append((opt_ref()))
-        scanner.next()
     else:
         lex_list.append(error('LB', 'proc_dot'))
     while scanner.lex[lex_en['value']] == 'DOT':
@@ -1181,13 +1191,12 @@ def proc_dot():
             return lex_list
         if scanner.lex[lex_en['value']] == 'LB':
             lex_list.append((opt_ref()))
-            scanner.next()
         else:
             lex_list.append(error('LB', 'proc_dot'))
     else:
         return lex_list
 
-def pvar_value_list()
+def pvar_value_list():
     lex_list = ['pvar_value_list']
     # Valid types and values for following the expr() path
     valid_types = ['IDENTIFIER', 'STRING', 'LETTER', 'ICON', 'HCON', 'FCON']
@@ -1259,13 +1268,12 @@ def ptest_elsif():
 
 def proc_elseif():
     lex_list = ['proc_elseif']
-    while scanner.lex[lex_en['value']] == 'ELSEIF'
+    while scanner.lex[lex_en['value']] == 'ELSEIF':
         lex_list.append(tuple(scanner.lex))
         scanner.next()
         if (scanner.lex[lex_en['value']] == 'NOT' or
                 scanner.lex[lex_en['value']] == 'LP'):
-            lex_list.append(pcondition()):
-            scanner.next()
+            lex_list.append(pcondition())
         else:
             lex_list.append(error('NOT or LP', 'proc_elseif'))
         if scanner.lex[lex_en['value']] == 'THEN':
@@ -1289,7 +1297,7 @@ def downto():
     lex_list.append(tuple(scanner.lex))
     return lex_list
 
-def pcase_val()
+def pcase_val():
     lex_list = ['pcase_val']
     valid_types = ['IDENTIFIER', 'STRING', 'LETTER', 'ICON', 'HCON', 'FCON']
     valid_values = ['MINUS', 'NEGATE', 'MTRUE', 'MFALSE', 'LP']
