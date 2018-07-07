@@ -43,8 +43,12 @@ class Scanner:
         if (self.current_row >= len(self.symbol_table)):
             return (None, None, None, None)
         if self.current_attribute + 1 >= len(self.symbol_table[self.current_row]):
+            if (self.current_row + 1 >= len(self.symbol_table)):
+                return (None, None, None, None)
             return self.symbol_table[self.current_row + 1][0]
         else:
+            if (self.current_row >= len(self.symbol_table)):
+                return (None, None, None, None)
             return self.symbol_table[self.current_row][self.current_attribute + 1]
 
     # A recursive definition always has to peek one ahead to

@@ -47,7 +47,7 @@ c_lex = []
 def returnTabs(tabNum):
 	tabs = ''
 	for i in range(tabNum):
-		tabs = tabs + '\t'
+		tabs = tabs + '    '
 	return tabs
 
 #convenience function returning an error message
@@ -484,13 +484,7 @@ def simp_arr_val():
 		scanner.next()
 	else:
 		lex_list.append(error('LB', 'simp_arr_val'))
-	word = scanner.lex[lex_en['value']]
-	if(word == 'MINUS' or word == 'NEGATE' or word == 'STRING'
-	or word == 'CHAR' or word == 'MTRUE' or word == 'MFASLE' or
-	word == 'LP'):
-		lex_list.append(arg_list())
-	else:
-		lex_list.append('\tError Type or Identifier was expected')
+	lex_list.append(arg_list())
 	if(scanner.lex[lex_en['value']] == 'RB'):
 		lex_list.append(tuple(scanner.lex))
 		scanner.next()
@@ -516,7 +510,93 @@ def data_type():
 
 def expr():
 	lex_list = ['expr']
+	lex_list.append(term())
+	if (scanner.lex[lex_en['value']] == 'PLUS' or scanner.lex[lex_en['value']] == 'MINUS'
+			or scanner.lex[lex_en['value']] == 'BAND' or scanner.lex[lex_en['value']] == 'BOR'
+			or scanner.lex[lex_en['value']] == 'BXOR'):
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
+	lex_list.append(term())
 	return lex_list
+
+def term():
+	lex_list = ['term']
+	lex_list.append(punary())
+
+	if (scanner.lex[lex_en['value']] == 'STAR' or scanner.lex[lex_en['value']] == 'DIVOP'
+			or scanner.lex[lex_en['value']] == 'MOD' or scanner.lex[lex_en['value']] == 'LSHIFT'
+			or scanner.lex[lex_en['value']] == 'RSHIFT'):
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
+		lex_list.append(punary)
+	return lex_list
+
+def punary():
+	lex_list = ['punary']
+	if scanner.lex[lex_en['value']] == 'MINUS' or scanner.lex[lex_en['value']] == 'NEGATE':
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
+		lex_list.append(element())
+	else:
+		lex_list.append(element())
+	return lex_list
+
+def element():
+	lex_list = ['element']
+	valid_types = ['STRING', 'LETTER', 'ICON', 'HCON', 'FCON']
+	valid_values = ['MTRUE', 'MFALSE']
+
+	if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
+	elif scanner.lex[lex_en['type']] == 'IDENTIFIER':
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
+		lex_list.append(popt_ref())
+	elif scanner.lex[lex_en['value']] == 'LP':
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
+		lex_list.append(expr())
+		if scanner.lex[lex_en['value']] == 'RP':
+			lex_list.append(tuple(scanner.lex))
+			scanner.next()
+		else:
+			lex_list.append(error('RP', 'element'))
+			return lex_list
+	return lex_list
+
+def popt_ref():
+	lex_list = ['popt_ref']
+	if scanner.lex[lex_en['value']] == 'LB':
+		lex_list.append(array_val())
+	elif scanner.lex[lex_en['value']] == 'LP':
+		lex_list.append(parguments())
+	else:
+		lex_list.append(error('LP or LB', 'popt_ref'))
+		return lex_list
+	return lex_list
+
+def parguments():
+	lex_list = ['parguments']
+	if scanner.lex[lex_en['value']] == 'LP':
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
+	else:
+		lex_list.append(error('LP', 'parguments'))
+		return lex_list
+	lex_list.append(arg_list())
+	if scanner.lex[lex_en['value']] == 'RP':
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
+	else:
+		lex_list.append(error('RP', 'parguments'))
+		return lex_list
+	
+
+
+
+
+	
 
 def struct_enum():
 	lex_list = ['struct_enum']
