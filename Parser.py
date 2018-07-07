@@ -336,7 +336,6 @@ def data_declarations():
 	if scanner.lex[lex_en['value']] == 'DEFINE': #check validity before starting while loop
 		while(scanner.lex[lex_en['value']] == 'DEFINE'):
 			lex_list.append(comp_declare())
-			print ('end of while: ' + str(scanner.lex))
 
 	else:
 		lex_list.append('Error: keyword DEFINE expected in data_declarations')
@@ -399,6 +398,29 @@ def parray_dec():
 		scanner.next()
 	return lex_list
 
+#def plist_const():
+#	lex_list = ['plist_const']
+#	lex_list.append(tuple(scanner.lex))
+#	scanner.next()
+#	if(scanner.lex[lex_en['type']] == 'IDENTIFIER'):
+#		lex_list.append(iconst_ident())
+#		scanner.next()
+#	else:
+#		lex_list.append('\tError Identifier was expected')
+#	if(scanner.lex[lex_en['value']] == 'RB'):
+#		lex_list.append(tuple(scanner.lex))
+#		scanner.next()
+#	else:
+#		lex_list.append('\tError Keyword RB was expected')
+#	if(scanner.peek()[lex_en['value']] == 'LB'):
+#		scanner.next()
+#		n_lex = plist_const()
+#		x = recursiveAppend(n_lex, 'plist_const')
+#		x.insert(1,lex_list)
+#		lex_list = n_lex
+#		#lex_list.insert(1,plist_const())
+#	return lex_list
+
 def plist_const():
 	lex_list = ['plist_const']
 	lex_list.append(tuple(scanner.lex))
@@ -413,13 +435,19 @@ def plist_const():
 		scanner.next()
 	else:
 		lex_list.append('\tError Keyword RB was expected')
-	if(scanner.peek()[lex_en['value']] == 'LB'):
+	while(scanner.lex[lex_en['value']] == 'LB'):
+		lex_list.append(tuple(scanner.lex))
 		scanner.next()
-		n_lex = plist_const()
-		x = recursiveAppend(n_lex, 'plist_const')
-		x.insert(1,lex_list)
-		lex_list = n_lex
-		#lex_list.insert(1,plist_const())
+		if (scanner.lex[lex_en['type']] == 'IDENTIFIER'):
+			lex_list.append(iconst_ident())
+			scanner.next()
+		else:
+			lex_list.append('\tError Identifier was expected')
+		if (scanner.lex[lex_en['value']] == 'RB'):
+			lex_list.append(tuple(scanner.lex))
+			scanner.next()
+		else:
+			lex_list.append('\tError Keyword RB was expected')
 	return lex_list
 
 def iconst_ident():
