@@ -144,14 +144,14 @@ def processNumeric(line):
 			currentChar = line[charNumber]
 
 	#lex_type = types['INTEGER'] #set type to integer
-	lex_type = "TYPE"
+	lex_type = "ICON"
 	
 	if(charNumber < len(line)):
 		if(currentChar == 'h'): # Determine if a number is in hex; a hex number might not contain A,B,C,D,E or F
 			if(hexPossible):
 				closedBracketAllowed = False
 				#lex_type = types['HEX_INTEGER']
-				lex_type = "TYPE"
+				lex_type = "HCON"
 				token += currentChar
 				charNumber += 1
 				return [token, lex_type]
@@ -173,7 +173,7 @@ def processNumeric(line):
 				charNumber+= 1
 				closedBracketAllowed = False
 				#lex_type = types['HEX_INTEGER']
-				lex_type = "TYPES"
+				lex_type = "HCON"
 				return [token, lex_type]
 			else:
 				return [token, error]
@@ -192,10 +192,10 @@ def processNumeric(line):
 					if(charNumber < len(line)):
 						currentChar = line[charNumber]
 			#lex_type = types['REAL'] #mark the token as floating point
-			lex_type = "TYPE"
+			lex_type = "FCON"
 	
 	#if(currentChar == 'e' and lex_type == types['REAL']): #if the next character is the beginning of an exponent
-	if currentChar == 'e' and lex_type == "TYPE":
+	if currentChar == 'e' and lex_type == "FCON":
 		token += currentChar
 		charNumber+= 1
 
@@ -244,7 +244,7 @@ def processQuotes(line): #if first character is "
 			currentChar = line[charNumber] #move up
 
 	#lex_type = types['STRING'] #set type to string
-	lex_type = "TYPE"
+	lex_type = "STRING"
 	if(currentChar != '\"'): #if the last character isn't a quotation mark, switch type to error instead
 		lex_type = error	
 	charNumber += 1
@@ -280,7 +280,7 @@ def processSingleQuote(line): #if first character is '
 		if currentChar == '\'': #check whether there's an ending quote, return the char if so, otherwise error
 			token = token + currentChar
 			#lexType = types['CHAR']
-			lexType = "TYPE"
+			lexType = "LETTER"
 			charNumber += 1
 			return [token, lexType]
 		else:
