@@ -365,7 +365,6 @@ def data_declaration():
 	word = scanner.lex[lex_en['value']]
 	if(word == 'ARRAY' or word == 'LB' or word == 'VALUE' or word == 'EQUOP'):
 		lex_list.append(parray_dec())
-		scanner.next()
 	else:
 		lex_list.append(error('ARRAY or LB or VALYE or EQUOP', 'data_declaration'))
 	if(scanner.lex[lex_en['value']] == 'OF'):
@@ -388,7 +387,6 @@ def parray_dec():
 		scanner.next()
 		if(scanner.lex[lex_en['value']] == 'LB'):
 			lex_list.append(plist_const())
-			scanner.next()
 		else:
 			lex_list.append('\tError Keyword LB was expected')
 		if(scanner.lex[lex_en['value']] == 'VALUE'):
@@ -458,11 +456,10 @@ def iconst_ident():
 def popt_array_val():
 	lex_list = ['popt_array_val']
 	lex_list.append(value_eq())
-	scanner.next()
 	if(scanner.lex[lex_en['value']] == 'LB'):
 		lex_list.append(array_val())
 	else:
-		lex_list.append('\tError Keyword LB expected')
+		lex_list.append(error('LB', 'popt_array_val'))
 	return lex_list
 
 def value_eq():
@@ -476,11 +473,7 @@ def value_eq():
 
 def array_val():
 	lex_list = ['array_val']
-	if(scanner.lex[lex_en['value']] != 'LB'):
-		lex_list.append('\tError Keyword LB expected')
-		return lex_list
-	else:
-		lex_list.append(simp_arr_val())
+	lex_list.append(simp_arr_val())
 	return lex_list
 
 def simp_arr_val():
@@ -492,12 +485,10 @@ def simp_arr_val():
 	else:
 		lex_list.append(error('LB', 'simp_arr_val'))
 	word = scanner.lex[lex_en['value']]
-	type = scanner.lex[lex_en['type']]
 	if(word == 'MINUS' or word == 'NEGATE' or word == 'STRING'
 	or word == 'CHAR' or word == 'MTRUE' or word == 'MFASLE' or
 	word == 'LP'):
 		lex_list.append(arg_list())
-		scanner.next()
 	else:
 		lex_list.append('\tError Type or Identifier was expected')
 	if(scanner.lex[lex_en['value']] == 'RB'):
@@ -507,24 +498,15 @@ def simp_arr_val():
 		lex_list.append('\tError, RB was expected')
 	return lex_list
 
-def arg_list(): #correct recursion later
+def arg_list():
 	lex_list = ['arg_list']
-	lex_list.append(expr())
-	scanner.next()
-	if(scanner.lex[lex_en['value']] == 'COMMA'):
-		lex_list.append(scanner.lex)
-		scanner.next()
-		word = scanner.lex[lex_en['value']]
-		type = scanner.lex[lex_en['type']]
-		if(word == 'MINUS' or word == 'NEGATE' or word == 'STRING'
-		or word == 'CHAR' or word == 'MTRUE' or word == 'MFASLE' or
-		word == 'LP'):
-			n_lex = arg_list()
-			x = recursiveAppend(n_lex, 'arg_list')
-			x.insert(1,lex_list)
-			lex_list = n_lex
-	else:
-		scanner.last()
+	valid_types = ['IDENTIFIER', 'STRING', 'LETTER', 'ICON', 'HCON', 'FCON']
+	valid_values = ['MINUS', 'NEGATE', 'MTRUE', 'MFALSE', 'LP']
+	while (scanner.peek()[lex_en['type']] in valid_types or scanner.peek()[lex_en['value']] in valid_values):
+		lex_list.append(expr())
+		if(scanner.lex[lex_en['value']] == 'COMMA'):
+			lex_list.append(scanner.lex)
+			scanner.next()
 	return lex_list
 
 def data_type():
@@ -541,7 +523,7 @@ def struct_enum():
 	lex_list.append(tuple(scanner.lex))
 	scanner.next()
 	if scanner.lex[lex_en['value']] == 'STRUCT' or scanner.lex[lex_en['value']] == 'ENUM':
-		lex_list.append(tuple(lex))
+		lex_list.append(tuple(scanner.lex))
 	else:	
 		lex_list.append('Error: Keyword STRUCT or ENUM expected')
 	return lex_list 
