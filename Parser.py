@@ -506,7 +506,7 @@ def simp_arr_val():
 def arg_list():
 	lex_list = ['arg_list']
 	valid_types = ['IDENTIFIER', 'STRING', 'LETTER', 'ICON', 'HCON', 'FCON']
-	valid_values = ['MINUS', 'NEGATE', 'MTRUE', 'MFALSE', 'LP']
+	valid_values = ['PLUS', 'MINUS', 'NEGATE', 'MTRUE', 'MFALSE', 'LP']
 	while (scanner.peek()[lex_en['type']] in valid_types or scanner.peek()[lex_en['value']] in valid_values):
 		lex_list.append(expr())
 		if(scanner.lex[lex_en['value']] == 'COMMA'):
@@ -781,20 +781,26 @@ def pcond2():
 	valid_types = ['STRING', 'LETTER', 'ICON', 'HCON', 'FCON']
 	valid_values = ['MTRUE', 'MFALSE']
 	if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
-		lex_list.append(element())
-		return lex_list
+		word = scanner.peek()[lex_en['value']]
+		if(word == 'PLUS' or word == 'MINUS' or word == 'BAND' or word == 'BOR'
+		or word == 'BXOR' or word == 'STAR' or word == 'DIVOP' or
+		word == 'MOD' or word == 'LSHIFT' or word == 'RSHIFT'):
+			lex_list.append(expr())
+			if scanner.lex[lex_en['value']] == 'RELOP' or scanner.lex[lex_en['value']] == 'EQUOP':
+				lex_list.append(tuple(scanner.lex))
+				scanner.next()
+			elif scanner.lex[lex_en['value']] == 'NOT':
+				lex_list.append(opt_not())
+				lex_list.append(true_false())
+			else:
+				lex_list.append(eq_v())
+			lex_list.append(expr())
+			return lex_list
+		else:
+			lex_list.append(element())
+			return lex_list
 
-	lex_list.append(expr())
-	if scanner.lex[lex_en['value']] == 'RELOP' or scanner.lex[lex_en['value']] == 'EQUOP':
-		lex_list.append(tuple(scanner.lex))
-		scanner.next()
-	elif scanner.lex[lex_en['value']] == 'NOT':
-		lex_list.append(opt_not())
-		lex_list.append(true_false())
-	else:
-		lex_list.append(eq_v())
-	lex_list.append(expr())
-	return lex_list
+
 
 def opt_not():
 	lex_list = ['opt_not']
@@ -846,12 +852,12 @@ def pactions():
     lex_list = ['pactions']
     valid_values = ['SET', 'READ', 'INPUT', 'DISPLAY', 'DISPLAYN', 'MCLOSE', 'MOPEN', 'MFILE',
                     'INCREMENT', 'DECREMENT', 'RETURN', 'CALL', 'IF', 'FOR', 'REPEAT',
-                    'WHILE', 'CASE', 'MBREAK', 'MEXIT', 'ENDFUN', 'POSCONDITION']
+                    'WHILE', 'CASE', 'MBREAK', 'MEXIT', ''''ENDFUN,''' 'POSCONDITION']
+    times = 0
     while scanner.lex[lex_en['value']] in valid_values:
         lex_list.append(action_def())
-        scanner.next()
-        return lex_list
-    else:
+        times += 1
+    if times == 0:
         lex_list.append(error('action_def keyword', 'paction'))
     return lex_list
 
@@ -912,8 +918,9 @@ def action_def():
         scanner.next()
         if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             lex_list.append(tuple(scanner.lex))
+            scanner.next()
         else:
-            lex_list.append(error('IDENTIFIER','action_def'))
+            lex_list.append(error('IDENTIFIER', 'action_def'))
     # Following 'MOPEN' path
     elif scanner.lex[lex_en['value']] == 'MOPEN':
         scanner.next()
@@ -927,7 +934,7 @@ def action_def():
         scanner.next()
         if (scanner.lex[lex_en['value']] == 'READ' or
                 scanner.lex[lex_en['value']] == 'WRITE'):
-            lex_list.append(read_write())
+                lex_list.append(read_write())
         else:
             lex_list.append(error('READ or WRITE', 'action_def'))
     # Following 'INCREMENT' or 'DECREMENT' path
@@ -964,12 +971,11 @@ def action_def():
     # Following 'IF' path
     elif scanner.lex[lex_en['value']] == 'IF':
         scanner.next()
-        if (scanner.lex[lex_en['value']] == 'NOT' or
-                scanner.lex[lex_en['value']] == 'LP'):
-            lex_list.append(pcondition())
-            scanner.next()
-        else:
-            lex_list.append(error('NOT or LP', 'action_def'))
+#        if (scanner.lex[lex_en['value']] == 'NOT' or
+#                scanner.lex[lex_en['value']] == 'LP'):
+        lex_list.append(pcondition())
+#        else:
+#            lex_list.append(error('NOT or LP', 'action_def'))
         if scanner.lex[lex_en['value']] == 'THEN':
             lex_list.append(tuple(scanner.lex))
             scanner.next()
@@ -982,7 +988,6 @@ def action_def():
             lex_list.append(error('ELSEIF', 'action_def'))
         if scanner.lex[lex_en['value']] == 'ELSE':
             lex_list.append(opt_else())
-            scanner.next()
         else:
             lex_list.append(error('ELSE', 'action_def'))
         if scanner.lex[lex_en['value']] == 'ENDIF':
@@ -1087,14 +1092,14 @@ def action_def():
         else:
             lex_list.append(error('MENDCASE', 'action_def'))
     # Following 'ENDFUN' path
-    elif scanner.lex[lex_en['value']] == 'ENDFUN':
-        scanner.next()
-        if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-            lex_list.append(tuple(scanner.lex))
-            scanner.next()
-            lex_list.append(name_ref())
-        else:
-            lex_list.append(error('IDENTIFIER', 'action_def'))
+#    elif scanner.lex[lex_en['value']] == 'ENDFUN':
+#        scanner.next()
+#        if scanner.lex[lex_en['type']] == 'IDENTIFIER':
+#            lex_list.append(tuple(scanner.lex))
+#            scanner.next()
+#            lex_list.append(name_ref())
+#        else:
+#            lex_list.append(error('IDENTIFIER', 'action_def'))
     # Following 'POSTCONDITION' path
     elif scanner.lex[lex_en['value']] == 'POSTCONDITION':
         scanner.next()
@@ -1116,12 +1121,12 @@ def name_ref():
         lex_list.append(error('LB', 'name_ref'))
     if scanner.lex[lex_en['value']] == 'OF':
         lex_list.append(pmember_opt())
-    else:
-        lex_list.append(error('OF', 'name_ref'))
+#    else:
+#       lex_list.append(error('OF', 'name_ref'))
     if scanner.lex[lex_en['value']] == 'DOT':
         lex_list.append(popt_dot())
-    else:
-        lex_list.append(error('DOT', 'name_ref'))
+#    else:
+#       lex_list.append(error('DOT', 'name_ref'))
     return lex_list
 
 def opt_ref():
@@ -1183,7 +1188,7 @@ def proc_dot():
     while scanner.lex[lex_en['value']] == 'DOT':
         lex_list.append(tuple(scanner.lex))
         scanner.next()
-        if scanner.lex[lex_en['value']] == 'IDENTIFIER':
+        if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             lex_list.append(tuple(scanner.lex))
             scanner.next()
         else:
@@ -1201,7 +1206,7 @@ def pvar_value_list():
     # Valid types and values for following the expr() path
     valid_types = ['IDENTIFIER', 'STRING', 'LETTER', 'ICON', 'HCON', 'FCON']
     valid_values = ['MINUS', 'NEGATE', 'MTRUE', 'MFALSE', 'LP']
-    while (scanner.peek()[lex_en['type']] in valid_types or scanner.peek()[lex_en['value']] in valid_values):
+    while (scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values):
         lex_list.append(expr())
         if (scanner.lex[lex_en['value']] == 'COMMA'):
             lex_list.append(scanner.lex)
@@ -1217,7 +1222,7 @@ def in_out():
         scanner.next()
     else:
         lex_list.append(error('MFILE', 'in_out'))
-    if scanner.lex[lex_en['value']] == 'IDENTIFIER':
+    if scanner.lex[lex_en['type']] == 'IDENTIFIER':
         lex_list.append(tuple(scanner.lex))
         scanner.next()
     else:
@@ -1233,7 +1238,6 @@ def read_write():
     scanner.next()
     if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
         lex_list.append(pvar_value_list())
-        scanner.next()
     else:
         lex_list.append(error('pvar_value_list keyword', 'read_write'))
     if (scanner.lex[lex_en['value']] == 'FROM' or
@@ -1242,7 +1246,7 @@ def read_write():
         scanner.next()
     else:
         lex_list.append(error('FROM or TO', 'read_write'))
-    if scanner.lex[lex_en['value']] == 'IDENTIFIER':
+    if scanner.lex[lex_en['type']] == 'IDENTIFIER':
         lex_list.append(tuple(scanner.lex))
         scanner.next()
     else:
@@ -1271,18 +1275,17 @@ def proc_elseif():
     while scanner.lex[lex_en['value']] == 'ELSEIF':
         lex_list.append(tuple(scanner.lex))
         scanner.next()
-        if (scanner.lex[lex_en['value']] == 'NOT' or
-                scanner.lex[lex_en['value']] == 'LP'):
-            lex_list.append(pcondition())
-        else:
-            lex_list.append(error('NOT or LP', 'proc_elseif'))
+#        if (scanner.lex[lex_en['value']] == 'NOT' or
+#                scanner.lex[lex_en['value']] == 'LP'):
+        lex_list.append(pcondition())
+#        else:
+#            lex_list.append(error('NOT or LP', 'proc_elseif'))
         if scanner.lex[lex_en['value']] == 'THEN':
             lex_list.append(tuple(scanner.lex))
             scanner.next()
         else:
             lex_list.append(error('THEN', 'proc_elseif'))
         lex_list.append(pactions())
-        scanner.next()
     return lex_list
 
 def opt_else():
