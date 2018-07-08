@@ -852,7 +852,7 @@ def pactions():
     lex_list = ['pactions']
     valid_values = ['SET', 'READ', 'INPUT', 'DISPLAY', 'DISPLAYN', 'MCLOSE', 'MOPEN', 'MFILE',
                     'INCREMENT', 'DECREMENT', 'RETURN', 'CALL', 'IF', 'FOR', 'REPEAT',
-                    'WHILE', 'CASE', 'MBREAK', 'MEXIT', ''''ENDFUN,''' 'POSCONDITION']
+                    'WHILE', 'CASE', 'MBREAK', 'MEXIT','POSTCONDITION']
     times = 0
     while scanner.lex[lex_en['value']] in valid_values:
         lex_list.append(action_def())
@@ -1031,36 +1031,37 @@ def action_def():
         lex_list.append(pactions())
         if scanner.lex[lex_en['value']] == 'ENDFOR':
             lex_list.append(tuple(scanner.lex))
+            scanner.next()
         else:
             lex_list.append(error('ENDFOR', 'action_def'))
     # Following 'REPEAT' path
     elif scanner.lex[lex_en['value']] == 'REPEAT':
         scanner.next()
         lex_list.append(pactions())
-        if scanner.lex[lex_en] == 'UNTIL':
+        if scanner.lex[lex_en['value']] == 'UNTIL':
             lex_list.append(tuple(scanner.lex))
             scanner.next()
         else:
             lex_list.append(error('UNTIL', 'action_def'))
-        if (scanner.lex[lex_en['value']] == 'NOT' or
-                scanner.lex[lex_en['value']] == 'LP'):
-            lex_list.append(pcondition())
-            scanner.next()
-        else:
-            lex_list.append(error('NOT or LP', 'action_def'))
+#        if (scanner.lex[lex_en['value']] == 'NOT' or
+#                scanner.lex[lex_en['value']] == 'LP'):
+        lex_list.append(pcondition())
+#        else:
+#            lex_list.append(error('NOT or LP', 'action_def'))
         if scanner.lex[lex_en['value']] == 'ENDREPEAT':
             lex_list.append(tuple(scanner.lex))
+            scanner.next()
         else:
             lex_list.append(error('ENDREPEAT', 'action_def'))
     # Following 'WHILE' path
     elif scanner.lex[lex_en['value']] == 'WHILE':
         scanner.next()
-        if (scanner.lex[lex_en['value']] == 'NOT' or
-                scanner.lex[lex_en['value']] == 'LP'):
-            lex_list.append(pcondition())
-            scanner.next()
-        else:
-            lex_list.append(error('NOT or LP', 'action_def'))
+#        if (scanner.lex[lex_en['value']] == 'NOT' or
+#               scanner.lex[lex_en['value']] == 'LP'):
+        lex_list.append(pcondition())
+
+#      else:
+#            lex_list.append(error('NOT or LP', 'action_def'))
         if scanner.lex[lex_en['value']] == 'DO':
             lex_list.append(tuple(scanner.lex))
             scanner.next()
@@ -1069,6 +1070,7 @@ def action_def():
         lex_list.append(pactions())
         if scanner.lex[lex_en['value']] == 'ENDWHILE':
             lex_list.append(tuple(scanner.lex))
+            scanner.next()
         else:
             lex_list.append(error('ENDWHILE', 'action_def'))
     # Following 'CASE' path
@@ -1090,6 +1092,7 @@ def action_def():
             lex_list.append(error('DEFAULT', 'action_def'))
         if scanner.lex[lex_en['value']] == 'MENDCASE':
             lex_list.append(tuple(scanner.lex))
+            scanner.next()
         else:
             lex_list.append(error('MENDCASE', 'action_def'))
     # Following 'ENDFUN' path
@@ -1102,13 +1105,18 @@ def action_def():
 #        else:
 #            lex_list.append(error('IDENTIFIER', 'action_def'))
     # Following 'POSTCONDITION' path
+    elif scanner.lex[lex_en['value']] == 'MEXIT':
+        scanner.next()
+
+    elif scanner.lex[lex_en['value']] == 'MBREAK':
+        scanner.next()
     elif scanner.lex[lex_en['value']] == 'POSTCONDITION':
         scanner.next()
-        if (scanner.lex[lex_en['value']] == 'NOT' or
-                scanner.lex[lex_en['value']] == 'LP'):
-            lex_list.append(pcondition())
-        else:
-            lex_list.append(error('NOT or LP', 'action_def'))
+#        if (scanner.lex[lex_en['value']] == 'NOT' or
+#                scanner.lex[lex_en['value']] == 'LP'):
+        lex_list.append(pcondition())
+#        else:
+#            lex_list.append(error('NOT or LP', 'action_def'))
     # Default error
     else:
         lex_list.append(error('action_def keyword', 'action_def'))
@@ -1307,6 +1315,7 @@ def pcase_val():
     valid_values = ['MINUS', 'NEGATE', 'MTRUE', 'MFALSE', 'LP']
     while scanner.lex[lex_en['value']] == 'MWHEN':
         lex_list.append(tuple(scanner.lex))
+        scanner.next()
         if (scanner.lex[lex_en['type']] in valid_types or
                 scanner.lex[lex_en['value']] in valid_values):
             lex_list.append(expr())

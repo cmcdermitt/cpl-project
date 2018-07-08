@@ -616,5 +616,339 @@ Program
                                                                             ('0', 'ICON')
                                                         ('RB', 'KEYWORD')
                             ('ENDIF', 'KEYWORD')
+                        action_def
+                            ('FOR', 'KEYWORD')
+                            ('c', 'IDENTIFIER')
+                            name_ref
+                                opt_ref
+                                    array_val
+                                        simp_arr_val
+                                            ('LB', 'KEYWORD')
+                                            arg_list
+                                                expr
+                                                    term
+                                                        punary
+                                                            element
+                                                                ('0', 'ICON')
+                                                    ('PLUS', 'IDENTIFIER')
+                                                    term
+                                                        punary
+                                                            element
+                                                                ('0', 'ICON')
+                                            ('RB', 'KEYWORD')
+                            ('EQUOP', 'IDENTIFIER')
+                            expr
+                                term
+                                    punary
+                                        element
+                                            ('2', 'ICON')
+                                ('BAND', 'KEYWORD')
+                                term
+                                    punary
+                                        element
+                                            ('2', 'ICON')
+                            downto
+                                ('TO', 'KEYWORD')
+                            expr
+                                term
+                                    punary
+                                        element
+                                            ('2', 'ICON')
+                                ('BAND', 'KEYWORD')
+                                term
+                                    punary
+                                        element
+                                            ('3', 'ICON')
+                            ('DO', 'KEYWORD')
+                            pactions
+                                action_def
+                                    ('INPUT', 'KEYWORD')
+                                    ('f', 'IDENTIFIER')
+                                    name_ref
+                                        opt_ref
+                                            array_val
+                                                simp_arr_val
+                                                    ('LB', 'KEYWORD')
+                                                    arg_list
+                                                        expr
+                                                            term
+                                                                punary
+                                                                    element
+                                                                        ('0', 'ICON')
+                                                            ('BAND', 'KEYWORD')
+                                                            term
+                                                                punary
+                                                                    element
+                                                                        ('0', 'ICON')
+                                                    ('RB', 'KEYWORD')
+                            ('ENDFOR', 'KEYWORD')
+                        action_def
+                            ('REPEAT', 'KEYWORD')
+                            pactions
+                                action_def
+                                    ('INPUT', 'KEYWORD')
+                                    ('f', 'IDENTIFIER')
+                                    name_ref
+                                        opt_ref
+                                            array_val
+                                                simp_arr_val
+                                                    ('LB', 'KEYWORD')
+                                                    arg_list
+                                                        expr
+                                                            term
+                                                                punary
+                                                                    element
+                                                                        ('0', 'ICON')
+                                                            ('BAND', 'KEYWORD')
+                                                            term
+                                                                punary
+                                                                    element
+                                                                        ('0', 'ICON')
+                                                    ('RB', 'KEYWORD')
+                            ('UNTIL', 'KEYWORD')
+                            pcondition
+                                pcond1
+                                    pcond2
+                                        expr
+                                            term
+                                                punary
+                                                    element
+                                                        ('2', 'ICON')
+                                            ('PLUS', 'IDENTIFIER')
+                                            term
+                                                punary
+                                                    element
+                                                        ('2', 'ICON')
+                                        ('EQUOP', 'IDENTIFIER')
+                                        expr
+                                            term
+                                                punary
+                                                    element
+                                                        ('2', 'ICON')
+                                            ('PLUS', 'IDENTIFIER')
+                                            term
+                                                punary
+                                                    element
+                                                        ('2', 'ICON')
+                            ('ENDREPEAT', 'KEYWORD')
+                        action_def
+                            ('WHILE', 'KEYWORD')
+                            pcondition
+                                pcond1
+                                    pcond2
+                                        expr
+                                            term
+                                                punary
+                                                    element
+                                                        ('2', 'ICON')
+                                            ('PLUS', 'IDENTIFIER')
+                                            term
+                                                punary
+                                                    element
+                                                        ('2', 'ICON')
+                                        ('EQUOP', 'IDENTIFIER')
+                                        expr
+                                            term
+                                                punary
+                                                    element
+                                                        ('2', 'ICON')
+                                            ('PLUS', 'IDENTIFIER')
+                                            term
+                                                punary
+                                                    element
+                                                        ('2', 'ICON')
+                            ('DO', 'KEYWORD')
+                            pactions
+                                action_def
+                                    ('INPUT', 'KEYWORD')
+                                    ('f', 'IDENTIFIER')
+                                    name_ref
+                                        opt_ref
+                                            array_val
+                                                simp_arr_val
+                                                    ('LB', 'KEYWORD')
+                                                    arg_list
+                                                        expr
+                                                            term
+                                                                punary
+                                                                    element
+                                                                        ('0', 'ICON')
+                                                            ('BAND', 'KEYWORD')
+                                                            term
+                                                                punary
+                                                                    element
+                                                                        ('0', 'ICON')
+                                                    ('RB', 'KEYWORD')
+                            ('ENDWHILE', 'KEYWORD')
+                        action_def
+                            ('MEXIT', 'KEYWORD')
+                        action_def
+                            ('POSTCONDITION', 'IDENTIFIER')
+                            pcondition
+                                pcond1
+                                    pcond2
+                                        expr
+                                            term
+                                                punary
+                                                    element
+                                                        ('2', 'ICON')
+                                            ('PLUS', 'IDENTIFIER')
+                                            term
+                                                punary
+                                                    element
+                                                        ('2', 'ICON')
+                                        ('EQUOP', 'IDENTIFIER')
+                                        expr
+                                            term
+                                                punary
+                                                    element
+                                                        ('2', 'ICON')
+                                            ('PLUS', 'IDENTIFIER')
+                                            term
+                                                punary
+                                                    element
+                                                        ('2', 'ICON')
+                        action_def
+                            ('MBREAK', 'KEYWORD')
+                        action_def
+                            ('CASE', 'KEYWORD')
+                            ('c', 'IDENTIFIER')
+                            name_ref
+                                opt_ref
+                                    array_val
+                                        simp_arr_val
+                                            ('LB', 'KEYWORD')
+                                            arg_list
+                                                expr
+                                                    term
+                                                        punary
+                                                            element
+                                                                ('0', 'ICON')
+                                                    ('BAND', 'KEYWORD')
+                                                    term
+                                                        punary
+                                                            element
+                                                                ('0', 'ICON')
+                                            ('RB', 'KEYWORD')
+                            pcase_val
+                                ('MWHEN', 'IDENTIFIER')
+                                expr
+                                    term
+                                        punary
+                                            element
+                                                ('2', 'ICON')
+                                    ('BAND', 'KEYWORD')
+                                    term
+                                        punary
+                                            element
+                                                ('2', 'ICON')
+                                ('COLON', 'IDENTIFIER')
+                                pactions
+                                    action_def
+                                        ('INPUT', 'KEYWORD')
+                                        ('f', 'IDENTIFIER')
+                                        name_ref
+                                            opt_ref
+                                                array_val
+                                                    simp_arr_val
+                                                        ('LB', 'KEYWORD')
+                                                        arg_list
+                                                            expr
+                                                                term
+                                                                    punary
+                                                                        element
+                                                                            ('0', 'ICON')
+                                                                ('BAND', 'KEYWORD')
+                                                                term
+                                                                    punary
+                                                                        element
+                                                                            ('0', 'ICON')
+                                                        ('RB', 'KEYWORD')
+                                ('MWHEN', 'IDENTIFIER')
+                                expr
+                                    term
+                                        punary
+                                            element
+                                                ('2', 'ICON')
+                                    ('BAND', 'KEYWORD')
+                                    term
+                                        punary
+                                            element
+                                                ('2', 'ICON')
+                                ('COLON', 'IDENTIFIER')
+                                pactions
+                                    action_def
+                                        ('MEXIT', 'KEYWORD')
+                            pcase_def
+                                ('DEFAULT', 'KEYWORD')
+                                ('COLON', 'IDENTIFIER')
+                                pactions
+                                    action_def
+                                        ('FOR', 'KEYWORD')
+                                        ('c', 'IDENTIFIER')
+                                        name_ref
+                                            opt_ref
+                                                array_val
+                                                    simp_arr_val
+                                                        ('LB', 'KEYWORD')
+                                                        arg_list
+                                                            expr
+                                                                term
+                                                                    punary
+                                                                        element
+                                                                            ('0', 'ICON')
+                                                                ('PLUS', 'IDENTIFIER')
+                                                                term
+                                                                    punary
+                                                                        element
+                                                                            ('0', 'ICON')
+                                                        ('RB', 'KEYWORD')
+                                        ('EQUOP', 'IDENTIFIER')
+                                        expr
+                                            term
+                                                punary
+                                                    element
+                                                        ('2', 'ICON')
+                                            ('BAND', 'KEYWORD')
+                                            term
+                                                punary
+                                                    element
+                                                        ('2', 'ICON')
+                                        downto
+                                            ('TO', 'KEYWORD')
+                                        expr
+                                            term
+                                                punary
+                                                    element
+                                                        ('2', 'ICON')
+                                            ('BAND', 'KEYWORD')
+                                            term
+                                                punary
+                                                    element
+                                                        ('3', 'ICON')
+                                        ('DO', 'KEYWORD')
+                                        pactions
+                                            action_def
+                                                ('INPUT', 'KEYWORD')
+                                                ('f', 'IDENTIFIER')
+                                                name_ref
+                                                    opt_ref
+                                                        array_val
+                                                            simp_arr_val
+                                                                ('LB', 'KEYWORD')
+                                                                arg_list
+                                                                    expr
+                                                                        term
+                                                                            punary
+                                                                                element
+                                                                                    ('0', 'ICON')
+                                                                        ('BAND', 'KEYWORD')
+                                                                        term
+                                                                            punary
+                                                                                element
+                                                                                    ('0', 'ICON')
+                                                                ('RB', 'KEYWORD')
+                                        ('ENDFOR', 'KEYWORD')
+                            ('MENDCASE', 'KEYWORD')
                     ('ENDFUN', 'KEYWORD')
                     ('id', 'IDENTIFIER')
