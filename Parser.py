@@ -506,7 +506,7 @@ def simp_arr_val():
 def arg_list():
 	lex_list = ['arg_list']
 	valid_types = ['IDENTIFIER', 'STRING', 'LETTER', 'ICON', 'HCON', 'FCON']
-	valid_values = ['PLUS', 'MINUS', 'NEGATE', 'MTRUE', 'MFALSE', 'LP']
+	valid_values = ['BAND','BOR', 'BXOR', 'STAR', 'DIVOP', 'MOD', 'LSHIFT', 'RSHIFT' 'PLUS', 'MINUS', 'NEGATE', 'MTRUE', 'MFALSE', 'LP']
 	while (scanner.peek()[lex_en['type']] in valid_types or scanner.peek()[lex_en['value']] in valid_values):
 		lex_list.append(expr())
 		if(scanner.lex[lex_en['value']] == 'COMMA'):
@@ -992,6 +992,7 @@ def action_def():
             lex_list.append(error('ELSE', 'action_def'))
         if scanner.lex[lex_en['value']] == 'ENDIF':
             lex_list.append(tuple(scanner.lex))
+            scanner.next()
         else:
             lex_list.append(error('ENDIF', 'action_def'))
     # Following 'FOR' path
