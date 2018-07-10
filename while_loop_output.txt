@@ -1,0 +1,142 @@
+Program
+    func_main
+        ('MAIN', 'KEYWORD')
+    None
+    implement
+        ('IMPLEMENTATIONS', 'IDENTIFIER')
+        main_head
+            ('MAIN', 'KEYWORD')
+            ('DESCRIPTION', 'KEYWORD')
+        funct_list
+            funct_body
+                ('FUNCTION', 'KEYWORD')
+                pother_oper_def
+                    pother_oper
+                        ('m', 'IDENTIFIER')
+                        ('DESCRIPTION', 'KEYWORD')
+                        oper_type
+                            ('RETURN', 'KEYWORD')
+                            chk_ptr
+                                ('POINTER', 'KEYWORD')
+                                ('OF', 'KEYWORD')
+                            chk_array
+                                ('ARRAY', 'KEYWORD')
+                                array_dim_list
+                                    ('LB', 'KEYWORD')
+                                    array_index
+                                        ('ad', 'IDENTIFIER')
+                                    ('RB', 'KEYWORD')
+                            ret_type
+                                ('STRUCT', 'KEYWORD')
+                                ('a', 'IDENTIFIER')
+                    ('IS', 'KEYWORD')
+                    const_var_struct
+                        var_dec
+                            ('VARIABLES', 'KEYWORD')
+                            data_declarations
+                                comp_declare
+                                    ('DEFINE', 'KEYWORD')
+                                    data_declaration
+                                        ('a', 'IDENTIFIER')
+                                        parray_dec
+                                            ('VALUE', 'KEYWORD')
+                                        ('OF', 'KEYWORD')
+                                        data_type
+                                            ('INTEGER', 'KEYWORD')
+                    ('BEGIN', 'KEYWORD')
+                    pactions
+                        action_def
+                            ('SET', 'KEYWORD')
+                            ('max', 'IDENTIFIER')
+                            name_ref
+                                opt_ref
+                                    array_val
+                                        simp_arr_val
+                                            ('LB', 'KEYWORD')
+                                            arg_list
+                                                expr
+                                                    term
+                                                        punary
+                                                            element
+                                                                ('0', 'ICON')
+                                                    ('PLUS', 'IDENTIFIER')
+                                                    term
+                                                        punary
+                                                            element
+                                                                ('0', 'ICON')
+                                            ('RB', 'KEYWORD')
+                            ('EQUOP', 'IDENTIFIER')
+                            expr
+                                term
+                                    punary
+                                        element
+                                            ('0', 'ICON')
+                                ('PLUS', 'IDENTIFIER')
+                                term
+                                    punary
+                                        element
+                                            ('60', 'ICON')
+                        action_def
+                            ('WHILE', 'KEYWORD')
+                            pcondition
+                                pcond1
+                                    pcond2
+                                        expr
+                                            term
+                                                punary
+                                                    element
+                                                        ('a', 'IDENTIFIER')
+                                            ('PLUS', 'IDENTIFIER')
+                                            term
+                                                punary
+                                                    element
+                                                        ('0', 'ICON')
+                                        eq_v
+                                            ('LESS', 'IDENTIFIER')
+                                            ('THAN', 'IDENTIFIER')
+                                        expr
+                                            term
+                                                punary
+                                                    element
+                                                        ('max', 'IDENTIFIER')
+                                            ('PLUS', 'IDENTIFIER')
+                                            term
+                                                punary
+                                                    element
+                                                        ('0', 'ICON')
+                            ('DO', 'KEYWORD')
+                            pactions
+                                action_def
+                                    ('SET', 'KEYWORD')
+                                    ('a', 'IDENTIFIER')
+                                    name_ref
+                                        opt_ref
+                                            array_val
+                                                simp_arr_val
+                                                    ('LB', 'KEYWORD')
+                                                    arg_list
+                                                        expr
+                                                            term
+                                                                punary
+                                                                    element
+                                                                        ('0', 'ICON')
+                                                            ('PLUS', 'IDENTIFIER')
+                                                            term
+                                                                punary
+                                                                    element
+                                                                        ('0', 'ICON')
+                                                    ('RB', 'KEYWORD')
+                                    ('EQUOP', 'IDENTIFIER')
+                                    expr
+                                        term
+                                            punary
+                                                element
+                                                    ('a', 'IDENTIFIER')
+                                        ('PLUS', 'IDENTIFIER')
+                                        term
+                                            punary
+                                                element
+                                                    ('2', 'ICON')
+                            ('ENDWHILE', 'KEYWORD')
+                    ('ENDFUN', 'KEYWORD')
+                    ('m', 'IDENTIFIER')

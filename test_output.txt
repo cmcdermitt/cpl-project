@@ -1,4 +1,3 @@
-test.txt
 Program
     func_main
         ('FUNCTION', 'KEYWORD')

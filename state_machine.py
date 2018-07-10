@@ -262,12 +262,6 @@ def processSingleQuote(line): #if first character is '
 
 def processOperator(line):
 	global charNumber
-	global anyAllowedAfter
-	global openParenthAllowed
-	global closedBracketAllowed
-	anyAllowedAfter = False
-	openParenthAllowed = False
-	closedBracketAllowed = False
 	currentChar = line[charNumber]
 	token = currentChar
 	charNumber += 1
@@ -278,7 +272,6 @@ def processOperator(line):
 		if(currentChar.isdigit()): #if the next character's a digit, it's a signed number
 			val = processNumeric(line) #process the number
 			val[0] = token + val[0] #add the sign to the processed number
-			val[1] = val[1] + 1 #since the ID of signed numbers (both ints and floats) is 1 more than the id of unsigned numbers, we can just add 1
 			return val
 		elif currentChar != ' ':
 			openParenthAllowed = True
