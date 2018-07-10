@@ -54,6 +54,10 @@ class Scanner:
         self.input_file = infile
         self.output_file = outfile
 
+
+    def start(self):
+        self.fillSymbolTable()
+        self.lex = self.symbol_table[0][0]
     # Name: next
     # Summary: Advance lex by one position in the row and save the new attribute list to self.lex
     #          If the current_attribute is greater than or equal to the length of the current row,
@@ -80,7 +84,7 @@ class Scanner:
     # Summary: Returns the lexeme at position symbol_table[current_row][current_attribute + 1] if there is room in row
     #          Otherwise, it increments the row and returns the first index.
     # Returns: Next lexeme in table without setting lex
-    def peek(self)
+    def peek(self):
         if (len(self.symbol_table) == 0):
             self.fillSymbolTable()
         if (self.current_row >= len(self.symbol_table)):

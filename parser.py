@@ -6,24 +6,24 @@ import sys
 Parser.py
 The parser uses the recursive-descent method of parsing, where each left hand definition is represented as a function.
 The root of the parse tree is the function program.
-Each function calls the functions of the right hand components after checking if it is 
+Each function calls the functions of the right hand components after checking if it is
 possible to use those components by looking ahead.
-The original caller has a list called lexeme_list. lexeme_list is appended 
+The original caller has a list called lexeme_list. lexeme_list is appended
 the return value of each function called. Each return value is a list.
-Each of those functions in turn calls other subfunctions that will append 
+Each of those functions in turn calls other subfunctions that will append
 the return value of the called function to their own lexeme_list.
 However, there are two cases to consider.
-If there are multiple right hand definitions, only one will be correct. 
+If there are multiple right hand definitions, only one will be correct.
 Sometimes, the wrong function will be chosen first and as a result nothing will be returned.
 If this is the case, then the integer current_lex needs to be reverted to its value before calling the function.
-The document has errors in it. If all right hand definitions are exhausted and none of them work (at a certain level), 
+The document has errors in it. If all right hand definitions are exhausted and none of them work (at a certain level),
 then an error message is created at some level.
 ISSUE: Where do we decide to put the error. Theoretically, it could be at the root of the tree.
 POSSIBLE SOLUTION: Certain definitions are considered "choke points for errors" like action_def. RESOLVED
 If one action_def in a pactions is malformed, the pactions should continue to process more action_defs.
 lexeme_list = a recursive list lexemes [lexeme[[sublexeme1[sub sub lexeme]] ... [sublexeme[sublexeme]]]]
 ISSUE: When do we decide to add more lexemes to the initial pool of lexemes.
-POSSIBLE SOLUTION: We call the scanner and get all of the lexemes at once. We then append Nothing to the end to signify 
+POSSIBLE SOLUTION: We call the scanner and get all of the lexemes at once. We then append Nothing to the end to signify
 the last lexeme has been read. RESOLVED: Addded as needed with look back functions
 '''
 
@@ -79,8 +79,7 @@ def printTree(tree_list, tab):
 # The third pair in this case, represents the individual lexeme (there could be more in this list)
 def program_start():
 	lex_list = ['Program']
-
-	scanner.start() #fills symbol table and sets scanner.lex
+	scanner.start()
 	lex_list.append(func_main())
 
 	if(scanner.lex[lex_en['value']] == 'GLOBAL'):
