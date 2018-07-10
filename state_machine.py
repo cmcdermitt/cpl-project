@@ -1,12 +1,10 @@
-'''
-Authors: Charlie McDermitt
-         Eric Schneider
-         Corey Harris
-Class:   CS4308 - W01
-         Concepts of Programming Languages
-Title:   Final Project - Second Deliverable
-Date:    09 July 2018
-'''
+# Authors: Charlie McDermitt
+#          Eric Schneider
+#          Corey Harris
+# Class:   CS4308 - W01
+#          Concepts of Programming Languages
+# Title:   Final Project - Second Deliverable
+# Date:    09 July 2018
 
 import string
 from enum import Enum

@@ -1,43 +1,28 @@
+# Authors: Charlie McDermitt
+#          Eric Schneider
+#          Corey Harris
+# Class:   CS4308 - W01
+#          Concepts of Programming Languages
+# Title:   Final Project - Second Deliverable
+# Date:    09 July 2018
+
 from enum import Enum
 from scanner import Scanner
 import sys
 
-'''
-Parser.py
-The parser uses the recursive-descent method of parsing, where each left hand definition is represented as a function.
-The root of the parse tree is the function program.
-Each function calls the functions of the right hand components after checking if it is
-possible to use those components by looking ahead.
-The original caller has a list called lexeme_list. lexeme_list is appended
-the return value of each function called. Each return value is a list.
-Each of those functions in turn calls other subfunctions that will append
-the return value of the called function to their own lexeme_list.
-However, there are two cases to consider.
-If there are multiple right hand definitions, only one will be correct.
-Sometimes, the wrong function will be chosen first and as a result nothing will be returned.
-If this is the case, then the integer current_lex needs to be reverted to its value before calling the function.
-The document has errors in it. If all right hand definitions are exhausted and none of them work (at a certain level),
-then an error message is created at some level.
-ISSUE: Where do we decide to put the error. Theoretically, it could be at the root of the tree.
-POSSIBLE SOLUTION: Certain definitions are considered "choke points for errors" like action_def. RESOLVED
-If one action_def in a pactions is malformed, the pactions should continue to process more action_defs.
-lexeme_list = a recursive list lexemes [lexeme[[sublexeme1[sub sub lexeme]] ... [sublexeme[sublexeme]]]]
-ISSUE: When do we decide to add more lexemes to the initial pool of lexemes.
-POSSIBLE SOLUTION: We call the scanner and get all of the lexemes at once. We then append Nothing to the end to signify
-the last lexeme has been read. RESOLVED: Addded as needed with look back functions
-'''
-
-#Now each function is expected to start on the first token in it, but we don't assume that it's already checked.
-
-'''
-NOTES:
-Every time you go into a function, the first lexeme
-Every time you add a lexeme, put it in a tuple.
-'''
+# The parser uses the recursive-descent method of parsing, where each left hand definition is represented as a function.
+# The root of the parse tree is the function program.
+# Each function calls the functions of the right hand components after checking if it is 
+# possible to use those components by looking ahead.
+# The original caller has a list called lex_list. lex_list is appended 
+# the return value of each function called. Each return value is a list.
+# Each of those functions in turn calls other subfunctions that will append 
+# the return value of the called function to their own lex_list.
+# However, if there are multiple right hand definitions, only one will be correct, so the correct function must be chosen before we enter it.
+# If the parser encounters an error, it appends an error message instead of a list.
 
 lex_en = {'value' : 0, 'type' : 1}
 scanner = Scanner(sys.argv[1])
-c_lex = []
 
 # Returns number of tabs
 def returnTabs(tabNum):
@@ -55,28 +40,43 @@ def error(expected, location = ''):
 		return '\tError: {} expected in {}'.format(expected, location)
 
 # Prints out the tree using tabs to represent children
-def printTree(tree_list, tab):
+def printTree(tree_list, tab, out_string = ''):
 	if(len(tree_list) == 0):
 		return
-	print(returnTabs(tab) + tree_list[0]) # Print out the first item in the list; this is the parent node
-	if(len(tree_list) == 1):
-		return
-	for x in range(1, len(tree_list)): # Print out all of its children
-		if(isinstance(tree_list[x], str)): # If the child is a string, print it out
-			print(returnTabs(tab) + tree_list[x])
-		elif(isinstance(tree_list[x], list)): #If the child is a list, indent by 1 and print out that list
-			printTree(tree_list[x],tab + 1)
-		else:
-			print(returnTabs(tab + 1) + str(tree_list[x]))
+	if len(sys.argv) > 2: #if there's an output file name
+		out_string = out_string + returnTabs(tab) + tree_list[0] + '\n' # Print out the first item in the list; this is the parent node
+		if(len(tree_list) == 1):
+			return
+		for x in range(1, len(tree_list)): # Print out all of its children
+			if(isinstance(tree_list[x], str)): # If the child is a string, print it out
+				out_string = out_string + returnTabs(tab) + tree_list[x] + '\n'
+			elif(isinstance(tree_list[x], list)): #If the child is a list, indent by 1 and print out that list
+				out_string = printTree(tree_list[x], tab + 1, out_string)
+			else:
+				out_string = out_string + returnTabs(tab + 1) + str(tree_list[x]) + '\n'
+		with open(sys.argv[2], 'w') as outfile:
+			outfile.write(out_string)
+	else: #if no output file name is provided, print the output
+		print(returnTabs(tab) + tree_list[0]) # Print out the first item in the list; this is the parent node
+		if(len(tree_list) == 1):
+			return
+		for x in range(1, len(tree_list)): # Print out all of its children
+			if(isinstance(tree_list[x], str)): # If the child is a string, print it out
+				print(returnTabs(tab) + tree_list[x])
+			elif(isinstance(tree_list[x], list)): #If the child is a list, indent by 1 and print out that list
+				printTree(tree_list[x], tab + 1)
+			else:
+				print(returnTabs(tab + 1) + str(tree_list[x]))
+	return out_string
 
 # Starting point for parse tree
-# Initially, lex_list is ['Program']
-# After appending func_main(),
-# lex_list might be ['Program',[func_main, ['0','0','KEYWORD','FUNCTION'],
-# 							   ['1','1',IDENTIFER, 'MAIN'],
-# 							   [oper_type,['2','2','KEYWORD','RETURN']]]]
-# The second pair of braces represents the entirety of func_main
-# The third pair in this case, represents the individual lexeme (there could be more in this list)
+# Each function following this checks the unique case that defines its particular grammar as defined by the document
+# The general structure instantiates a new instance of lex_list, and sets its initial value to the name of the function
+# This creates an easy to follow hierarchy and flow of function calls that can be read and debugged via the output
+# The function then retrieves each subsequent lexeme from the symbol table, checks its validity, and adds it to lex_list
+# Once the last lexeme has been appended the lex_list, it is returned and appended to the instance of the calling method
+# If the function encounters an error, it appends an error message and skips over that lexeme.
+# This method of error checking allows to catch each individual error without it crashing the entire system.
 def program_start():
 	lex_list = ['Program']
 	scanner.start()
@@ -90,15 +90,6 @@ def program_start():
 	lex_list.append(implement())
 	printTree(lex_list, 0)
 
-
-# Functions for func_main
-# Each function following this checks the unique case that defines its particular grammar as defined by the document
-# The general structure instantiates a new instance of lex_list, and sets its initial value to the name of the function
-# This creates an easy to following heirarchy and flow of function calls that can be read and debugged via the output
-# The function then retrieves each subsequent lexeme from the symbol table, checks its validity, and adds it to lex_list
-# Once the last lexeme has been appended the lex_list, it is returned and appended to the instance of the calling method
-# If the function encounters an error, it appends an error message and skips over that lexeme.
-# This method of error checking allows to catch each individual error without it crashing the entire system.
 def func_main():
 	lex_list = ['func_main']
 	if(scanner.lex[lex_en['value']] == 'MAIN'):
@@ -133,7 +124,6 @@ def oper_type():
 	word = scanner.lex[lex_en['value']]
 	if(word == 'TYPE' or word == 'STRUCT' or word == 'IDENTIFIER'):
 		lex_list.append(ret_type())
-		print (scanner.lex)
 	else:
 		lex_list.append('\tError: The keywords STRUCT or TYPE or an IDENTIFIER was expected')
 	# Not done yet
@@ -574,7 +564,6 @@ def parameters():
 
 def param_def():
 	lex_list = ['param_def']
-	print(scanner.lex)
 	lex_list.append(data_declaration())
 	return lex_list
 

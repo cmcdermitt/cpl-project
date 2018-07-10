@@ -1,34 +1,34 @@
-'''
-Authors: Charlie McDermitt
-         Eric Schneider
-         Corey Harris
-Class:   CS4308 - W01
-         Concepts of Programming Languages
-Title:   Final Project - Second Deliverable
-Date:    09 July 2018
 
-Scanner.py
-The Scanner class contains member variables and functions invoked by the Parser in order to connect with and interpret
-input file data and state machine logic. The overall functionality of the Scanner is made up of two primary operations,
-which are the initial parsing of the input file and filling of the scanner object's symbol table, and returning the most
-current lexeme and attributes to the Parser when called upon. The primary variables and functions are defined below:
+# Authors: Charlie McDermitt
+#          Eric Schneider
+#          Corey Harris
+# Class:   CS4308 - W01
+#          Concepts of Programming Languages
+# Title:   Final Project - Second Deliverable
+# Date:    09 July 2018
 
-Member Variables:
-- tokens -> output array for tokens and data
-- symbol_table -> 2D array for lexeme attribute data. Position corresponds to line number and position
-- attributes -> list of lexeme attributes retrieved from state_machine logic, which make up symbol_table indexes
-- current_row/current_attribute -> incrementing symbol_table index for next lexeme to be passed to Parser
-- last_token -> most previously referenced token, saved for error checking
-- lex -> currently held lexeme of scanner to be passed to Parser
-- input_file/output_file -> variables for storing file paths
+# Scanner.py
+# The Scanner class contains member variables and functions invoked by the Parser in order to connect with and interpret
+# input file data and state machine logic. The overall functionality of the Scanner is made up of two primary operations,
+# which are the initial parsing of the input file and filling of the scanner object's symbol table, and returning the most
+# current lexeme and attributes to the Parser when called upon. The primary variables and functions are defined below:
 
-Member Functions:
-- next(self): Set lex to next lexeme in symbol_table
-- peek(self): Return next lexeme to symbol_table, without setting lex. Used to conditional statement checking
-- last(self): Set last_token to position (current_attribute - 1)
-- fillSymbolTable(self): Perform initial parse of input file and fill symbol table. Called once if table is empty.
-- writeChangeLog(self): Create the output file of parsed data.
-'''
+# Member Variables:
+#   tokens -> output array for tokens and data
+#   symbol_table -> 2D array for lexeme attribute data. Position corresponds to line number and position
+#   attributes -> list of lexeme attributes retrieved from state_machine logic, which make up symbol_table indexes
+#   current_row/current_attribute -> incrementing symbol_table index for next lexeme to be passed to Parser
+#   last_token -> most previously referenced token, saved for error checking
+#   lex -> currently held lexeme of scanner to be passed to Parser
+#   input_file/output_file -> variables for storing file paths
+
+# Member Functions:
+#   next(self): Set lex to next lexeme in symbol_table
+#   peek(self): Return next lexeme to symbol_table, without setting lex. Used to conditional statement checking
+#   last(self): Set last_token to position (current_attribute - 1)
+#   fillSymbolTable(self): Perform initial parse of input file and fill symbol table. Called once if table is empty.
+#   writeChangeLog(self): Create the output file of parsed data.
+
 
 # imports
 import sys
@@ -37,7 +37,7 @@ import csv
 
 class Scanner:
 
-    def __init__(self, infile, outfile='output_scanned.csv'):
+    def __init__(self, infile):
         # List of output tokens and line numbers
         self.tokens = []
         # 2D symbol table array to hold attribute data
@@ -52,7 +52,6 @@ class Scanner:
         self.last_token = ()
         self.lex = ()
         self.input_file = infile
-        self.output_file = outfile
 
 
     def start(self):
