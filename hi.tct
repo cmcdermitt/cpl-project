@@ -32,7 +32,7 @@ Program
                     ('INTEGER', 'KEYWORD')
     None
     implement
-        ('IMPLEMENTATIONS', 'IDENTIFIER')
+    	Error: IMPLEMENTATIONS expected in implement
         main_head
             ('MAIN', 'KEYWORD')
             ('DESCRIPTION', 'KEYWORD')

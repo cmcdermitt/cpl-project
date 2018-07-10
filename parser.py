@@ -12,11 +12,11 @@ import sys
 
 # The parser uses the recursive-descent method of parsing, where each left hand definition is represented as a function.
 # The root of the parse tree is the function program.
-# Each function calls the functions of the right hand components after checking if it is 
+# Each function calls the functions of the right hand components after checking if it is
 # possible to use those components by looking ahead.
-# The original caller has a list called lex_list. lex_list is appended 
+# The original caller has a list called lex_list. lex_list is appended
 # the return value of each function called. Each return value is a list.
-# Each of those functions in turn calls other subfunctions that will append 
+# Each of those functions in turn calls other subfunctions that will append
 # the return value of the called function to their own lex_list.
 # However, if there are multiple right hand definitions, only one will be correct, so the correct function must be chosen before we enter it.
 # If the parser encounters an error, it appends an error message instead of a list.
@@ -84,9 +84,7 @@ def program_start():
 
 	if(scanner.lex[lex_en['value']] == 'GLOBAL'):
 		lex_list.append(f_globals()) #called f_globals becasue globals is a function
-	else:
-		lex_list.append('\tError: Keyword IMPLEMENTATIONS expected')
-		scanner.next()
+
 	lex_list.append(implement())
 	printTree(lex_list, 0)
 
@@ -223,9 +221,6 @@ def f_globals():
 
 	if(scanner.lex[lex_en['value']] == 'CONSTANTS'):
 		lex_list.append(const_dec())
-	else:
-		lex_list.append(error('DECLARATIONS', 'f_globals'))
-		return lex_list
 
 	if(scanner.lex[lex_en['value']] == 'VARIABLES'):
 	 	lex_list.append(var_dec())
@@ -235,9 +230,7 @@ def f_globals():
 
 	if(scanner.lex[lex_en['value']] == 'STRUCT'):
 	 	lex_list.append(struct_dec())
-	else:
-		lex_list.append(error('STRUCT', 'f_globals'))
-	return lex_list
+
 
 def const_dec():
 	lex_list = ['const_dec']
@@ -315,8 +308,7 @@ def data_declaration():
 	word = scanner.lex[lex_en['value']]
 	if(word == 'ARRAY' or word == 'LB' or word == 'VALUE' or word == 'EQUOP'):
 		lex_list.append(parray_dec())
-	else:
-		lex_list.append(error('ARRAY or LB or VALYE or EQUOP', 'data_declaration'))
+
 	if(scanner.lex[lex_en['value']] == 'OF'):
 		lex_list.append(tuple(scanner.lex))
 		scanner.next()
@@ -529,7 +521,8 @@ def implement():
 		scanner.next()
 	else:
 		lex_list.append(error('IMPLEMENTATIONS', 'implement'))
-	lex_list.append(main_head())
+	if scanner.lex[lex_en['value']] == 'MAIN':
+		lex_list.append(main_head())
 	lex_list.append(funct_list())
 	return lex_list
 
@@ -547,8 +540,6 @@ def main_head():
 		lex_list.append(error('DESCRIPTION','main_head'))
 	if scanner.lex[lex_en['value']] == 'PARAMETERS':
 		lex_list.append(parameters())
-	else:
-		lex_list.append(error('PARAMETERS','main_head'))
 	return lex_list
 
 def parameters():
@@ -594,7 +585,8 @@ def pother_oper_def():
 	else:
 		lex_list.append(error('IS', 'pother_oper_def'))
 	lex_list.append(const_var_struct())
-	lex_list.append(precond())
+	if(scanner.lex[lex_en['value']] == 'PRECONDITION'):
+		lex_list.append(precond())
 	if scanner.lex[lex_en['value']] == 'BEGIN':
 		lex_list.append(tuple(scanner.lex))
 		scanner.next()
@@ -636,9 +628,6 @@ def const_var_struct():
 
 	if(scanner.lex[lex_en['value']] == 'CONSTANTS'):
 		lex_list.append(const_dec())
-	else:
-		lex_list.append(error('CONSTANTS', 'const_var_struct'))
-		return lex_list
 
 	if(scanner.lex[lex_en['value']] == 'VARIABLES'):
 	 	lex_list.append(var_dec())
@@ -648,8 +637,7 @@ def const_var_struct():
 
 	if(scanner.lex[lex_en['value']] == 'STRUCT'):
 	 	lex_list.append(struct_dec())
-	else:
-		lex_list.append(error('STRUCT', 'const_var_struct'))
+
 	return lex_list
 
 def precond():
@@ -705,6 +693,8 @@ def pcond2():
 				scanner.next()
 			elif scanner.lex[lex_en['value']] == 'NOT':
 				lex_list.append(opt_not())
+				lex_list.append(true_false())
+			elif scanner.lex[lex_en['value']] == 'MTRUE' or scanner.lex[lex_en['type']] == 'MFALSE':
 				lex_list.append(true_false())
 			else:
 				lex_list.append(eq_v())
@@ -878,8 +868,6 @@ def action_def():
         if (scanner.lex[lex_en['value']] == 'USING' or
                 scanner.lex[lex_en['value']] == 'LP'):
             lex_list.append(pusing_ref())
-        else:
-            lex_list.append(error('USING or LP', 'action_def'))
     # Following 'IF' path
     elif scanner.lex[lex_en['value']] == 'IF':
         scanner.next()
@@ -892,12 +880,8 @@ def action_def():
         lex_list.append(pactions())
         if scanner.lex[lex_en['value']] == 'ELSEIF':
             lex_list.append(ptest_elsif())
-        else:
-            lex_list.append(error('ELSEIF', 'action_def'))
         if scanner.lex[lex_en['value']] == 'ELSE':
             lex_list.append(opt_else())
-        else:
-            lex_list.append(error('ELSE', 'action_def'))
         if scanner.lex[lex_en['value']] == 'ENDIF':
             lex_list.append(tuple(scanner.lex))
             scanner.next()
@@ -987,8 +971,6 @@ def action_def():
             lex_list.append(error('MWHEN', 'action_def'))
         if scanner.lex[lex_en['value']] == 'DEFAULT':
             lex_list.append(pcase_def())
-        else:
-            lex_list.append(error('DEFAULT', 'action_def'))
         if scanner.lex[lex_en['value']] == 'MENDCASE':
             lex_list.append(tuple(scanner.lex))
             scanner.next()
