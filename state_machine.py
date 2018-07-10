@@ -12,12 +12,12 @@ import string
 from enum import Enum
 
 #list possible keywords and their ids
-keywords = dict(zip(['(', ')', '[', ']', 'IMPLEMENTATION',
+keywords = dict(zip([ 'IMPLEMENTATION',
 	'MAIN', 'DESCRIPTION', 'PARAMETERS', 'OF', 'IDENTIFIER',
-  	'VALUE', 'ARRAY', 'ICON', '+', '-',
-   	'BAND', 'BOR', 'BXOR', '*', '/',
-    'MOD', 'LSHIFT', 'RSHIFT', 'NEGATE', ',',
-	':=', 'POINTER', 'STRUCT', 'STRUCTYPE', 'ARRAY',
+  	'VALUE', 'ARRAY', 'ICON',
+   	'BAND', 'BOR', 'BXOR',
+    'MOD', 'LSHIFT', 'RSHIFT', 'NEGATE', 'POINTER', 'STRUCT',
+	'STRUCTYPE', 'ARRAY',
 	'RETURN', '[empty]', 'FUNCTION', 'IS', 'BEGIN',
 	'ENDFUN', 'PRECONDITION', 'MTRUE', 'MFALSE', 'CONSTANTS',
 	'VARIABLES', 'DEFINE', 'NOT', 'AND', 'OR',
@@ -27,12 +27,11 @@ keywords = dict(zip(['(', ')', '[', ']', 'IMPLEMENTATION',
 	'DO', 'ENDFOR', 'REPEAT', 'UNTIL', 'ENDREPEAT',
 	'WHILE', 'ENDWHILE', 'CASE', 'MENDCASE', 'MBREAK',
 	'MEXIT', 'POTCONDITION', 'ELSEIF', 'WRITE', 'TO',
-	'FROM', ':', '.', 'DOWNTO', 'DEFAULT',
+	'FROM', 'DOWNTO', 'DEFAULT',
 	'USING', 'MVOID', 'INTEGER', 'SHORT', 'REAL',
 	'FLOAT', 'DOUBLE', 'TBOOL', 'CHAR', 'TSTRING',
 	'LENGTH', 'TBYTE', 'TUNSIGNED', 'MTRUE', 'LETTER',
-	'HCON', 'FCON', 'RELOP', '==', '>',
-	'<', '>=', '<=', 'OUTPUT', 'LB', 'RB'], range(1,120)))
+	'HCON', 'FCON', 'RELOP', 'OUTPUT', 'LB', 'RB'], range(1,120)))
 
 identifiers = {}
 identifier_id = 701
@@ -231,8 +230,9 @@ def processQuotes(line): #if first character is "
 #
 #
 #
+
+def processSingleQuote(line): #if first character is '
 	global charNumber
-	def processSingleQuote(line): #if first character is '
 	currentChar = line[charNumber]
 	token = currentChar
 
