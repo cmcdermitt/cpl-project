@@ -670,6 +670,7 @@ def pcond1():
 
 def pcond2():
 	lex_list = ['pcond2']
+	# For LP pcondition RP case
 	if scanner.lex[lex_en['value']] == 'LP':
 		lex_list.append(tuple(scanner.lex))
 		scanner.next()
@@ -680,8 +681,12 @@ def pcond2():
 		else:
 			lex_list.append(error('RP', 'pcond2'))
 		return lex_list
-	valid_types = ['STRING', 'LETTER', 'ICON', 'HCON', 'FCON']
+
+	valid_types = ['STRING', 'LETTER', 'ICON', 'HCON', 'FCON', 'IDENTIFIER']
 	valid_values = ['MTRUE', 'MFALSE']
+
+
+	# For other cases
 	if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
 		word = scanner.peek()[lex_en['value']]
 		if(word == 'PLUS' or word == 'MINUS' or word == 'BAND' or word == 'BOR'
@@ -694,15 +699,17 @@ def pcond2():
 			elif scanner.lex[lex_en['value']] == 'NOT':
 				lex_list.append(opt_not())
 				lex_list.append(true_false())
+				return lex_list
 			elif scanner.lex[lex_en['value']] == 'MTRUE' or scanner.lex[lex_en['type']] == 'MFALSE':
 				lex_list.append(true_false())
+				return lex_list
 			else:
 				lex_list.append(eq_v())
 			lex_list.append(expr())
 			return lex_list
 		else:
 			lex_list.append(element())
-			return lex_list
+	return lex_list
 
 def opt_not():
 	lex_list = ['opt_not']
@@ -778,8 +785,6 @@ def action_def():
             lex_list.append(tuple(scanner.lex))
             scanner.next()
             lex_list.append(name_ref())
-            print('at name_rref')
-            print(scanner.lex)
         else:
             lex_list.append(error('IDENTIFIER', 'action_def'))
         if scanner.lex[lex_en['value']] == 'EQUOP':

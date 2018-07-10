@@ -34,7 +34,7 @@ keywords = dict(zip([ 'IMPLEMENTATION',
 identifiers = {}
 identifier_id = 701
 error = 0
-
+operator_characters = ['+', '-']
 charNumber = 0
 tokenNum = 0
 
@@ -260,6 +260,31 @@ def processSingleQuote(line): #if first character is '
 	else: #if the character after the ' isn't alphanumeric, it's an error
 		return [token, error]
 
+def processOperator(line):
+	global charNumber
+	global anyAllowedAfter
+	global openParenthAllowed
+	global closedBracketAllowed
+	anyAllowedAfter = False
+	openParenthAllowed = False
+	closedBracketAllowed = False
+	currentChar = line[charNumber]
+	token = currentChar
+	charNumber += 1
+
+	if currentChar == '+' or currentChar == '-': #these two can be part of signed numbers
+		currentChar = line[charNumber]
+
+		if(currentChar.isdigit()): #if the next character's a digit, it's a signed number
+			val = processNumeric(line) #process the number
+			val[0] = token + val[0] #add the sign to the processed number
+			val[1] = val[1] + 1 #since the ID of signed numbers (both ints and floats) is 1 more than the id of unsigned numbers, we can just add 1
+			return val
+		elif currentChar != ' ':
+			openParenthAllowed = True
+			return [token, 0] #error if the next character isn't a number or space
+
+
 # Name processLine
 # Summary Takes an input line and checks the current character.
 # Depending on the current character, a function is called which
@@ -301,6 +326,12 @@ def processLine(line):
 				return [token, 0]
 			token = processSingleQuote(line)
 			processedToken  = True
+
+		elif(line[charNumber] in operator_characters): # if it's an operator
+			if(not anyAllowedAfter and not line[charNumber] == ','):
+				return [token, 0]
+			token = processOperator(line) #Go down operator path
+			processedToken = True
 		else:
 			anyAllowedAfter = True
 			openParenthAllowed =  True
