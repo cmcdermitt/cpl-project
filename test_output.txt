@@ -27,7 +27,150 @@ Program
                 ('TYPE', 'IDENTIFIER')
                 type_name
                     ('INTEGER', 'KEYWORD')
-    None
+    globals
+        ('GLOBAL', 'IDENTIFIER')
+        ('DECLARATIONS', 'IDENTIFIER')
+        const_dec
+            ('CONSTANTS', 'KEYWORD')
+            data_declarations
+                comp_declare
+                    ('DEFINE', 'KEYWORD')
+                    data_declaration
+                        ('a', 'IDENTIFIER')
+                        parray_dec
+                            ('VALUE', 'KEYWORD')
+                        ('OF', 'KEYWORD')
+                        data_type
+                            ('INTEGER', 'KEYWORD')
+                comp_declare
+                    ('DEFINE', 'KEYWORD')
+                    data_declaration
+                        ('d', 'IDENTIFIER')
+                        parray_dec
+                            plist_const
+                                ('LB', 'KEYWORD')
+                                iconst_ident
+                                    ('id', 'IDENTIFIER')
+                                ('RB', 'KEYWORD')
+                                ('LB', 'KEYWORD')
+                                iconst_ident
+                                    ('id2', 'IDENTIFIER')
+                                ('RB', 'KEYWORD')
+                            popt_array_val
+                                value_eq
+                                    ('VALUE', 'KEYWORD')
+                                array_val
+                                    simp_arr_val
+                                        ('LB', 'KEYWORD')
+                                        arg_list
+                                            expr
+                                                term
+                                                    punary
+                                                        element
+                                                            ('"THE"', 'STRING')
+                                                ('PLUS', 'IDENTIFIER')
+                                                term
+                                                    punary
+                                                        element
+                                                            ('"INOBEUI"', 'STRING')
+                                        ('RB', 'KEYWORD')
+                        ('OF', 'KEYWORD')
+                        data_type
+                            ('INTEGER', 'KEYWORD')
+        var_dec
+            ('VARIABLES', 'KEYWORD')
+            data_declarations
+                comp_declare
+                    ('DEFINE', 'KEYWORD')
+                    data_declaration
+                        ('a', 'IDENTIFIER')
+                        parray_dec
+                            ('VALUE', 'KEYWORD')
+                        ('OF', 'KEYWORD')
+                        data_type
+                            ('INTEGER', 'KEYWORD')
+                comp_declare
+                    ('DEFINE', 'KEYWORD')
+                    data_declaration
+                        ('d', 'IDENTIFIER')
+                        parray_dec
+                            plist_const
+                                ('LB', 'KEYWORD')
+                                iconst_ident
+                                    ('id', 'IDENTIFIER')
+                                ('RB', 'KEYWORD')
+                                ('LB', 'KEYWORD')
+                                iconst_ident
+                                    ('id2', 'IDENTIFIER')
+                                ('RB', 'KEYWORD')
+                            popt_array_val
+                                value_eq
+                                    ('VALUE', 'KEYWORD')
+                                array_val
+                                    simp_arr_val
+                                        ('LB', 'KEYWORD')
+                                        arg_list
+                                            expr
+                                                term
+                                                    punary
+                                                        element
+                                                            ('"THE"', 'STRING')
+                                                ('PLUS', 'IDENTIFIER')
+                                                term
+                                                    punary
+                                                        element
+                                                            ('"INOBEUI"', 'STRING')
+                                        ('RB', 'KEYWORD')
+                        ('OF', 'KEYWORD')
+                        data_type
+                            ('INTEGER', 'KEYWORD')
+        struct_dec
+            ('STRUCT', 'KEYWORD')
+            data_declarations
+                comp_declare
+                    ('DEFINE', 'KEYWORD')
+                    data_declaration
+                        ('a', 'IDENTIFIER')
+                        parray_dec
+                            ('VALUE', 'KEYWORD')
+                        ('OF', 'KEYWORD')
+                        data_type
+                            ('INTEGER', 'KEYWORD')
+                comp_declare
+                    ('DEFINE', 'KEYWORD')
+                    data_declaration
+                        ('d', 'IDENTIFIER')
+                        parray_dec
+                            plist_const
+                                ('LB', 'KEYWORD')
+                                iconst_ident
+                                    ('id', 'IDENTIFIER')
+                                ('RB', 'KEYWORD')
+                                ('LB', 'KEYWORD')
+                                iconst_ident
+                                    ('id2', 'IDENTIFIER')
+                                ('RB', 'KEYWORD')
+                            popt_array_val
+                                value_eq
+                                    ('VALUE', 'KEYWORD')
+                                array_val
+                                    simp_arr_val
+                                        ('LB', 'KEYWORD')
+                                        arg_list
+                                            expr
+                                                term
+                                                    punary
+                                                        element
+                                                            ('"THE"', 'STRING')
+                                                ('PLUS', 'IDENTIFIER')
+                                                term
+                                                    punary
+                                                        element
+                                                            ('"INOBEUI"', 'STRING')
+                                        ('RB', 'KEYWORD')
+                        ('OF', 'KEYWORD')
+                        data_type
+                            ('INTEGER', 'KEYWORD')
     implement
         ('IMPLEMENTATIONS', 'IDENTIFIER')
         main_head

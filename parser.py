@@ -230,7 +230,7 @@ def f_globals():
 
 	if(scanner.lex[lex_en['value']] == 'STRUCT'):
 	 	lex_list.append(struct_dec())
-
+	return lex_list
 
 def const_dec():
 	lex_list = ['const_dec']

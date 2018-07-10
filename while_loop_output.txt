@@ -1,7 +1,21 @@
 Program
     func_main
         ('MAIN', 'KEYWORD')
-    None
+    globals
+        ('GLOBAL', 'IDENTIFIER')
+        ('DECLARATIONS', 'IDENTIFIER')
+        var_dec
+            ('VARIABLES', 'KEYWORD')
+            data_declarations
+                comp_declare
+                    ('DEFINE', 'KEYWORD')
+                    data_declaration
+                        ('max', 'IDENTIFIER')
+                        parray_dec
+                            ('VALUE', 'KEYWORD')
+                        ('OF', 'KEYWORD')
+                        data_type
+                            ('INTEGER', 'KEYWORD')
     implement
         ('IMPLEMENTATIONS', 'IDENTIFIER')
         main_head
@@ -76,6 +90,37 @@ Program
                                     punary
                                         element
                                             ('60', 'ICON')
+                        action_def
+                            ('SET', 'KEYWORD')
+                            ('a', 'IDENTIFIER')
+                            name_ref
+                                opt_ref
+                                    array_val
+                                        simp_arr_val
+                                            ('LB', 'KEYWORD')
+                                            arg_list
+                                                expr
+                                                    term
+                                                        punary
+                                                            element
+                                                                ('0', 'ICON')
+                                                    ('PLUS', 'IDENTIFIER')
+                                                    term
+                                                        punary
+                                                            element
+                                                                ('0', 'ICON')
+                                            ('RB', 'KEYWORD')
+                            ('EQUOP', 'IDENTIFIER')
+                            expr
+                                term
+                                    punary
+                                        element
+                                            ('0', 'ICON')
+                                ('PLUS', 'IDENTIFIER')
+                                term
+                                    punary
+                                        element
+                                            ('-2', 'ICON')
                         action_def
                             ('WHILE', 'KEYWORD')
                             pcondition
