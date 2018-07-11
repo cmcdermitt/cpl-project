@@ -21,7 +21,7 @@ import sys
 # However, if there are multiple right hand definitions, only one will be correct, so the correct function must be chosen before we enter it.
 # If the parser encounters an error, it appends an error message instead of a list.
 
-lex_en = {'value' : 0, 'type' : 1}
+lex_en = {'value' : 0, 'type' : 1, 'line_num' = 2}
 scanner = Scanner(sys.argv[1])
 
 # Returns number of tabs
@@ -69,6 +69,25 @@ def printTree(tree_list, tab, out_string = ''):
 				print(returnTabs(tab + 1) + str(tree_list[x]))
 	return out_string
 
+
+def printCleanTree(tree_list, tab, printTree = False, out_string = ''):
+	if(len(tree_list) == 0):
+		return out_string
+	out_string +=  returnTabs(tab) + ( ('Enter <' + tree_list[0] + '>\n'))
+	if(len(tree_list) == 1):
+		return out_string
+	for x in range(1, len(tree_list)):
+		if(isinstance(tree_list[x], str)):
+			out_string +=  returnTabs(tab) + tree_list[x] + '\n'
+		elif(isinstance(tree_list[x], list)):
+			out_string = printCleanTree(tree_list[x],tab + 1, False, out_string)
+		else:
+			out_string +=  returnTabs(tab) + ('Type is ' + str(tree_list[x][lex_en['type']]) + ' Value is ' + str(tree_list[x][lex_en['value']]) + '\n')
+	out_string += returnTabs(tab) + (('Exit <' + tree_list[0] + '>\n'))
+	return out_string
+
+
+
 # Starting point for parse tree
 # Each function following this checks the unique case that defines its particular grammar as defined by the document
 # The general structure instantiates a new instance of lex_list, and sets its initial value to the name of the function
@@ -86,7 +105,7 @@ def program_start():
 		lex_list.append(f_globals()) #called f_globals becasue globals is a function
 
 	lex_list.append(implement())
-	printTree(lex_list, 0)
+	print(printCleanTree(lex_list,0, True))
 
 def func_main():
 	lex_list = ['func_main']
