@@ -21,7 +21,7 @@ import sys
 # However, if there are multiple right hand definitions, only one will be correct, so the correct function must be chosen before we enter it.
 # If the parser encounters an error, it appends an error message instead of a list.
 
-lex_en = {'value' : 0, 'type' : 1, 'line_num' = 2}
+lex_en = {'value' : 0, 'type' : 1, 'line_num' : 2}
 scanner = Scanner(sys.argv[1])
 
 # Returns number of tabs
@@ -82,7 +82,7 @@ def printCleanTree(tree_list, tab, printTree = False, out_string = ''):
 		elif(isinstance(tree_list[x], list)):
 			out_string = printCleanTree(tree_list[x],tab + 1, False, out_string)
 		else:
-			out_string +=  returnTabs(tab) + ('Type is ' + str(tree_list[x][lex_en['type']]) + ' Value is ' + str(tree_list[x][lex_en['value']]) + '\n')
+			out_string +=  returnTabs(tab) + ('Type is ' + str(tree_list[x][lex_en['type']]) + ' Value is ' + str(tree_list[x][lex_en['value']]) + ' at line ' + str(tree_list[x][lex_en['line_num']]) + '\n')
 	out_string += returnTabs(tab) + (('Exit <' + tree_list[0] + '>\n'))
 	return out_string
 

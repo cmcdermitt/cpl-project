@@ -37,7 +37,7 @@ import csv
 
 class Scanner:
 
-    def __init__(self, infile):
+    def __init__(self, infile, outfile='output_from_scanner.csv'):
         # List of output tokens and line numbers
         self.tokens = []
         # 2D symbol table array to hold attribute data
@@ -52,11 +52,13 @@ class Scanner:
         self.last_token = ()
         self.lex = ()
         self.input_file = infile
+        self.output_file = outfile
 
 
     def start(self):
         self.fillSymbolTable()
         self.lex = self.symbol_table[0][0]
+        self.lex.append(1)
     # Name: next
     # Summary: Advance lex by one position in the row and save the new attribute list to self.lex
     #          If the current_attribute is greater than or equal to the length of the current row,
@@ -78,6 +80,7 @@ class Scanner:
         if(self.current_row >= len(self.symbol_table)):
             return(None,None,None,None)
         self.lex = self.symbol_table[self.current_row][self.current_attribute]
+        self.lex.append(self.current_row + 1) #plus 1 because line counts start at 1
 
     # Name: peek
     # Summary: Returns the lexeme at position symbol_table[current_row][current_attribute + 1] if there is room in row
@@ -91,12 +94,15 @@ class Scanner:
         if self.current_attribute + 1 >= len(self.symbol_table[self.current_row]):
             if (self.current_row + 1 >= len(self.symbol_table)):
                 return (None, None, None, None)
-            return self.symbol_table[self.current_row + 1][0]
+            next_lex = self.symbol_table[self.current_row + 1][0]
+            next_lex.append(self.current_row + 2)
+            return next_lex
         else:
             if (self.current_row >= len(self.symbol_table)):
                 return (None, None, None, None)
-            return self.symbol_table[self.current_row][self.current_attribute + 1]
-
+            next_lex = self.symbol_table[self.current_row][self.current_attribute + 1]
+            next_lex.append(self.current_row + 1)
+            return next_lex
     # A recursive definition always has to peek one ahead to
     # decide if it is going to continue repeating its right hand
     # definition. When a recursive definition finishes, it is
