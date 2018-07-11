@@ -1,779 +1,503 @@
 test.txt
 Enter <Program>
     Enter <func_main>
-    Type is KEYWORD Value is FUNCTION
-    Type is IDENTIFIER Value is thing
+    Type is KEYWORD Value is FUNCTION at line 1
+    Type is IDENTIFIER Value is thing at line 1
         Enter <oper_type>
-        Type is KEYWORD Value is RETURN
+        Type is KEYWORD Value is RETURN at line 1
             Enter <chk_array>
-            Type is KEYWORD Value is ARRAY
+            Type is KEYWORD Value is ARRAY at line 1
                 Enter <array_dim_list>
-                Type is KEYWORD Value is LB
+                Type is KEYWORD Value is LB at line 1
                     Enter <array_index>
-                    Type is IDENTIFIER Value is id
-                    Exit <array_index>
-                Type is KEYWORD Value is RB
-                Type is KEYWORD Value is LB
+                    Type is IDENTIFIER Value is id at line 1
+                Type is KEYWORD Value is RB at line 1
+                Type is KEYWORD Value is LB at line 1
                     Enter <array_index>
-                    Type is IDENTIFIER Value is id2
-                    Exit <array_index>
-                Type is KEYWORD Value is RB
-                Type is KEYWORD Value is LB
+                    Type is IDENTIFIER Value is id2 at line 1
+                Type is KEYWORD Value is RB at line 1
+                Type is KEYWORD Value is LB at line 1
                     Enter <array_index>
-                    Type is IDENTIFIER Value is id3
-                    Exit <array_index>
-                Type is KEYWORD Value is RB
-                Type is KEYWORD Value is LB
+                    Type is IDENTIFIER Value is id3 at line 1
+                Type is KEYWORD Value is RB at line 1
+                Type is KEYWORD Value is LB at line 1
                     Enter <array_index>
-                    Type is IDENTIFIER Value is id4
-                    Exit <array_index>
-                Type is KEYWORD Value is RB
-                Exit <array_dim_list>
-            Exit <chk_array>
+                    Type is IDENTIFIER Value is id4 at line 1
+                Type is KEYWORD Value is RB at line 1
             Enter <ret_type>
-            Type is IDENTIFIER Value is TYPE
+            Type is IDENTIFIER Value is TYPE at line 1
                 Enter <type_name>
-                Type is KEYWORD Value is INTEGER
-                Exit <type_name>
-            Exit <ret_type>
-        Exit <oper_type>
-    Exit <func_main>
+                Type is KEYWORD Value is INTEGER at line 1
     Enter <globals>
-    Type is IDENTIFIER Value is GLOBAL
-    Type is IDENTIFIER Value is DECLARATIONS
+    Type is IDENTIFIER Value is GLOBAL at line 2
+    Type is IDENTIFIER Value is DECLARATIONS at line 2
         Enter <const_dec>
-        Type is KEYWORD Value is CONSTANTS
+        Type is KEYWORD Value is CONSTANTS at line 3
             Enter <data_declarations>
                 Enter <comp_declare>
-                Type is KEYWORD Value is DEFINE
+                Type is KEYWORD Value is DEFINE at line 4
                     Enter <data_declaration>
-                    Type is IDENTIFIER Value is a
+                    Type is IDENTIFIER Value is a at line 4
                         Enter <parray_dec>
-                        Type is KEYWORD Value is VALUE
-                        Exit <parray_dec>
-                    Type is KEYWORD Value is OF
+                        Type is KEYWORD Value is VALUE at line 4
+                    Type is KEYWORD Value is OF at line 4
                         Enter <data_type>
-                        Type is KEYWORD Value is INTEGER
-                        Exit <data_type>
-                    Exit <data_declaration>
-                Exit <comp_declare>
+                        Type is KEYWORD Value is INTEGER at line 4
                 Enter <comp_declare>
-                Type is KEYWORD Value is DEFINE
+                Type is KEYWORD Value is DEFINE at line 5
                     Enter <data_declaration>
-                    Type is IDENTIFIER Value is d
+                    Type is IDENTIFIER Value is d at line 5
                         Enter <parray_dec>
                             Enter <plist_const>
-                            Type is KEYWORD Value is LB
+                            Type is KEYWORD Value is LB at line 5
                                 Enter <iconst_ident>
-                                Type is IDENTIFIER Value is id
-                                Exit <iconst_ident>
-                            Type is KEYWORD Value is RB
-                            Type is KEYWORD Value is LB
+                                Type is IDENTIFIER Value is id at line 5
+                            Type is KEYWORD Value is RB at line 5
+                            Type is KEYWORD Value is LB at line 5
                                 Enter <iconst_ident>
-                                Type is IDENTIFIER Value is id2
-                                Exit <iconst_ident>
-                            Type is KEYWORD Value is RB
-                            Exit <plist_const>
+                                Type is IDENTIFIER Value is id2 at line 5
+                            Type is KEYWORD Value is RB at line 5
                             Enter <popt_array_val>
                                 Enter <value_eq>
-                                Type is KEYWORD Value is VALUE
-                                Exit <value_eq>
+                                Type is KEYWORD Value is VALUE at line 5
                                 Enter <array_val>
                                     Enter <simp_arr_val>
-                                    Type is KEYWORD Value is LB
+                                    Type is KEYWORD Value is LB at line 5
                                         Enter <arg_list>
                                             Enter <expr>
                                                 Enter <term>
                                                     Enter <punary>
                                                         Enter <element>
-                                                        Type is STRING Value is "THE"
-                                                        Exit <element>
-                                                    Exit <punary>
-                                                Exit <term>
-                                            Type is IDENTIFIER Value is PLUS
+                                                        Type is STRING Value is "THE" at line 5
+                                            Type is IDENTIFIER Value is PLUS at line 5
                                                 Enter <term>
                                                     Enter <punary>
                                                         Enter <element>
-                                                        Type is STRING Value is "INOBEUI"
-                                                        Exit <element>
-                                                    Exit <punary>
-                                                Exit <term>
-                                            Exit <expr>
-                                        Exit <arg_list>
-                                    Type is KEYWORD Value is RB
-                                    Exit <simp_arr_val>
-                                Exit <array_val>
-                            Exit <popt_array_val>
-                        Exit <parray_dec>
-                    Type is KEYWORD Value is OF
+                                                        Type is STRING Value is "INOBEUI" at line 5
+                                    Type is KEYWORD Value is RB at line 5
+                    Type is KEYWORD Value is OF at line 5
                         Enter <data_type>
-                        Type is KEYWORD Value is INTEGER
-                        Exit <data_type>
-                    Exit <data_declaration>
-                Exit <comp_declare>
-            Exit <data_declarations>
-        Exit <const_dec>
+                        Type is KEYWORD Value is INTEGER at line 5
         Enter <var_dec>
-        Type is KEYWORD Value is VARIABLES
+        Type is KEYWORD Value is VARIABLES at line 6
             Enter <data_declarations>
                 Enter <comp_declare>
-                Type is KEYWORD Value is DEFINE
+                Type is KEYWORD Value is DEFINE at line 7
                     Enter <data_declaration>
-                    Type is IDENTIFIER Value is a
+                    Type is IDENTIFIER Value is a at line 7
                         Enter <parray_dec>
-                        Type is KEYWORD Value is VALUE
-                        Exit <parray_dec>
-                    Type is KEYWORD Value is OF
+                        Type is KEYWORD Value is VALUE at line 7
+                    Type is KEYWORD Value is OF at line 7
                         Enter <data_type>
-                        Type is KEYWORD Value is INTEGER
-                        Exit <data_type>
-                    Exit <data_declaration>
-                Exit <comp_declare>
+                        Type is KEYWORD Value is INTEGER at line 7
                 Enter <comp_declare>
-                Type is KEYWORD Value is DEFINE
+                Type is KEYWORD Value is DEFINE at line 8
                     Enter <data_declaration>
-                    Type is IDENTIFIER Value is d
+                    Type is IDENTIFIER Value is d at line 8
                         Enter <parray_dec>
                             Enter <plist_const>
-                            Type is KEYWORD Value is LB
+                            Type is KEYWORD Value is LB at line 8
                                 Enter <iconst_ident>
-                                Type is IDENTIFIER Value is id
-                                Exit <iconst_ident>
-                            Type is KEYWORD Value is RB
-                            Type is KEYWORD Value is LB
+                                Type is IDENTIFIER Value is id at line 8
+                            Type is KEYWORD Value is RB at line 8
+                            Type is KEYWORD Value is LB at line 8
                                 Enter <iconst_ident>
-                                Type is IDENTIFIER Value is id2
-                                Exit <iconst_ident>
-                            Type is KEYWORD Value is RB
-                            Exit <plist_const>
+                                Type is IDENTIFIER Value is id2 at line 8
+                            Type is KEYWORD Value is RB at line 8
                             Enter <popt_array_val>
                                 Enter <value_eq>
-                                Type is KEYWORD Value is VALUE
-                                Exit <value_eq>
+                                Type is KEYWORD Value is VALUE at line 8
                                 Enter <array_val>
                                     Enter <simp_arr_val>
-                                    Type is KEYWORD Value is LB
+                                    Type is KEYWORD Value is LB at line 8
                                         Enter <arg_list>
                                             Enter <expr>
                                                 Enter <term>
                                                     Enter <punary>
                                                         Enter <element>
-                                                        Type is STRING Value is "THE"
-                                                        Exit <element>
-                                                    Exit <punary>
-                                                Exit <term>
-                                            Type is IDENTIFIER Value is PLUS
+                                                        Type is STRING Value is "THE" at line 8
+                                            Type is IDENTIFIER Value is PLUS at line 8
                                                 Enter <term>
                                                     Enter <punary>
                                                         Enter <element>
-                                                        Type is STRING Value is "INOBEUI"
-                                                        Exit <element>
-                                                    Exit <punary>
-                                                Exit <term>
-                                            Exit <expr>
-                                        Exit <arg_list>
-                                    Type is KEYWORD Value is RB
-                                    Exit <simp_arr_val>
-                                Exit <array_val>
-                            Exit <popt_array_val>
-                        Exit <parray_dec>
-                    Type is KEYWORD Value is OF
+                                                        Type is STRING Value is "INOBEUI" at line 8
+                                    Type is KEYWORD Value is RB at line 8
+                    Type is KEYWORD Value is OF at line 8
                         Enter <data_type>
-                        Type is KEYWORD Value is INTEGER
-                        Exit <data_type>
-                    Exit <data_declaration>
-                Exit <comp_declare>
-            Exit <data_declarations>
-        Exit <var_dec>
+                        Type is KEYWORD Value is INTEGER at line 8
         Enter <struct_dec>
-        Type is KEYWORD Value is STRUCT
+        Type is KEYWORD Value is STRUCT at line 9
             Enter <data_declarations>
                 Enter <comp_declare>
-                Type is KEYWORD Value is DEFINE
+                Type is KEYWORD Value is DEFINE at line 10
                     Enter <data_declaration>
-                    Type is IDENTIFIER Value is a
+                    Type is IDENTIFIER Value is a at line 10
                         Enter <parray_dec>
-                        Type is KEYWORD Value is VALUE
-                        Exit <parray_dec>
-                    Type is KEYWORD Value is OF
+                        Type is KEYWORD Value is VALUE at line 10
+                    Type is KEYWORD Value is OF at line 10
                         Enter <data_type>
-                        Type is KEYWORD Value is INTEGER
-                        Exit <data_type>
-                    Exit <data_declaration>
-                Exit <comp_declare>
+                        Type is KEYWORD Value is INTEGER at line 10
                 Enter <comp_declare>
-                Type is KEYWORD Value is DEFINE
+                Type is KEYWORD Value is DEFINE at line 11
                     Enter <data_declaration>
-                    Type is IDENTIFIER Value is d
+                    Type is IDENTIFIER Value is d at line 11
                         Enter <parray_dec>
                             Enter <plist_const>
-                            Type is KEYWORD Value is LB
+                            Type is KEYWORD Value is LB at line 11
                                 Enter <iconst_ident>
-                                Type is IDENTIFIER Value is id
-                                Exit <iconst_ident>
-                            Type is KEYWORD Value is RB
-                            Type is KEYWORD Value is LB
+                                Type is IDENTIFIER Value is id at line 11
+                            Type is KEYWORD Value is RB at line 11
+                            Type is KEYWORD Value is LB at line 11
                                 Enter <iconst_ident>
-                                Type is IDENTIFIER Value is id2
-                                Exit <iconst_ident>
-                            Type is KEYWORD Value is RB
-                            Exit <plist_const>
+                                Type is IDENTIFIER Value is id2 at line 11
+                            Type is KEYWORD Value is RB at line 11
                             Enter <popt_array_val>
                                 Enter <value_eq>
-                                Type is KEYWORD Value is VALUE
-                                Exit <value_eq>
+                                Type is KEYWORD Value is VALUE at line 11
                                 Enter <array_val>
                                     Enter <simp_arr_val>
-                                    Type is KEYWORD Value is LB
+                                    Type is KEYWORD Value is LB at line 11
                                         Enter <arg_list>
                                             Enter <expr>
                                                 Enter <term>
                                                     Enter <punary>
                                                         Enter <element>
-                                                        Type is STRING Value is "THE"
-                                                        Exit <element>
-                                                    Exit <punary>
-                                                Exit <term>
-                                            Type is IDENTIFIER Value is PLUS
+                                                        Type is STRING Value is "THE" at line 11
+                                            Type is IDENTIFIER Value is PLUS at line 11
                                                 Enter <term>
                                                     Enter <punary>
                                                         Enter <element>
-                                                        Type is STRING Value is "INOBEUI"
-                                                        Exit <element>
-                                                    Exit <punary>
-                                                Exit <term>
-                                            Exit <expr>
-                                        Exit <arg_list>
-                                    Type is KEYWORD Value is RB
-                                    Exit <simp_arr_val>
-                                Exit <array_val>
-                            Exit <popt_array_val>
-                        Exit <parray_dec>
-                    Type is KEYWORD Value is OF
+                                                        Type is STRING Value is "INOBEUI" at line 11
+                                    Type is KEYWORD Value is RB at line 11
+                    Type is KEYWORD Value is OF at line 11
                         Enter <data_type>
-                        Type is KEYWORD Value is INTEGER
-                        Exit <data_type>
-                    Exit <data_declaration>
-                Exit <comp_declare>
-            Exit <data_declarations>
-        Exit <struct_dec>
-    Exit <globals>
+                        Type is KEYWORD Value is INTEGER at line 11
     Enter <implement>
-    Type is IDENTIFIER Value is IMPLEMENTATIONS
+    Type is IDENTIFIER Value is IMPLEMENTATIONS at line 12
         Enter <main_head>
-        Type is KEYWORD Value is MAIN
-        Type is KEYWORD Value is DESCRIPTION
+        Type is KEYWORD Value is MAIN at line 12
+        Type is KEYWORD Value is DESCRIPTION at line 12
             Enter <parameters>
-            Type is KEYWORD Value is PARAMETERS
+            Type is KEYWORD Value is PARAMETERS at line 12
                 Enter <param_def>
                     Enter <data_declaration>
-                    Type is IDENTIFIER Value is a
+                    Type is IDENTIFIER Value is a at line 12
                         Enter <parray_dec>
-                        Type is KEYWORD Value is VALUE
-                        Exit <parray_dec>
-                    Type is KEYWORD Value is OF
+                        Type is KEYWORD Value is VALUE at line 12
+                    Type is KEYWORD Value is OF at line 12
                         Enter <data_type>
-                        Type is KEYWORD Value is INTEGER
-                        Exit <data_type>
-                    Exit <data_declaration>
-                Exit <param_def>
-            Type is IDENTIFIER Value is COMMA
+                        Type is KEYWORD Value is INTEGER at line 12
+            Type is IDENTIFIER Value is COMMA at line 12
                 Enter <param_def>
                     Enter <data_declaration>
-                    Type is IDENTIFIER Value is b
+                    Type is IDENTIFIER Value is b at line 12
                         Enter <parray_dec>
-                        Type is KEYWORD Value is VALUE
-                        Exit <parray_dec>
-                    Type is KEYWORD Value is OF
+                        Type is KEYWORD Value is VALUE at line 12
+                    Type is KEYWORD Value is OF at line 12
                         Enter <data_type>
-                        Type is KEYWORD Value is INTEGER
-                        Exit <data_type>
-                    Exit <data_declaration>
-                Exit <param_def>
-            Exit <parameters>
-        Exit <main_head>
+                        Type is KEYWORD Value is INTEGER at line 12
         Enter <funct_list>
             Enter <funct_body>
-            Type is KEYWORD Value is FUNCTION
+            Type is KEYWORD Value is FUNCTION at line 13
                 Enter <pother_oper_def>
                     Enter <pother_oper>
-                    Type is IDENTIFIER Value is m
-                    Type is KEYWORD Value is DESCRIPTION
+                    Type is IDENTIFIER Value is m at line 13
+                    Type is KEYWORD Value is DESCRIPTION at line 13
                         Enter <oper_type>
-                        Type is KEYWORD Value is RETURN
+                        Type is KEYWORD Value is RETURN at line 13
                             Enter <chk_ptr>
-                            Type is KEYWORD Value is POINTER
-                            Type is KEYWORD Value is OF
-                            Exit <chk_ptr>
+                            Type is KEYWORD Value is POINTER at line 13
+                            Type is KEYWORD Value is OF at line 13
                             Enter <chk_array>
-                            Type is KEYWORD Value is ARRAY
+                            Type is KEYWORD Value is ARRAY at line 13
                                 Enter <array_dim_list>
-                                Type is KEYWORD Value is LB
+                                Type is KEYWORD Value is LB at line 13
                                     Enter <array_index>
-                                    Type is IDENTIFIER Value is ad
-                                    Exit <array_index>
-                                Type is KEYWORD Value is RB
-                                Exit <array_dim_list>
-                            Exit <chk_array>
+                                    Type is IDENTIFIER Value is ad at line 13
+                                Type is KEYWORD Value is RB at line 13
                             Enter <ret_type>
-                            Type is KEYWORD Value is STRUCT
-                            Type is IDENTIFIER Value is a
-                            Exit <ret_type>
-                        Exit <oper_type>
-                    Exit <pother_oper>
-                Type is KEYWORD Value is IS
+                            Type is KEYWORD Value is STRUCT at line 13
+                            Type is IDENTIFIER Value is a at line 13
+                Type is KEYWORD Value is IS at line 13
                     Enter <const_var_struct>
                         Enter <const_dec>
-                        Type is KEYWORD Value is CONSTANTS
+                        Type is KEYWORD Value is CONSTANTS at line 14
                             Enter <data_declarations>
                                 Enter <comp_declare>
-                                Type is KEYWORD Value is DEFINE
+                                Type is KEYWORD Value is DEFINE at line 15
                                     Enter <data_declaration>
-                                    Type is IDENTIFIER Value is a
+                                    Type is IDENTIFIER Value is a at line 15
                                         Enter <parray_dec>
-                                        Type is KEYWORD Value is VALUE
-                                        Exit <parray_dec>
-                                    Type is KEYWORD Value is OF
+                                        Type is KEYWORD Value is VALUE at line 15
+                                    Type is KEYWORD Value is OF at line 15
                                         Enter <data_type>
-                                        Type is KEYWORD Value is INTEGER
-                                        Exit <data_type>
-                                    Exit <data_declaration>
-                                Exit <comp_declare>
-                            Exit <data_declarations>
-                        Exit <const_dec>
+                                        Type is KEYWORD Value is INTEGER at line 15
                         Enter <var_dec>
-                        Type is KEYWORD Value is VARIABLES
+                        Type is KEYWORD Value is VARIABLES at line 16
                             Enter <data_declarations>
                                 Enter <comp_declare>
-                                Type is KEYWORD Value is DEFINE
+                                Type is KEYWORD Value is DEFINE at line 17
                                     Enter <data_declaration>
-                                    Type is IDENTIFIER Value is a
+                                    Type is IDENTIFIER Value is a at line 17
                                         Enter <parray_dec>
-                                        Type is KEYWORD Value is VALUE
-                                        Exit <parray_dec>
-                                    Type is KEYWORD Value is OF
+                                        Type is KEYWORD Value is VALUE at line 17
+                                    Type is KEYWORD Value is OF at line 17
                                         Enter <data_type>
-                                        Type is KEYWORD Value is INTEGER
-                                        Exit <data_type>
-                                    Exit <data_declaration>
-                                Exit <comp_declare>
-                            Exit <data_declarations>
-                        Exit <var_dec>
+                                        Type is KEYWORD Value is INTEGER at line 17
                         Enter <struct_dec>
-                        Type is KEYWORD Value is STRUCT
+                        Type is KEYWORD Value is STRUCT at line 18
                             Enter <data_declarations>
                                 Enter <comp_declare>
-                                Type is KEYWORD Value is DEFINE
+                                Type is KEYWORD Value is DEFINE at line 19
                                     Enter <data_declaration>
-                                    Type is IDENTIFIER Value is a
+                                    Type is IDENTIFIER Value is a at line 19
                                         Enter <parray_dec>
-                                        Type is KEYWORD Value is VALUE
-                                        Exit <parray_dec>
-                                    Type is KEYWORD Value is OF
+                                        Type is KEYWORD Value is VALUE at line 19
+                                    Type is KEYWORD Value is OF at line 19
                                         Enter <data_type>
-                                        Type is KEYWORD Value is INTEGER
-                                        Exit <data_type>
-                                    Exit <data_declaration>
-                                Exit <comp_declare>
-                            Exit <data_declarations>
-                        Exit <struct_dec>
-                    Exit <const_var_struct>
+                                        Type is KEYWORD Value is INTEGER at line 19
                     Enter <PRECONDITION>
-                    Type is KEYWORD Value is PRECONDITION
+                    Type is KEYWORD Value is PRECONDITION at line 20
                         Enter <pcondition>
                             Enter <pcond1>
                                 Enter <pcond2>
                                     Enter <element>
-                                    Type is ICON Value is 123
-                                    Exit <element>
-                                Exit <pcond2>
-                            Exit <pcond1>
-                        Type is KEYWORD Value is AND
+                                    Type is ICON Value is 123 at line 20
+                        Type is KEYWORD Value is AND at line 20
                             Enter <pcond1>
                                 Enter <pcond2>
                                     Enter <element>
-                                    Type is ICON Value is 234
-                                    Exit <element>
-                                Exit <pcond2>
-                            Exit <pcond1>
-                        Exit <pcondition>
-                    Exit <PRECONDITION>
-                Type is KEYWORD Value is BEGIN
+                                    Type is ICON Value is 234 at line 20
+                Type is KEYWORD Value is BEGIN at line 21
                     Enter <pactions>
                         Enter <action_def>
-                        Type is KEYWORD Value is CALL
-                        Type is IDENTIFIER Value is id
+                        Type is KEYWORD Value is CALL at line 22
+                        Type is IDENTIFIER Value is id at line 22
                             Enter <name_ref>
                                 Enter <opt_ref>
                                     Enter <array_val>
                                         Enter <simp_arr_val>
-                                        Type is KEYWORD Value is LB
+                                        Type is KEYWORD Value is LB at line 22
                                             Enter <arg_list>
                                                 Enter <expr>
                                                     Enter <term>
                                                         Enter <punary>
                                                             Enter <element>
-                                                            Type is ICON Value is 0
-                                                            Exit <element>
-                                                        Exit <punary>
-                                                    Exit <term>
-                                                Type is IDENTIFIER Value is PLUS
+                                                            Type is ICON Value is 0 at line 22
+                                                Type is IDENTIFIER Value is PLUS at line 22
                                                     Enter <term>
                                                         Enter <punary>
                                                             Enter <element>
-                                                            Type is ICON Value is 0
-                                                            Exit <element>
-                                                        Exit <punary>
-                                                    Exit <term>
-                                                Exit <expr>
-                                            Exit <arg_list>
-                                        Type is KEYWORD Value is RB
-                                        Exit <simp_arr_val>
-                                    Exit <array_val>
-                                Exit <opt_ref>
-                            Exit <name_ref>
+                                                            Type is ICON Value is 0 at line 22
+                                        Type is KEYWORD Value is RB at line 22
                             Enter <pusing_ref>
-                            Type is KEYWORD Value is USING
+                            Type is KEYWORD Value is USING at line 22
                                 Enter <arg_list>
                                     Enter <expr>
                                         Enter <term>
                                             Enter <punary>
                                                 Enter <element>
-                                                Type is STRING Value is "S"
-                                                Exit <element>
-                                            Exit <punary>
-                                        Exit <term>
-                                    Type is IDENTIFIER Value is MINUS
+                                                Type is STRING Value is "S" at line 22
+                                    Type is IDENTIFIER Value is MINUS at line 22
                                         Enter <term>
                                             Enter <punary>
                                                 Enter <element>
-                                                Type is STRING Value is "S"
-                                                Exit <element>
-                                            Exit <punary>
-                                        Exit <term>
-                                    Exit <expr>
-                                Exit <arg_list>
-                            Exit <pusing_ref>
-                        Exit <action_def>
+                                                Type is STRING Value is "S" at line 22
                         Enter <action_def>
-                        Type is KEYWORD Value is SET
-                        Type is IDENTIFIER Value is a
+                        Type is KEYWORD Value is SET at line 23
+                        Type is IDENTIFIER Value is a at line 23
                             Enter <name_ref>
                                 Enter <opt_ref>
                                     Enter <array_val>
                                         Enter <simp_arr_val>
-                                        Type is KEYWORD Value is LB
+                                        Type is KEYWORD Value is LB at line 23
                                             Enter <arg_list>
                                                 Enter <expr>
                                                     Enter <term>
                                                         Enter <punary>
                                                             Enter <element>
-                                                            Type is ICON Value is 0
-                                                            Exit <element>
-                                                        Exit <punary>
-                                                    Exit <term>
-                                                Type is IDENTIFIER Value is PLUS
+                                                            Type is ICON Value is 0 at line 23
+                                                Type is IDENTIFIER Value is PLUS at line 23
                                                     Enter <term>
                                                         Enter <punary>
                                                             Enter <element>
-                                                            Type is ICON Value is 2
-                                                            Exit <element>
-                                                        Exit <punary>
-                                                    Exit <term>
-                                                Exit <expr>
-                                            Exit <arg_list>
-                                        Type is KEYWORD Value is RB
-                                        Exit <simp_arr_val>
-                                    Exit <array_val>
-                                Exit <opt_ref>
+                                                            Type is ICON Value is 2 at line 23
+                                        Type is KEYWORD Value is RB at line 23
                                 Enter <pmember_opt>
                                     Enter <pmember_of>
-                                    Type is KEYWORD Value is OF
-                                    Type is IDENTIFIER Value is id2
+                                    Type is KEYWORD Value is OF at line 23
+                                    Type is IDENTIFIER Value is id2 at line 23
                                         Enter <opt_ref>
                                             Enter <array_val>
                                                 Enter <simp_arr_val>
-                                                Type is KEYWORD Value is LB
+                                                Type is KEYWORD Value is LB at line 23
                                                     Enter <arg_list>
                                                         Enter <expr>
                                                             Enter <term>
                                                                 Enter <punary>
                                                                     Enter <element>
-                                                                    Type is ICON Value is 0
-                                                                    Exit <element>
-                                                                Exit <punary>
-                                                            Exit <term>
-                                                        Type is IDENTIFIER Value is PLUS
+                                                                    Type is ICON Value is 0 at line 23
+                                                        Type is IDENTIFIER Value is PLUS at line 23
                                                             Enter <term>
                                                                 Enter <punary>
                                                                     Enter <element>
-                                                                    Type is ICON Value is 2
-                                                                    Exit <element>
-                                                                Exit <punary>
-                                                            Exit <term>
-                                                        Exit <expr>
-                                                    Exit <arg_list>
-                                                Type is KEYWORD Value is RB
-                                                Exit <simp_arr_val>
-                                            Exit <array_val>
-                                        Exit <opt_ref>
-                                    Exit <pmember_of>
-                                Exit <pmember_opt>
+                                                                    Type is ICON Value is 2 at line 23
+                                                Type is KEYWORD Value is RB at line 23
                                 Enter <popt_def>
                                     Enter <proc_dot>
-                                    Type is IDENTIFIER Value is DOT
-                                    Type is IDENTIFIER Value is self
+                                    Type is IDENTIFIER Value is DOT at line 23
+                                    Type is IDENTIFIER Value is self at line 23
                                         Enter <opt_ref>
                                             Enter <array_val>
                                                 Enter <simp_arr_val>
-                                                Type is KEYWORD Value is LB
+                                                Type is KEYWORD Value is LB at line 23
                                                     Enter <arg_list>
                                                         Enter <expr>
                                                             Enter <term>
                                                                 Enter <punary>
                                                                     Enter <element>
-                                                                    Type is ICON Value is 0
-                                                                    Exit <element>
-                                                                Exit <punary>
-                                                            Exit <term>
-                                                        Type is IDENTIFIER Value is PLUS
+                                                                    Type is ICON Value is 0 at line 23
+                                                        Type is IDENTIFIER Value is PLUS at line 23
                                                             Enter <term>
                                                                 Enter <punary>
                                                                     Enter <element>
-                                                                    Type is ICON Value is 2
-                                                                    Exit <element>
-                                                                Exit <punary>
-                                                            Exit <term>
-                                                        Exit <expr>
-                                                    Exit <arg_list>
-                                                Type is KEYWORD Value is RB
-                                                Exit <simp_arr_val>
-                                            Exit <array_val>
-                                        Exit <opt_ref>
-                                    Exit <proc_dot>
-                                Exit <popt_def>
-                            Exit <name_ref>
-                        Type is IDENTIFIER Value is EQUOP
+                                                                    Type is ICON Value is 2 at line 23
+                                                Type is KEYWORD Value is RB at line 23
+                        Type is IDENTIFIER Value is EQUOP at line 23
                             Enter <expr>
                                 Enter <term>
                                     Enter <punary>
                                         Enter <element>
-                                        Type is IDENTIFIER Value is abc
-                                        Exit <element>
-                                    Exit <punary>
-                                Exit <term>
-                            Type is IDENTIFIER Value is MINUS
+                                        Type is IDENTIFIER Value is abc at line 23
+                            Type is IDENTIFIER Value is MINUS at line 23
                                 Enter <term>
                                     Enter <punary>
                                         Enter <element>
-                                        Type is IDENTIFIER Value is cba
-                                        Exit <element>
-                                    Exit <punary>
-                                Exit <term>
-                            Exit <expr>
-                        Exit <action_def>
+                                        Type is IDENTIFIER Value is cba at line 23
                         Enter <action_def>
-                        Type is KEYWORD Value is INPUT
-                        Type is IDENTIFIER Value is c
+                        Type is KEYWORD Value is INPUT at line 24
+                        Type is IDENTIFIER Value is c at line 24
                             Enter <name_ref>
                                 Enter <opt_ref>
                                     Enter <array_val>
                                         Enter <simp_arr_val>
-                                        Type is KEYWORD Value is LB
+                                        Type is KEYWORD Value is LB at line 24
                                             Enter <arg_list>
                                                 Enter <expr>
                                                     Enter <term>
                                                         Enter <punary>
                                                             Enter <element>
-                                                            Type is ICON Value is 0
-                                                            Exit <element>
-                                                        Exit <punary>
-                                                    Exit <term>
-                                                Type is IDENTIFIER Value is PLUS
+                                                            Type is ICON Value is 0 at line 24
+                                                Type is IDENTIFIER Value is PLUS at line 24
                                                     Enter <term>
                                                         Enter <punary>
                                                             Enter <element>
-                                                            Type is ICON Value is 0
-                                                            Exit <element>
-                                                        Exit <punary>
-                                                    Exit <term>
-                                                Exit <expr>
-                                            Exit <arg_list>
-                                        Type is KEYWORD Value is RB
-                                        Exit <simp_arr_val>
-                                    Exit <array_val>
-                                Exit <opt_ref>
-                            Exit <name_ref>
-                        Exit <action_def>
+                                                            Type is ICON Value is 0 at line 24
+                                        Type is KEYWORD Value is RB at line 24
                         Enter <action_def>
-                        Type is KEYWORD Value is DISPLAYN
+                        Type is KEYWORD Value is DISPLAYN at line 25
                             Enter <pvar_value_list>
                                 Enter <expr>
                                     Enter <term>
                                         Enter <punary>
                                             Enter <element>
-                                            Type is ICON Value is 1
-                                            Exit <element>
-                                        Exit <punary>
-                                    Exit <term>
-                                Type is KEYWORD Value is BAND
+                                            Type is ICON Value is 1 at line 25
+                                Type is KEYWORD Value is BAND at line 25
                                     Enter <term>
                                         Enter <punary>
                                             Enter <element>
-                                            Type is ICON Value is 1
-                                            Exit <element>
-                                        Exit <punary>
-                                    Exit <term>
-                                Exit <expr>
-                                Enter <COMMA>
-                                IDENTIFIER
-                                Exit <COMMA>
+                                            Type is ICON Value is 1 at line 25
+                            Type is IDENTIFIER Value is COMMA at line 25
                                 Enter <expr>
                                     Enter <term>
                                         Enter <punary>
                                             Enter <element>
-                                            Type is ICON Value is 2
-                                            Exit <element>
-                                        Exit <punary>
-                                    Exit <term>
-                                Type is IDENTIFIER Value is MINUS
+                                            Type is ICON Value is 2 at line 25
+                                Type is IDENTIFIER Value is MINUS at line 25
                                     Enter <term>
                                         Enter <punary>
                                             Enter <element>
-                                            Type is IDENTIFIER Value is TERM
-                                            Exit <element>
-                                        Exit <punary>
-                                    Exit <term>
-                                Exit <expr>
-                            Exit <pvar_value_list>
-                        Exit <action_def>
+                                            Type is IDENTIFIER Value is TERM at line 25
                         Enter <action_def>
-                        Type is KEYWORD Value is MCLOSE
-                        Type is IDENTIFIER Value is hello
-                        Exit <action_def>
+                        Type is KEYWORD Value is MCLOSE at line 26
+                        Type is IDENTIFIER Value is hello at line 26
                         Enter <action_def>
-                        Type is KEYWORD Value is MOPEN
+                        Type is KEYWORD Value is MOPEN at line 27
                             Enter <in_out>
-                            Type is KEYWORD Value is INPUT
-                            Type is KEYWORD Value is MFILE
-                            Type is IDENTIFIER Value is id
-                            Exit <in_out>
-                        Exit <action_def>
+                            Type is KEYWORD Value is INPUT at line 27
+                            Type is KEYWORD Value is MFILE at line 27
+                            Type is IDENTIFIER Value is id at line 27
                         Enter <action_def>
-                        Type is KEYWORD Value is MFILE
+                        Type is KEYWORD Value is MFILE at line 28
                             Enter <read_write>
-                            Type is KEYWORD Value is READ
+                            Type is KEYWORD Value is READ at line 28
                                 Enter <pvar_value_list>
                                     Enter <expr>
                                         Enter <term>
                                             Enter <punary>
                                                 Enter <element>
-                                                Type is STRING Value is "STRING"
-                                                Exit <element>
-                                            Exit <punary>
-                                        Exit <term>
-                                    Type is KEYWORD Value is BOR
+                                                Type is STRING Value is "STRING" at line 28
+                                    Type is KEYWORD Value is BOR at line 28
                                         Enter <term>
                                             Enter <punary>
                                                 Enter <element>
-                                                Type is STRING Value is "STRING"
-                                                Exit <element>
-                                            Exit <punary>
-                                        Exit <term>
-                                    Exit <expr>
-                                Exit <pvar_value_list>
-                            Type is KEYWORD Value is FROM
-                            Type is IDENTIFIER Value is id
-                            Exit <read_write>
-                        Exit <action_def>
+                                                Type is STRING Value is "STRING" at line 28
+                            Type is KEYWORD Value is FROM at line 28
+                            Type is IDENTIFIER Value is id at line 28
                         Enter <action_def>
-                        Type is KEYWORD Value is INCREMENT
-                        Type is IDENTIFIER Value is id
+                        Type is KEYWORD Value is INCREMENT at line 29
+                        Type is IDENTIFIER Value is id at line 29
                             Enter <name_ref>
                                 Enter <opt_ref>
                                     Enter <array_val>
                                         Enter <simp_arr_val>
-                                        Type is KEYWORD Value is LB
+                                        Type is KEYWORD Value is LB at line 29
                                             Enter <arg_list>
                                                 Enter <expr>
                                                     Enter <term>
                                                         Enter <punary>
                                                             Enter <element>
-                                                            Type is ICON Value is 0
-                                                            Exit <element>
-                                                        Exit <punary>
-                                                    Exit <term>
-                                                Type is IDENTIFIER Value is PLUS
+                                                            Type is ICON Value is 0 at line 29
+                                                Type is IDENTIFIER Value is PLUS at line 29
                                                     Enter <term>
                                                         Enter <punary>
                                                             Enter <element>
-                                                            Type is ICON Value is 0
-                                                            Exit <element>
-                                                        Exit <punary>
-                                                    Exit <term>
-                                                Exit <expr>
-                                            Exit <arg_list>
-                                        Type is KEYWORD Value is RB
-                                        Exit <simp_arr_val>
-                                    Exit <array_val>
-                                Exit <opt_ref>
-                            Exit <name_ref>
-                        Exit <action_def>
+                                                            Type is ICON Value is 0 at line 29
+                                        Type is KEYWORD Value is RB at line 29
                         Enter <action_def>
-                        Type is KEYWORD Value is DECREMENT
-                        Type is IDENTIFIER Value is id
+                        Type is KEYWORD Value is DECREMENT at line 30
+                        Type is IDENTIFIER Value is id at line 30
                             Enter <name_ref>
                                 Enter <opt_ref>
                                     Enter <array_val>
                                         Enter <simp_arr_val>
-                                        Type is KEYWORD Value is LB
+                                        Type is KEYWORD Value is LB at line 30
                                             Enter <arg_list>
                                                 Enter <expr>
                                                     Enter <term>
                                                         Enter <punary>
                                                             Enter <element>
-                                                            Type is ICON Value is 0
-                                                            Exit <element>
-                                                        Exit <punary>
-                                                    Exit <term>
-                                                Type is IDENTIFIER Value is PLUS
+                                                            Type is ICON Value is 0 at line 30
+                                                Type is IDENTIFIER Value is PLUS at line 30
                                                     Enter <term>
                                                         Enter <punary>
                                                             Enter <element>
-                                                            Type is ICON Value is 0
-                                                            Exit <element>
-                                                        Exit <punary>
-                                                    Exit <term>
-                                                Exit <expr>
-                                            Exit <arg_list>
-                                        Type is KEYWORD Value is RB
-                                        Exit <simp_arr_val>
-                                    Exit <array_val>
-                                Exit <opt_ref>
-                            Exit <name_ref>
-                        Exit <action_def>
+                                                            Type is ICON Value is 0 at line 30
+                                        Type is KEYWORD Value is RB at line 30
                         Enter <action_def>
-                        Type is KEYWORD Value is RETURN
+                        Type is KEYWORD Value is RETURN at line 31
                             Enter <expr>
                                 Enter <term>
                                     Enter <punary>
                                         Enter <element>
-                                        Type is ICON Value is 0
-                                        Exit <element>
-                                    Exit <punary>
-                                Exit <term>
-                            Type is IDENTIFIER Value is PLUS
+                                        Type is ICON Value is 0 at line 31
+                            Type is IDENTIFIER Value is PLUS at line 31
                                 Enter <term>
                                     Enter <punary>
                                         Enter <element>
-                                        Type is ICON Value is 0
-                                        Exit <element>
-                                    Exit <punary>
-                                Exit <term>
-                            Exit <expr>
-                        Exit <action_def>
+                                        Type is ICON Value is 0 at line 31
                         Enter <action_def>
-                        Type is KEYWORD Value is IF
+                        Type is KEYWORD Value is IF at line 32
                             Enter <pcondition>
                                 Enter <pcond1>
                                     Enter <pcond2>
@@ -781,66 +505,40 @@ Enter <Program>
                                             Enter <term>
                                                 Enter <punary>
                                                     Enter <element>
-                                                    Type is ICON Value is 2
-                                                    Exit <element>
-                                                Exit <punary>
-                                            Exit <term>
-                                        Type is IDENTIFIER Value is PLUS
+                                                    Type is ICON Value is 2 at line 32
+                                        Type is IDENTIFIER Value is PLUS at line 32
                                             Enter <term>
                                                 Enter <punary>
                                                     Enter <element>
-                                                    Type is ICON Value is 2
-                                                    Exit <element>
-                                                Exit <punary>
-                                            Exit <term>
-                                        Exit <expr>
-                                    Type is IDENTIFIER Value is EQUOP
+                                                    Type is ICON Value is 2 at line 32
+                                    Type is IDENTIFIER Value is EQUOP at line 32
                                         Enter <expr>
                                             Enter <term>
                                                 Enter <punary>
                                                     Enter <element>
-                                                    Type is ICON Value is 2
-                                                    Exit <element>
-                                                Exit <punary>
-                                            Exit <term>
-                                        Type is IDENTIFIER Value is PLUS
+                                                    Type is ICON Value is 2 at line 32
+                                        Type is IDENTIFIER Value is PLUS at line 32
                                             Enter <term>
                                                 Enter <punary>
                                                     Enter <element>
-                                                    Type is ICON Value is 2
-                                                    Exit <element>
-                                                Exit <punary>
-                                            Exit <term>
-                                        Exit <expr>
-                                    Exit <pcond2>
-                                Exit <pcond1>
-                            Exit <pcondition>
-                        Type is KEYWORD Value is THEN
+                                                    Type is ICON Value is 2 at line 32
+                        Type is KEYWORD Value is THEN at line 32
                             Enter <pactions>
                                 Enter <action_def>
-                                Type is KEYWORD Value is RETURN
+                                Type is KEYWORD Value is RETURN at line 33
                                     Enter <expr>
                                         Enter <term>
                                             Enter <punary>
                                                 Enter <element>
-                                                Type is ICON Value is 0
-                                                Exit <element>
-                                            Exit <punary>
-                                        Exit <term>
-                                    Type is IDENTIFIER Value is PLUS
+                                                Type is ICON Value is 0 at line 33
+                                    Type is IDENTIFIER Value is PLUS at line 33
                                         Enter <term>
                                             Enter <punary>
                                                 Enter <element>
-                                                Type is ICON Value is 0
-                                                Exit <element>
-                                            Exit <punary>
-                                        Exit <term>
-                                    Exit <expr>
-                                Exit <action_def>
-                            Exit <pactions>
+                                                Type is ICON Value is 0 at line 33
                             Enter <ptest_elsif>
                                 Enter <proc_elseif>
-                                Type is KEYWORD Value is ELSEIF
+                                Type is KEYWORD Value is ELSEIF at line 34
                                     Enter <pcondition>
                                         Enter <pcond1>
                                             Enter <pcond2>
@@ -848,264 +546,159 @@ Enter <Program>
                                                     Enter <term>
                                                         Enter <punary>
                                                             Enter <element>
-                                                            Type is ICON Value is 2
-                                                            Exit <element>
-                                                        Exit <punary>
-                                                    Exit <term>
-                                                Type is KEYWORD Value is BAND
+                                                            Type is ICON Value is 2 at line 34
+                                                Type is KEYWORD Value is BAND at line 34
                                                     Enter <term>
                                                         Enter <punary>
                                                             Enter <element>
-                                                            Type is ICON Value is 2
-                                                            Exit <element>
-                                                        Exit <punary>
-                                                    Exit <term>
-                                                Exit <expr>
-                                            Type is IDENTIFIER Value is EQUOP
+                                                            Type is ICON Value is 2 at line 34
+                                            Type is IDENTIFIER Value is EQUOP at line 34
                                                 Enter <expr>
                                                     Enter <term>
                                                         Enter <punary>
                                                             Enter <element>
-                                                            Type is ICON Value is 2
-                                                            Exit <element>
-                                                        Exit <punary>
-                                                    Exit <term>
-                                                Type is KEYWORD Value is BAND
+                                                            Type is ICON Value is 2 at line 34
+                                                Type is KEYWORD Value is BAND at line 34
                                                     Enter <term>
                                                         Enter <punary>
                                                             Enter <element>
-                                                            Type is ICON Value is 2
-                                                            Exit <element>
-                                                        Exit <punary>
-                                                    Exit <term>
-                                                Exit <expr>
-                                            Exit <pcond2>
-                                        Exit <pcond1>
-                                    Exit <pcondition>
-                                Type is KEYWORD Value is THEN
+                                                            Type is ICON Value is 2 at line 34
+                                Type is KEYWORD Value is THEN at line 35
                                     Enter <pactions>
                                         Enter <action_def>
-                                        Type is KEYWORD Value is INPUT
-                                        Type is IDENTIFIER Value is c
+                                        Type is KEYWORD Value is INPUT at line 36
+                                        Type is IDENTIFIER Value is c at line 36
                                             Enter <name_ref>
                                                 Enter <opt_ref>
                                                     Enter <array_val>
                                                         Enter <simp_arr_val>
-                                                        Type is KEYWORD Value is LB
+                                                        Type is KEYWORD Value is LB at line 36
                                                             Enter <arg_list>
                                                                 Enter <expr>
                                                                     Enter <term>
                                                                         Enter <punary>
                                                                             Enter <element>
-                                                                            Type is ICON Value is 0
-                                                                            Exit <element>
-                                                                        Exit <punary>
-                                                                    Exit <term>
-                                                                Type is KEYWORD Value is BAND
+                                                                            Type is ICON Value is 0 at line 36
+                                                                Type is KEYWORD Value is BAND at line 36
                                                                     Enter <term>
                                                                         Enter <punary>
                                                                             Enter <element>
-                                                                            Type is ICON Value is 0
-                                                                            Exit <element>
-                                                                        Exit <punary>
-                                                                    Exit <term>
-                                                                Exit <expr>
-                                                            Exit <arg_list>
-                                                        Type is KEYWORD Value is RB
-                                                        Exit <simp_arr_val>
-                                                    Exit <array_val>
-                                                Exit <opt_ref>
-                                            Exit <name_ref>
-                                        Exit <action_def>
-                                    Exit <pactions>
-                                Exit <proc_elseif>
-                            Exit <ptest_elsif>
+                                                                            Type is ICON Value is 0 at line 36
+                                                        Type is KEYWORD Value is RB at line 36
                             Enter <opt_else>
-                            Type is IDENTIFIER Value is ELSE
+                            Type is IDENTIFIER Value is ELSE at line 37
                                 Enter <pactions>
                                     Enter <action_def>
-                                    Type is KEYWORD Value is INPUT
-                                    Type is IDENTIFIER Value is f
+                                    Type is KEYWORD Value is INPUT at line 38
+                                    Type is IDENTIFIER Value is f at line 38
                                         Enter <name_ref>
                                             Enter <opt_ref>
                                                 Enter <array_val>
                                                     Enter <simp_arr_val>
-                                                    Type is KEYWORD Value is LB
+                                                    Type is KEYWORD Value is LB at line 38
                                                         Enter <arg_list>
                                                             Enter <expr>
                                                                 Enter <term>
                                                                     Enter <punary>
                                                                         Enter <element>
-                                                                        Type is ICON Value is 0
-                                                                        Exit <element>
-                                                                    Exit <punary>
-                                                                Exit <term>
-                                                            Type is KEYWORD Value is BAND
+                                                                        Type is ICON Value is 0 at line 38
+                                                            Type is KEYWORD Value is BAND at line 38
                                                                 Enter <term>
                                                                     Enter <punary>
                                                                         Enter <element>
-                                                                        Type is ICON Value is 0
-                                                                        Exit <element>
-                                                                    Exit <punary>
-                                                                Exit <term>
-                                                            Exit <expr>
-                                                        Exit <arg_list>
-                                                    Type is KEYWORD Value is RB
-                                                    Exit <simp_arr_val>
-                                                Exit <array_val>
-                                            Exit <opt_ref>
-                                        Exit <name_ref>
-                                    Exit <action_def>
-                                Exit <pactions>
-                            Exit <opt_else>
-                        Type is KEYWORD Value is ENDIF
-                        Exit <action_def>
+                                                                        Type is ICON Value is 0 at line 38
+                                                    Type is KEYWORD Value is RB at line 38
+                        Type is KEYWORD Value is ENDIF at line 39
                         Enter <action_def>
-                        Type is KEYWORD Value is FOR
-                        Type is IDENTIFIER Value is c
+                        Type is KEYWORD Value is FOR at line 40
+                        Type is IDENTIFIER Value is c at line 40
                             Enter <name_ref>
                                 Enter <opt_ref>
                                     Enter <array_val>
                                         Enter <simp_arr_val>
-                                        Type is KEYWORD Value is LB
+                                        Type is KEYWORD Value is LB at line 40
                                             Enter <arg_list>
                                                 Enter <expr>
                                                     Enter <term>
                                                         Enter <punary>
                                                             Enter <element>
-                                                            Type is ICON Value is 0
-                                                            Exit <element>
-                                                        Exit <punary>
-                                                    Exit <term>
-                                                Type is IDENTIFIER Value is PLUS
+                                                            Type is ICON Value is 0 at line 40
+                                                Type is IDENTIFIER Value is PLUS at line 40
                                                     Enter <term>
                                                         Enter <punary>
                                                             Enter <element>
-                                                            Type is ICON Value is 0
-                                                            Exit <element>
-                                                        Exit <punary>
-                                                    Exit <term>
-                                                Exit <expr>
-                                            Exit <arg_list>
-                                        Type is KEYWORD Value is RB
-                                        Exit <simp_arr_val>
-                                    Exit <array_val>
-                                Exit <opt_ref>
-                            Exit <name_ref>
-                        Type is IDENTIFIER Value is EQUOP
+                                                            Type is ICON Value is 0 at line 40
+                                        Type is KEYWORD Value is RB at line 40
+                        Type is IDENTIFIER Value is EQUOP at line 40
                             Enter <expr>
                                 Enter <term>
                                     Enter <punary>
                                         Enter <element>
-                                        Type is ICON Value is 2
-                                        Exit <element>
-                                    Exit <punary>
-                                Exit <term>
-                            Type is KEYWORD Value is BAND
+                                        Type is ICON Value is 2 at line 40
+                            Type is KEYWORD Value is BAND at line 40
                                 Enter <term>
                                     Enter <punary>
                                         Enter <element>
-                                        Type is ICON Value is 2
-                                        Exit <element>
-                                    Exit <punary>
-                                Exit <term>
-                            Exit <expr>
+                                        Type is ICON Value is 2 at line 40
                             Enter <downto>
-                            Type is KEYWORD Value is TO
-                            Exit <downto>
+                            Type is KEYWORD Value is TO at line 40
                             Enter <expr>
                                 Enter <term>
                                     Enter <punary>
                                         Enter <element>
-                                        Type is ICON Value is 2
-                                        Exit <element>
-                                    Exit <punary>
-                                Exit <term>
-                            Type is KEYWORD Value is BAND
+                                        Type is ICON Value is 2 at line 40
+                            Type is KEYWORD Value is BAND at line 40
                                 Enter <term>
                                     Enter <punary>
                                         Enter <element>
-                                        Type is ICON Value is 3
-                                        Exit <element>
-                                    Exit <punary>
-                                Exit <term>
-                            Exit <expr>
-                        Type is KEYWORD Value is DO
+                                        Type is ICON Value is 3 at line 40
+                        Type is KEYWORD Value is DO at line 40
                             Enter <pactions>
                                 Enter <action_def>
-                                Type is KEYWORD Value is INPUT
-                                Type is IDENTIFIER Value is f
+                                Type is KEYWORD Value is INPUT at line 41
+                                Type is IDENTIFIER Value is f at line 41
                                     Enter <name_ref>
                                         Enter <opt_ref>
                                             Enter <array_val>
                                                 Enter <simp_arr_val>
-                                                Type is KEYWORD Value is LB
+                                                Type is KEYWORD Value is LB at line 41
                                                     Enter <arg_list>
                                                         Enter <expr>
                                                             Enter <term>
                                                                 Enter <punary>
                                                                     Enter <element>
-                                                                    Type is ICON Value is 0
-                                                                    Exit <element>
-                                                                Exit <punary>
-                                                            Exit <term>
-                                                        Type is KEYWORD Value is BAND
+                                                                    Type is ICON Value is 0 at line 41
+                                                        Type is KEYWORD Value is BAND at line 41
                                                             Enter <term>
                                                                 Enter <punary>
                                                                     Enter <element>
-                                                                    Type is ICON Value is 0
-                                                                    Exit <element>
-                                                                Exit <punary>
-                                                            Exit <term>
-                                                        Exit <expr>
-                                                    Exit <arg_list>
-                                                Type is KEYWORD Value is RB
-                                                Exit <simp_arr_val>
-                                            Exit <array_val>
-                                        Exit <opt_ref>
-                                    Exit <name_ref>
-                                Exit <action_def>
-                            Exit <pactions>
-                        Type is KEYWORD Value is ENDFOR
-                        Exit <action_def>
+                                                                    Type is ICON Value is 0 at line 41
+                                                Type is KEYWORD Value is RB at line 41
+                        Type is KEYWORD Value is ENDFOR at line 42
                         Enter <action_def>
-                        Type is KEYWORD Value is REPEAT
+                        Type is KEYWORD Value is REPEAT at line 43
                             Enter <pactions>
                                 Enter <action_def>
-                                Type is KEYWORD Value is INPUT
-                                Type is IDENTIFIER Value is f
+                                Type is KEYWORD Value is INPUT at line 44
+                                Type is IDENTIFIER Value is f at line 44
                                     Enter <name_ref>
                                         Enter <opt_ref>
                                             Enter <array_val>
                                                 Enter <simp_arr_val>
-                                                Type is KEYWORD Value is LB
+                                                Type is KEYWORD Value is LB at line 44
                                                     Enter <arg_list>
                                                         Enter <expr>
                                                             Enter <term>
                                                                 Enter <punary>
                                                                     Enter <element>
-                                                                    Type is ICON Value is 0
-                                                                    Exit <element>
-                                                                Exit <punary>
-                                                            Exit <term>
-                                                        Type is KEYWORD Value is BAND
+                                                                    Type is ICON Value is 0 at line 44
+                                                        Type is KEYWORD Value is BAND at line 44
                                                             Enter <term>
                                                                 Enter <punary>
                                                                     Enter <element>
-                                                                    Type is ICON Value is 0
-                                                                    Exit <element>
-                                                                Exit <punary>
-                                                            Exit <term>
-                                                        Exit <expr>
-                                                    Exit <arg_list>
-                                                Type is KEYWORD Value is RB
-                                                Exit <simp_arr_val>
-                                            Exit <array_val>
-                                        Exit <opt_ref>
-                                    Exit <name_ref>
-                                Exit <action_def>
-                            Exit <pactions>
-                        Type is KEYWORD Value is UNTIL
+                                                                    Type is ICON Value is 0 at line 44
+                                                Type is KEYWORD Value is RB at line 44
+                        Type is KEYWORD Value is UNTIL at line 45
                             Enter <pcondition>
                                 Enter <pcond1>
                                     Enter <pcond2>
@@ -1113,44 +706,26 @@ Enter <Program>
                                             Enter <term>
                                                 Enter <punary>
                                                     Enter <element>
-                                                    Type is ICON Value is 2
-                                                    Exit <element>
-                                                Exit <punary>
-                                            Exit <term>
-                                        Type is IDENTIFIER Value is PLUS
+                                                    Type is ICON Value is 2 at line 46
+                                        Type is IDENTIFIER Value is PLUS at line 46
                                             Enter <term>
                                                 Enter <punary>
                                                     Enter <element>
-                                                    Type is ICON Value is 2
-                                                    Exit <element>
-                                                Exit <punary>
-                                            Exit <term>
-                                        Exit <expr>
-                                    Type is IDENTIFIER Value is EQUOP
+                                                    Type is ICON Value is 2 at line 46
+                                    Type is IDENTIFIER Value is EQUOP at line 46
                                         Enter <expr>
                                             Enter <term>
                                                 Enter <punary>
                                                     Enter <element>
-                                                    Type is ICON Value is 2
-                                                    Exit <element>
-                                                Exit <punary>
-                                            Exit <term>
-                                        Type is IDENTIFIER Value is PLUS
+                                                    Type is ICON Value is 2 at line 46
+                                        Type is IDENTIFIER Value is PLUS at line 46
                                             Enter <term>
                                                 Enter <punary>
                                                     Enter <element>
-                                                    Type is ICON Value is 2
-                                                    Exit <element>
-                                                Exit <punary>
-                                            Exit <term>
-                                        Exit <expr>
-                                    Exit <pcond2>
-                                Exit <pcond1>
-                            Exit <pcondition>
-                        Type is KEYWORD Value is ENDREPEAT
-                        Exit <action_def>
+                                                    Type is ICON Value is 2 at line 46
+                        Type is KEYWORD Value is ENDREPEAT at line 47
                         Enter <action_def>
-                        Type is KEYWORD Value is WHILE
+                        Type is KEYWORD Value is WHILE at line 48
                             Enter <pcondition>
                                 Enter <pcond1>
                                     Enter <pcond2>
@@ -1158,83 +733,50 @@ Enter <Program>
                                             Enter <term>
                                                 Enter <punary>
                                                     Enter <element>
-                                                    Type is ICON Value is 2
-                                                    Exit <element>
-                                                Exit <punary>
-                                            Exit <term>
-                                        Type is IDENTIFIER Value is PLUS
+                                                    Type is ICON Value is 2 at line 49
+                                        Type is IDENTIFIER Value is PLUS at line 49
                                             Enter <term>
                                                 Enter <punary>
                                                     Enter <element>
-                                                    Type is ICON Value is 2
-                                                    Exit <element>
-                                                Exit <punary>
-                                            Exit <term>
-                                        Exit <expr>
-                                    Type is IDENTIFIER Value is EQUOP
+                                                    Type is ICON Value is 2 at line 49
+                                    Type is IDENTIFIER Value is EQUOP at line 49
                                         Enter <expr>
                                             Enter <term>
                                                 Enter <punary>
                                                     Enter <element>
-                                                    Type is ICON Value is 2
-                                                    Exit <element>
-                                                Exit <punary>
-                                            Exit <term>
-                                        Type is IDENTIFIER Value is PLUS
+                                                    Type is ICON Value is 2 at line 49
+                                        Type is IDENTIFIER Value is PLUS at line 49
                                             Enter <term>
                                                 Enter <punary>
                                                     Enter <element>
-                                                    Type is ICON Value is 2
-                                                    Exit <element>
-                                                Exit <punary>
-                                            Exit <term>
-                                        Exit <expr>
-                                    Exit <pcond2>
-                                Exit <pcond1>
-                            Exit <pcondition>
-                        Type is KEYWORD Value is DO
+                                                    Type is ICON Value is 2 at line 49
+                        Type is KEYWORD Value is DO at line 50
                             Enter <pactions>
                                 Enter <action_def>
-                                Type is KEYWORD Value is INPUT
-                                Type is IDENTIFIER Value is f
+                                Type is KEYWORD Value is INPUT at line 51
+                                Type is IDENTIFIER Value is f at line 51
                                     Enter <name_ref>
                                         Enter <opt_ref>
                                             Enter <array_val>
                                                 Enter <simp_arr_val>
-                                                Type is KEYWORD Value is LB
+                                                Type is KEYWORD Value is LB at line 51
                                                     Enter <arg_list>
                                                         Enter <expr>
                                                             Enter <term>
                                                                 Enter <punary>
                                                                     Enter <element>
-                                                                    Type is ICON Value is 0
-                                                                    Exit <element>
-                                                                Exit <punary>
-                                                            Exit <term>
-                                                        Type is KEYWORD Value is BAND
+                                                                    Type is ICON Value is 0 at line 51
+                                                        Type is KEYWORD Value is BAND at line 51
                                                             Enter <term>
                                                                 Enter <punary>
                                                                     Enter <element>
-                                                                    Type is ICON Value is 0
-                                                                    Exit <element>
-                                                                Exit <punary>
-                                                            Exit <term>
-                                                        Exit <expr>
-                                                    Exit <arg_list>
-                                                Type is KEYWORD Value is RB
-                                                Exit <simp_arr_val>
-                                            Exit <array_val>
-                                        Exit <opt_ref>
-                                    Exit <name_ref>
-                                Exit <action_def>
-                            Exit <pactions>
-                        Type is KEYWORD Value is ENDWHILE
-                        Exit <action_def>
+                                                                    Type is ICON Value is 0 at line 51
+                                                Type is KEYWORD Value is RB at line 51
+                        Type is KEYWORD Value is ENDWHILE at line 52
                         Enter <action_def>
-                        Type is KEYWORD Value is MEXIT
-                        Exit <action_def>
+                        Type is KEYWORD Value is MEXIT at line 53
                         Enter <action_def>
-                        Type is IDENTIFIER Value is POSTCONDITION
+                        Type is IDENTIFIER Value is POSTCONDITION at line 54
                             Enter <pcondition>
                                 Enter <pcond1>
                                     Enter <pcond2>
@@ -1242,278 +784,165 @@ Enter <Program>
                                             Enter <term>
                                                 Enter <punary>
                                                     Enter <element>
-                                                    Type is ICON Value is 2
-                                                    Exit <element>
-                                                Exit <punary>
-                                            Exit <term>
-                                        Type is IDENTIFIER Value is PLUS
+                                                    Type is ICON Value is 2 at line 54
+                                        Type is IDENTIFIER Value is PLUS at line 54
                                             Enter <term>
                                                 Enter <punary>
                                                     Enter <element>
-                                                    Type is ICON Value is 2
-                                                    Exit <element>
-                                                Exit <punary>
-                                            Exit <term>
-                                        Exit <expr>
-                                    Type is IDENTIFIER Value is EQUOP
+                                                    Type is ICON Value is 2 at line 54
+                                    Type is IDENTIFIER Value is EQUOP at line 54
                                         Enter <expr>
                                             Enter <term>
                                                 Enter <punary>
                                                     Enter <element>
-                                                    Type is ICON Value is 2
-                                                    Exit <element>
-                                                Exit <punary>
-                                            Exit <term>
-                                        Type is IDENTIFIER Value is PLUS
+                                                    Type is ICON Value is 2 at line 54
+                                        Type is IDENTIFIER Value is PLUS at line 54
                                             Enter <term>
                                                 Enter <punary>
                                                     Enter <element>
-                                                    Type is ICON Value is 2
-                                                    Exit <element>
-                                                Exit <punary>
-                                            Exit <term>
-                                        Exit <expr>
-                                    Exit <pcond2>
-                                Exit <pcond1>
-                            Exit <pcondition>
-                        Exit <action_def>
+                                                    Type is ICON Value is 2 at line 54
                         Enter <action_def>
-                        Type is KEYWORD Value is MBREAK
-                        Exit <action_def>
+                        Type is KEYWORD Value is MBREAK at line 55
                         Enter <action_def>
-                        Type is KEYWORD Value is CASE
-                        Type is IDENTIFIER Value is c
+                        Type is KEYWORD Value is CASE at line 56
+                        Type is IDENTIFIER Value is c at line 56
                             Enter <name_ref>
                                 Enter <opt_ref>
                                     Enter <array_val>
                                         Enter <simp_arr_val>
-                                        Type is KEYWORD Value is LB
+                                        Type is KEYWORD Value is LB at line 56
                                             Enter <arg_list>
                                                 Enter <expr>
                                                     Enter <term>
                                                         Enter <punary>
                                                             Enter <element>
-                                                            Type is ICON Value is 0
-                                                            Exit <element>
-                                                        Exit <punary>
-                                                    Exit <term>
-                                                Type is KEYWORD Value is BAND
+                                                            Type is ICON Value is 0 at line 56
+                                                Type is KEYWORD Value is BAND at line 56
                                                     Enter <term>
                                                         Enter <punary>
                                                             Enter <element>
-                                                            Type is ICON Value is 0
-                                                            Exit <element>
-                                                        Exit <punary>
-                                                    Exit <term>
-                                                Exit <expr>
-                                            Exit <arg_list>
-                                        Type is KEYWORD Value is RB
-                                        Exit <simp_arr_val>
-                                    Exit <array_val>
-                                Exit <opt_ref>
-                            Exit <name_ref>
+                                                            Type is ICON Value is 0 at line 56
+                                        Type is KEYWORD Value is RB at line 56
                             Enter <pcase_val>
-                            Type is IDENTIFIER Value is MWHEN
+                            Type is IDENTIFIER Value is MWHEN at line 56
                                 Enter <expr>
                                     Enter <term>
                                         Enter <punary>
                                             Enter <element>
-                                            Type is ICON Value is 2
-                                            Exit <element>
-                                        Exit <punary>
-                                    Exit <term>
-                                Type is KEYWORD Value is BAND
+                                            Type is ICON Value is 2 at line 56
+                                Type is KEYWORD Value is BAND at line 56
                                     Enter <term>
                                         Enter <punary>
                                             Enter <element>
-                                            Type is ICON Value is 2
-                                            Exit <element>
-                                        Exit <punary>
-                                    Exit <term>
-                                Exit <expr>
-                            Type is IDENTIFIER Value is COLON
+                                            Type is ICON Value is 2 at line 56
+                            Type is IDENTIFIER Value is COLON at line 56
                                 Enter <pactions>
                                     Enter <action_def>
-                                    Type is KEYWORD Value is INPUT
-                                    Type is IDENTIFIER Value is f
+                                    Type is KEYWORD Value is INPUT at line 57
+                                    Type is IDENTIFIER Value is f at line 57
                                         Enter <name_ref>
                                             Enter <opt_ref>
                                                 Enter <array_val>
                                                     Enter <simp_arr_val>
-                                                    Type is KEYWORD Value is LB
+                                                    Type is KEYWORD Value is LB at line 57
                                                         Enter <arg_list>
                                                             Enter <expr>
                                                                 Enter <term>
                                                                     Enter <punary>
                                                                         Enter <element>
-                                                                        Type is ICON Value is 0
-                                                                        Exit <element>
-                                                                    Exit <punary>
-                                                                Exit <term>
-                                                            Type is KEYWORD Value is BAND
+                                                                        Type is ICON Value is 0 at line 57
+                                                            Type is KEYWORD Value is BAND at line 57
                                                                 Enter <term>
                                                                     Enter <punary>
                                                                         Enter <element>
-                                                                        Type is ICON Value is 0
-                                                                        Exit <element>
-                                                                    Exit <punary>
-                                                                Exit <term>
-                                                            Exit <expr>
-                                                        Exit <arg_list>
-                                                    Type is KEYWORD Value is RB
-                                                    Exit <simp_arr_val>
-                                                Exit <array_val>
-                                            Exit <opt_ref>
-                                        Exit <name_ref>
-                                    Exit <action_def>
-                                Exit <pactions>
-                            Type is IDENTIFIER Value is MWHEN
+                                                                        Type is ICON Value is 0 at line 57
+                                                    Type is KEYWORD Value is RB at line 57
+                            Type is IDENTIFIER Value is MWHEN at line 58
                                 Enter <expr>
                                     Enter <term>
                                         Enter <punary>
                                             Enter <element>
-                                            Type is ICON Value is 2
-                                            Exit <element>
-                                        Exit <punary>
-                                    Exit <term>
-                                Type is KEYWORD Value is BAND
+                                            Type is ICON Value is 2 at line 58
+                                Type is KEYWORD Value is BAND at line 58
                                     Enter <term>
                                         Enter <punary>
                                             Enter <element>
-                                            Type is ICON Value is 2
-                                            Exit <element>
-                                        Exit <punary>
-                                    Exit <term>
-                                Exit <expr>
-                            Type is IDENTIFIER Value is COLON
+                                            Type is ICON Value is 2 at line 58
+                            Type is IDENTIFIER Value is COLON at line 58
                                 Enter <pactions>
                                     Enter <action_def>
-                                    Type is KEYWORD Value is MEXIT
-                                    Exit <action_def>
-                                Exit <pactions>
-                            Exit <pcase_val>
+                                    Type is KEYWORD Value is MEXIT at line 59
                             Enter <pcase_def>
-                            Type is KEYWORD Value is DEFAULT
-                            Type is IDENTIFIER Value is COLON
+                            Type is KEYWORD Value is DEFAULT at line 60
+                            Type is IDENTIFIER Value is COLON at line 60
                                 Enter <pactions>
                                     Enter <action_def>
-                                    Type is KEYWORD Value is FOR
-                                    Type is IDENTIFIER Value is c
+                                    Type is KEYWORD Value is FOR at line 61
+                                    Type is IDENTIFIER Value is c at line 61
                                         Enter <name_ref>
                                             Enter <opt_ref>
                                                 Enter <array_val>
                                                     Enter <simp_arr_val>
-                                                    Type is KEYWORD Value is LB
+                                                    Type is KEYWORD Value is LB at line 61
                                                         Enter <arg_list>
                                                             Enter <expr>
                                                                 Enter <term>
                                                                     Enter <punary>
                                                                         Enter <element>
-                                                                        Type is ICON Value is 0
-                                                                        Exit <element>
-                                                                    Exit <punary>
-                                                                Exit <term>
-                                                            Type is IDENTIFIER Value is PLUS
+                                                                        Type is ICON Value is 0 at line 61
+                                                            Type is IDENTIFIER Value is PLUS at line 61
                                                                 Enter <term>
                                                                     Enter <punary>
                                                                         Enter <element>
-                                                                        Type is ICON Value is 0
-                                                                        Exit <element>
-                                                                    Exit <punary>
-                                                                Exit <term>
-                                                            Exit <expr>
-                                                        Exit <arg_list>
-                                                    Type is KEYWORD Value is RB
-                                                    Exit <simp_arr_val>
-                                                Exit <array_val>
-                                            Exit <opt_ref>
-                                        Exit <name_ref>
-                                    Type is IDENTIFIER Value is EQUOP
+                                                                        Type is ICON Value is 0 at line 61
+                                                    Type is KEYWORD Value is RB at line 61
+                                    Type is IDENTIFIER Value is EQUOP at line 61
                                         Enter <expr>
                                             Enter <term>
                                                 Enter <punary>
                                                     Enter <element>
-                                                    Type is ICON Value is 2
-                                                    Exit <element>
-                                                Exit <punary>
-                                            Exit <term>
-                                        Type is KEYWORD Value is BAND
+                                                    Type is ICON Value is 2 at line 61
+                                        Type is KEYWORD Value is BAND at line 61
                                             Enter <term>
                                                 Enter <punary>
                                                     Enter <element>
-                                                    Type is ICON Value is 2
-                                                    Exit <element>
-                                                Exit <punary>
-                                            Exit <term>
-                                        Exit <expr>
+                                                    Type is ICON Value is 2 at line 61
                                         Enter <downto>
-                                        Type is KEYWORD Value is TO
-                                        Exit <downto>
+                                        Type is KEYWORD Value is TO at line 61
                                         Enter <expr>
                                             Enter <term>
                                                 Enter <punary>
                                                     Enter <element>
-                                                    Type is ICON Value is 2
-                                                    Exit <element>
-                                                Exit <punary>
-                                            Exit <term>
-                                        Type is KEYWORD Value is BAND
+                                                    Type is ICON Value is 2 at line 61
+                                        Type is KEYWORD Value is BAND at line 61
                                             Enter <term>
                                                 Enter <punary>
                                                     Enter <element>
-                                                    Type is ICON Value is 3
-                                                    Exit <element>
-                                                Exit <punary>
-                                            Exit <term>
-                                        Exit <expr>
-                                    Type is KEYWORD Value is DO
+                                                    Type is ICON Value is 3 at line 61
+                                    Type is KEYWORD Value is DO at line 61
                                         Enter <pactions>
                                             Enter <action_def>
-                                            Type is KEYWORD Value is INPUT
-                                            Type is IDENTIFIER Value is f
+                                            Type is KEYWORD Value is INPUT at line 62
+                                            Type is IDENTIFIER Value is f at line 62
                                                 Enter <name_ref>
                                                     Enter <opt_ref>
                                                         Enter <array_val>
                                                             Enter <simp_arr_val>
-                                                            Type is KEYWORD Value is LB
+                                                            Type is KEYWORD Value is LB at line 62
                                                                 Enter <arg_list>
                                                                     Enter <expr>
                                                                         Enter <term>
                                                                             Enter <punary>
                                                                                 Enter <element>
-                                                                                Type is ICON Value is 0
-                                                                                Exit <element>
-                                                                            Exit <punary>
-                                                                        Exit <term>
-                                                                    Type is KEYWORD Value is BAND
+                                                                                Type is ICON Value is 0 at line 62
+                                                                    Type is KEYWORD Value is BAND at line 62
                                                                         Enter <term>
                                                                             Enter <punary>
                                                                                 Enter <element>
-                                                                                Type is ICON Value is 0
-                                                                                Exit <element>
-                                                                            Exit <punary>
-                                                                        Exit <term>
-                                                                    Exit <expr>
-                                                                Exit <arg_list>
-                                                            Type is KEYWORD Value is RB
-                                                            Exit <simp_arr_val>
-                                                        Exit <array_val>
-                                                    Exit <opt_ref>
-                                                Exit <name_ref>
-                                            Exit <action_def>
-                                        Exit <pactions>
-                                    Type is KEYWORD Value is ENDFOR
-                                    Exit <action_def>
-                                Exit <pactions>
-                            Exit <pcase_def>
-                        Type is KEYWORD Value is MENDCASE
-                        Exit <action_def>
-                    Exit <pactions>
-                Type is KEYWORD Value is ENDFUN
-                Type is IDENTIFIER Value is id
-                Exit <pother_oper_def>
-            Exit <funct_body>
-        Exit <funct_list>
-    Exit <implement>
-Exit <Program>
+                                                                                Type is ICON Value is 0 at line 62
+                                                            Type is KEYWORD Value is RB at line 62
+                                    Type is KEYWORD Value is ENDFOR at line 63
+                        Type is KEYWORD Value is MENDCASE at line 64
+                Type is KEYWORD Value is ENDFUN at line 65
+                Type is IDENTIFIER Value is id at line 65
 
