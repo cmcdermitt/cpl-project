@@ -1,187 +1,296 @@
-Program
-    func_main
-        ('MAIN', 'KEYWORD')
-    globals
-        ('GLOBAL', 'IDENTIFIER')
-        ('DECLARATIONS', 'IDENTIFIER')
-        var_dec
-            ('VARIABLES', 'KEYWORD')
-            data_declarations
-                comp_declare
-                    ('DEFINE', 'KEYWORD')
-                    data_declaration
-                        ('max', 'IDENTIFIER')
-                        parray_dec
-                            ('VALUE', 'KEYWORD')
-                        ('OF', 'KEYWORD')
-                        data_type
-                            ('INTEGER', 'KEYWORD')
-    implement
-        ('IMPLEMENTATIONS', 'IDENTIFIER')
-        main_head
-            ('MAIN', 'KEYWORD')
-            ('DESCRIPTION', 'KEYWORD')
-        funct_list
-            funct_body
-                ('FUNCTION', 'KEYWORD')
-                pother_oper_def
-                    pother_oper
-                        ('m', 'IDENTIFIER')
-                        ('DESCRIPTION', 'KEYWORD')
-                        oper_type
-                            ('RETURN', 'KEYWORD')
-                            chk_ptr
-                                ('POINTER', 'KEYWORD')
-                                ('OF', 'KEYWORD')
-                            chk_array
-                                ('ARRAY', 'KEYWORD')
-                                array_dim_list
-                                    ('LB', 'KEYWORD')
-                                    array_index
-                                        ('ad', 'IDENTIFIER')
-                                    ('RB', 'KEYWORD')
-                            ret_type
-                                ('STRUCT', 'KEYWORD')
-                                ('a', 'IDENTIFIER')
-                    ('IS', 'KEYWORD')
-                    const_var_struct
-                        var_dec
-                            ('VARIABLES', 'KEYWORD')
-                            data_declarations
-                                comp_declare
-                                    ('DEFINE', 'KEYWORD')
-                                    data_declaration
-                                        ('a', 'IDENTIFIER')
-                                        parray_dec
-                                            ('VALUE', 'KEYWORD')
-                                        ('OF', 'KEYWORD')
-                                        data_type
-                                            ('INTEGER', 'KEYWORD')
-                    ('BEGIN', 'KEYWORD')
-                    pactions
-                        action_def
-                            ('SET', 'KEYWORD')
-                            ('max', 'IDENTIFIER')
-                            name_ref
-                                opt_ref
-                                    array_val
-                                        simp_arr_val
-                                            ('LB', 'KEYWORD')
-                                            arg_list
-                                                expr
-                                                    term
-                                                        punary
-                                                            element
-                                                                ('0', 'ICON')
-                                                    ('PLUS', 'IDENTIFIER')
-                                                    term
-                                                        punary
-                                                            element
-                                                                ('0', 'ICON')
-                                            ('RB', 'KEYWORD')
-                            ('EQUOP', 'IDENTIFIER')
-                            expr
-                                term
-                                    punary
-                                        element
-                                            ('0', 'ICON')
-                                ('PLUS', 'IDENTIFIER')
-                                term
-                                    punary
-                                        element
-                                            ('60', 'ICON')
-                        action_def
-                            ('SET', 'KEYWORD')
-                            ('a', 'IDENTIFIER')
-                            name_ref
-                                opt_ref
-                                    array_val
-                                        simp_arr_val
-                                            ('LB', 'KEYWORD')
-                                            arg_list
-                                                expr
-                                                    term
-                                                        punary
-                                                            element
-                                                                ('0', 'ICON')
-                                                    ('PLUS', 'IDENTIFIER')
-                                                    term
-                                                        punary
-                                                            element
-                                                                ('0', 'ICON')
-                                            ('RB', 'KEYWORD')
-                            ('EQUOP', 'IDENTIFIER')
-                            expr
-                                term
-                                    punary
-                                        element
-                                            ('0', 'ICON')
-                                ('PLUS', 'IDENTIFIER')
-                                term
-                                    punary
-                                        element
-                                            ('-2', 'ICON')
-                        action_def
-                            ('WHILE', 'KEYWORD')
-                            pcondition
-                                pcond1
-                                    pcond2
-                                        expr
-                                            term
-                                                punary
-                                                    element
-                                                        ('a', 'IDENTIFIER')
-                                            ('PLUS', 'IDENTIFIER')
-                                            term
-                                                punary
-                                                    element
-                                                        ('0', 'ICON')
-                                        eq_v
-                                            ('LESS', 'IDENTIFIER')
-                                            ('THAN', 'IDENTIFIER')
-                                        expr
-                                            term
-                                                punary
-                                                    element
-                                                        ('max', 'IDENTIFIER')
-                                            ('PLUS', 'IDENTIFIER')
-                                            term
-                                                punary
-                                                    element
-                                                        ('0', 'ICON')
-                            ('DO', 'KEYWORD')
-                            pactions
-                                action_def
-                                    ('SET', 'KEYWORD')
-                                    ('a', 'IDENTIFIER')
-                                    name_ref
-                                        opt_ref
-                                            array_val
-                                                simp_arr_val
-                                                    ('LB', 'KEYWORD')
-                                                    arg_list
-                                                        expr
-                                                            term
-                                                                punary
-                                                                    element
-                                                                        ('0', 'ICON')
-                                                            ('PLUS', 'IDENTIFIER')
-                                                            term
-                                                                punary
-                                                                    element
-                                                                        ('0', 'ICON')
-                                                    ('RB', 'KEYWORD')
-                                    ('EQUOP', 'IDENTIFIER')
-                                    expr
-                                        term
-                                            punary
-                                                element
-                                                    ('a', 'IDENTIFIER')
-                                        ('PLUS', 'IDENTIFIER')
-                                        term
-                                            punary
-                                                element
-                                                    ('2', 'ICON')
-                            ('ENDWHILE', 'KEYWORD')
-                    ('ENDFUN', 'KEYWORD')
-                    ('m', 'IDENTIFIER')
+Enter <Program>
+  Enter <func_main>
+    Type is KEYWORD Value is MAIN at line 1
+  Exit <func_main>
+  Enter <globals>
+    Type is IDENTIFIER Value is GLOBAL at line 2
+    Type is IDENTIFIER Value is DECLARATIONS at line 2
+    Enter <var_dec>
+      Type is KEYWORD Value is VARIABLES at line 3
+      Enter <data_declarations>
+        Enter <comp_declare>
+          Type is KEYWORD Value is DEFINE at line 4
+          Enter <data_declaration>
+            Type is IDENTIFIER Value is max at line 4
+            Enter <parray_dec>
+              Type is KEYWORD Value is VALUE at line 4
+            Exit <parray_dec>
+            Type is KEYWORD Value is OF at line 4
+            Enter <data_type>
+              Type is KEYWORD Value is INTEGER at line 4
+            Exit <data_type>
+          Exit <data_declaration>
+        Exit <comp_declare>
+      Exit <data_declarations>
+    Exit <var_dec>
+  Exit <globals>
+  Enter <implement>
+    Type is IDENTIFIER Value is IMPLEMENTATIONS at line 5
+    Enter <main_head>
+      Type is KEYWORD Value is MAIN at line 5
+      Type is KEYWORD Value is DESCRIPTION at line 5
+    Exit <main_head>
+    Enter <funct_list>
+      Enter <funct_body>
+        Type is KEYWORD Value is FUNCTION at line 6
+        Enter <pother_oper_def>
+          Enter <pother_oper>
+            Type is IDENTIFIER Value is m at line 6
+            Type is KEYWORD Value is DESCRIPTION at line 6
+            Enter <oper_type>
+              Type is KEYWORD Value is RETURN at line 6
+              Enter <chk_ptr>
+                Type is KEYWORD Value is POINTER at line 6
+                Type is KEYWORD Value is OF at line 6
+              Exit <chk_ptr>
+              Enter <chk_array>
+                Type is KEYWORD Value is ARRAY at line 6
+                Enter <array_dim_list>
+                  Type is KEYWORD Value is LB at line 6
+                  Enter <array_index>
+                    Type is IDENTIFIER Value is ad at line 6
+                  Exit <array_index>
+                  Type is KEYWORD Value is RB at line 6
+                Exit <array_dim_list>
+              Exit <chk_array>
+              Enter <ret_type>
+                Type is KEYWORD Value is STRUCT at line 6
+                Type is IDENTIFIER Value is a at line 6
+              Exit <ret_type>
+            Exit <oper_type>
+          Exit <pother_oper>
+          Type is KEYWORD Value is IS at line 6
+          Enter <const_var_struct>
+            Enter <var_dec>
+              Type is KEYWORD Value is VARIABLES at line 7
+              Enter <data_declarations>
+                Enter <comp_declare>
+                  Type is KEYWORD Value is DEFINE at line 8
+                  Enter <data_declaration>
+                    Type is IDENTIFIER Value is a at line 8
+                    Enter <parray_dec>
+                      Type is KEYWORD Value is VALUE at line 8
+                    Exit <parray_dec>
+                    Type is KEYWORD Value is OF at line 8
+                    Enter <data_type>
+                      Type is KEYWORD Value is INTEGER at line 8
+                    Exit <data_type>
+                  Exit <data_declaration>
+                Exit <comp_declare>
+              Exit <data_declarations>
+            Exit <var_dec>
+          Exit <const_var_struct>
+          Type is KEYWORD Value is BEGIN at line 9
+          Enter <pactions>
+            Enter <action_def>
+              Type is KEYWORD Value is SET at line 10
+              Type is IDENTIFIER Value is max at line 10
+              Enter <name_ref>
+                Enter <opt_ref>
+                  Enter <array_val>
+                    Enter <simp_arr_val>
+                      Type is KEYWORD Value is LB at line 10
+                      Enter <arg_list>
+                        Enter <expr>
+                          Enter <term>
+                            Enter <punary>
+                              Enter <element>
+                                Type is ICON Value is 0 at line 10
+                              Exit <element>
+                            Exit <punary>
+                          Exit <term>
+                          Type is IDENTIFIER Value is PLUS at line 10
+                          Enter <term>
+                            Enter <punary>
+                              Enter <element>
+                                Type is ICON Value is 0 at line 10
+                              Exit <element>
+                            Exit <punary>
+                          Exit <term>
+                        Exit <expr>
+                      Exit <arg_list>
+                      Type is KEYWORD Value is RB at line 10
+                    Exit <simp_arr_val>
+                  Exit <array_val>
+                Exit <opt_ref>
+              Exit <name_ref>
+              Type is IDENTIFIER Value is EQUOP at line 10
+              Enter <expr>
+                Enter <term>
+                  Enter <punary>
+                    Enter <element>
+                      Type is ICON Value is 0 at line 10
+                    Exit <element>
+                  Exit <punary>
+                Exit <term>
+                Type is IDENTIFIER Value is PLUS at line 10
+                Enter <term>
+                  Enter <punary>
+                    Enter <element>
+                      Type is ICON Value is 60 at line 10
+                    Exit <element>
+                  Exit <punary>
+                Exit <term>
+              Exit <expr>
+            Exit <action_def>
+            Enter <action_def>
+              Type is KEYWORD Value is SET at line 11
+              Type is IDENTIFIER Value is a at line 11
+              Enter <name_ref>
+                Enter <opt_ref>
+                  Enter <array_val>
+                    Enter <simp_arr_val>
+                      Type is KEYWORD Value is LB at line 11
+                      Enter <arg_list>
+                        Enter <expr>
+                          Enter <term>
+                            Enter <punary>
+                              Enter <element>
+                                Type is ICON Value is 0 at line 11
+                              Exit <element>
+                            Exit <punary>
+                          Exit <term>
+                          Type is IDENTIFIER Value is PLUS at line 11
+                          Enter <term>
+                            Enter <punary>
+                              Enter <element>
+                                Type is ICON Value is 0 at line 11
+                              Exit <element>
+                            Exit <punary>
+                          Exit <term>
+                        Exit <expr>
+                      Exit <arg_list>
+                      Type is KEYWORD Value is RB at line 11
+                    Exit <simp_arr_val>
+                  Exit <array_val>
+                Exit <opt_ref>
+              Exit <name_ref>
+              Type is IDENTIFIER Value is EQUOP at line 11
+              Enter <expr>
+                Enter <term>
+                  Enter <punary>
+                    Enter <element>
+                      Type is ICON Value is 0 at line 11
+                    Exit <element>
+                  Exit <punary>
+                Exit <term>
+                Type is IDENTIFIER Value is PLUS at line 11
+                Enter <term>
+                  Enter <punary>
+                    Enter <element>
+                      Type is ICON Value is -2 at line 11
+                    Exit <element>
+                  Exit <punary>
+                Exit <term>
+              Exit <expr>
+            Exit <action_def>
+            Enter <action_def>
+              Type is KEYWORD Value is WHILE at line 12
+              Enter <pcondition>
+                Enter <pcond1>
+                  Enter <pcond2>
+                    Enter <expr>
+                      Enter <term>
+                        Enter <punary>
+                          Enter <element>
+                            Type is IDENTIFIER Value is a at line 12
+                          Exit <element>
+                        Exit <punary>
+                      Exit <term>
+                      Type is IDENTIFIER Value is PLUS at line 12
+                      Enter <term>
+                        Enter <punary>
+                          Enter <element>
+                            Type is ICON Value is 0 at line 12
+                          Exit <element>
+                        Exit <punary>
+                      Exit <term>
+                    Exit <expr>
+                    Enter <eq_v>
+                      Type is IDENTIFIER Value is LESS at line 12
+                      Type is IDENTIFIER Value is THAN at line 12
+                    Exit <eq_v>
+                    Enter <expr>
+                      Enter <term>
+                        Enter <punary>
+                          Enter <element>
+                            Type is IDENTIFIER Value is max at line 12
+                          Exit <element>
+                        Exit <punary>
+                      Exit <term>
+                      Type is IDENTIFIER Value is PLUS at line 12
+                      Enter <term>
+                        Enter <punary>
+                          Enter <element>
+                            Type is ICON Value is 0 at line 12
+                          Exit <element>
+                        Exit <punary>
+                      Exit <term>
+                    Exit <expr>
+                  Exit <pcond2>
+                Exit <pcond1>
+              Exit <pcondition>
+              Type is KEYWORD Value is DO at line 12
+              Enter <pactions>
+                Enter <action_def>
+                  Type is KEYWORD Value is SET at line 13
+                  Type is IDENTIFIER Value is a at line 13
+                  Enter <name_ref>
+                    Enter <opt_ref>
+                      Enter <array_val>
+                        Enter <simp_arr_val>
+                          Type is KEYWORD Value is LB at line 13
+                          Enter <arg_list>
+                            Enter <expr>
+                              Enter <term>
+                                Enter <punary>
+                                  Enter <element>
+                                    Type is ICON Value is 0 at line 13
+                                  Exit <element>
+                                Exit <punary>
+                              Exit <term>
+                              Type is IDENTIFIER Value is PLUS at line 13
+                              Enter <term>
+                                Enter <punary>
+                                  Enter <element>
+                                    Type is ICON Value is 0 at line 13
+                                  Exit <element>
+                                Exit <punary>
+                              Exit <term>
+                            Exit <expr>
+                          Exit <arg_list>
+                          Type is KEYWORD Value is RB at line 13
+                        Exit <simp_arr_val>
+                      Exit <array_val>
+                    Exit <opt_ref>
+                  Exit <name_ref>
+                  Type is IDENTIFIER Value is EQUOP at line 13
+                  Enter <expr>
+                    Enter <term>
+                      Enter <punary>
+                        Enter <element>
+                          Type is IDENTIFIER Value is a at line 13
+                        Exit <element>
+                      Exit <punary>
+                    Exit <term>
+                    Type is IDENTIFIER Value is PLUS at line 13
+                    Enter <term>
+                      Enter <punary>
+                        Enter <element>
+                          Type is ICON Value is 2 at line 13
+                        Exit <element>
+                      Exit <punary>
+                    Exit <term>
+                  Exit <expr>
+                Exit <action_def>
+              Exit <pactions>
+              Type is KEYWORD Value is ENDWHILE at line 14
+            Exit <action_def>
+          Exit <pactions>
+          Type is KEYWORD Value is ENDFUN at line 15
+          Type is IDENTIFIER Value is m at line 15
+        Exit <pother_oper_def>
+      Exit <funct_body>
+    Exit <funct_list>
+  Exit <implement>
+Exit <Program>
