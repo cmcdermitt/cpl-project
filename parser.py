@@ -642,6 +642,8 @@ def pother_oper():
 		lex_list.append(parameters())
 	return lex_list
 
+#CASE const_var_struct
+#GRAMMAR ::= const_var_struct ::= const_dec var_dec struct_dec
 def const_var_struct():
 	lex_list = ['const_var_struct']
 
@@ -659,6 +661,9 @@ def const_var_struct():
 
 	return lex_list
 
+#CASE precond
+#GRAMMAR precond ::=
+#				| PRECONDITION pcondition
 def precond():
 	lex_list = ['PRECONDITION']
 	if scanner.lex[lex_en['value']] == 'PRECONDITION':
@@ -669,6 +674,10 @@ def precond():
 	lex_list.append(pcondition())
 	return lex_list
 
+#CASE pcondition
+#GRAMMAR pcondition ::= |pcond1 OR pcond1
+#						| pcond1 AND pcond1
+#						| pcond1
 def pcondition():
 	lex_list = ['pcondition']
 	lex_list.append(pcond1())
@@ -679,6 +688,9 @@ def pcondition():
 		lex_list.append(pcond1())
 	return lex_list
 
+#CASE pcond1
+#GRAMMAR pcond1 ::= NOT pcond2
+#				|  pcond2
 def pcond1():
 	lex_list = ['pcond1']
 	if scanner.lex[lex_en['value']] == 'NOT':
@@ -687,6 +699,13 @@ def pcond1():
 	lex_list.append(pcond2())
 	return lex_list
 
+#CASE pcond2
+#GRAMMAR pcond2 ::= LP pcondition RP
+#				| expr RELOP expr
+#				| expr EQOP expr
+#				| expr eq_v expr
+#				| expr opt_not true_false
+#				| element
 def pcond2():
 	lex_list = ['pcond2']
 	# For LP pcondition RP case
@@ -730,6 +749,9 @@ def pcond2():
 			lex_list.append(element())
 	return lex_list
 
+#CASE opt_not
+#GRAMMAR opt_not ::=
+#				| NOT
 def opt_not():
 	lex_list = ['opt_not']
 	if(scanner.lex[lex_en['value']] == 'NOT'):
@@ -739,6 +761,9 @@ def opt_not():
 		lex_list.append(error('NOT', 'opt_not'))
 	return lex_list
 
+#CASE true_false
+#GRAMMAR true_false ::= MTRUE
+#					| MFALSE
 def true_false():
 	lex_list = ['true_false']
 	if(scanner.lex[lex_en['value']] == 'MTRUE' or scanner.lex[lex_en['value']] == 'MFALSE'):
@@ -748,6 +773,12 @@ def true_false():
 		lex_list.append(error('MTrue or MFalse', 'true_false'))
 	return lex_list
 
+#CASE eq_v
+#GRAMMAR ::=  EQUALS
+#			| GREATER THAN
+#			| LESS THAN
+#			| GREATER OR EQUAL
+#			| LESS OR EQUAL
 def eq_v():
 	lex_list = ['eq_v']
 	if(scanner.lex[lex_en['value']] == 'EQUALS'):
@@ -775,7 +806,8 @@ def eq_v():
 		lex_list.append('\tError Keywords EQUALS or GREATER were expected')
 	return lex_list
 
-
+#CASE pactions
+#GRAMMAR  pactions ::= action_def {action_def}
 def pactions():
     lex_list = ['pactions']
     valid_values = ['SET', 'READ', 'INPUT', 'DISPLAY', 'DISPLAYN', 'MCLOSE', 'MOPEN', 'MFILE',
@@ -788,6 +820,29 @@ def pactions():
     if times == 0:
         lex_list.append(error('action_def keyword', 'paction'))
     return lex_list
+
+# CASE action_def
+#GRAMMAR action_def ::= SET name_ref EQUOP exp
+#						| READ pvar_value_list
+#						| INPUT name_ref
+#						| DISPLAY pvar_value_list
+#						| DISPLAYN pvar_value_list
+#						| MCLOSE IDENTIFIER
+#						| MOPEN in_out
+#						| MFILE read_write
+#						| INCREMENT name_ref
+#						| DECREMENT name_ref
+#						| RETURN expr
+#						| CALL name_ref pusing_ref
+#						| IF pcondition THEN pactions ptest_elsif opt_else ENDIF
+#						| FOR name_ref EQUOP expr downto expr DO pactions ENDFOR
+#						| REPEAT pactions UNTIL pcondition ENDREPEAT
+#						| WHILE pcondition DO pactions ENDWHILE
+#						| CASE name_ref pcase_val pcase_def MENDCASE
+#						| MBREAK
+#						| MEXIT
+#						| ENDFUN name_ref
+#						| POTCONDITION pcondition
 
 def action_def():
     lex_list = ['action_def']
@@ -1014,6 +1069,8 @@ def action_def():
         lex_list.append(error('action_def keyword', 'action_def'))
     return lex_list
 
+#CASE name_ref
+#GRAMMAR name_ref ::= IDENTIFIER opt_ref pmember_opt popt_dot
 def name_ref():
     lex_list = ['name_ref']
     if (scanner.lex[lex_en['value']] == 'LB'):
@@ -1026,16 +1083,22 @@ def name_ref():
         lex_list.append(popt_dot())
     return lex_list
 
+#CASE opt_ref
+#GRAMMAR opt_ref ::= array_val
 def opt_ref():
     lex_list = ['opt_ref']
     lex_list.append(array_val())
     return lex_list
 
+#CASSE pmember_opt
+#GRAMMAR pmember_opt ::= pmember_of
 def pmember_opt():
     lex_list = ['pmember_opt']
     lex_list.append(pmember_of())
     return lex_list
 
+#CASE pmemeber_of
+#GRAMMAR pmember_of ::= OF IDENTIFIER opt_ref {OF IDENTIFIER opt_ref }
 def pmember_of():
     lex_list = ['pmember_of']
     lex_list.append(tuple(scanner.lex))
@@ -1049,7 +1112,7 @@ def pmember_of():
         lex_list.append(opt_ref())
     else:
         lex_list.append(error('LB', 'pmember_of'))
-    while scanner.lex[lex_en['value']] == 'OF':
+    while scanner.lex[lex_en['value']] == 'OF': # Recursively add pmemeber_of info
         lex_list.append(tuple(scanner.lex))
         scanner.next()
         if scanner.lex[lex_en['value']] == 'IDENTIFIER':
@@ -1064,11 +1127,16 @@ def pmember_of():
     else:
         return lex_list
 
+#CASE popt_dot
+#GRAMMAR popt_dot ::=
+#				| proc_dot
 def popt_dot():
     lex_list = ['popt_def']
     lex_list.append(proc_dot())
     return lex_list
 
+#CASE proc_dot
+#GRAMMAR proc_dot ::=  DOT IDENTIFIER opt_ref
 def proc_dot():
     lex_list = ['proc_dot']
     lex_list.append(tuple(scanner.lex))
@@ -1098,6 +1166,9 @@ def proc_dot():
     else:
         return lex_list
 
+# CASE pvar_value_list
+#GRAMMAR pvar_value_list  ::= expr
+#		  				| pvar_value_list COMMA expr
 def pvar_value_list():
     lex_list = ['pvar_value_list']
     # Valid types and values for following the expr() path
@@ -1110,6 +1181,8 @@ def pvar_value_list():
             scanner.next()
     return lex_list
 
+#CASE in_out
+#GRAMMAR in_out ::= INPUT MFILE IDENTIFIER
 def in_out():
     lex_list = ['in_out']
     lex_list.append(tuple(scanner.lex))
@@ -1126,6 +1199,8 @@ def in_out():
         lex_list.append(error('IDENTIFIER', 'in_out'))
     return lex_list
 
+#CASES read_write
+#GRAMMAR READ pvar_value_list FROM IDENTIFIER
 def read_write():
     lex_list = ['read_write']
     # Valid types and values for following the pvar_value_list() path
@@ -1134,12 +1209,12 @@ def read_write():
     lex_list.append(tuple(scanner.lex))
     scanner.next()
     if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
-        lex_list.append(pvar_value_list())
+        lex_list.append(pvar_value_list()) # add pvar_value_lsit
     else:
         lex_list.append(error('pvar_value_list keyword', 'read_write'))
     if (scanner.lex[lex_en['value']] == 'FROM' or
             scanner.lex[lex_en['value']] == 'TO'):
-        lex_list.append(tuple(scanner.lex))
+        lex_list.append(tuple(scanner.lex)) # Add FROM or TO
         scanner.next()
     else:
         lex_list.append(error('FROM or TO', 'read_write'))
@@ -1150,6 +1225,9 @@ def read_write():
         lex_list.append(error('IDENTIFIER', 'read_write'))
     return lex_list
 
+#CASE pusing_ref
+#GRAMMAR pusing_ref ::=
+#					| USING arg_list
 def pusing_ref():
     lex_list = ['pusing_ref']
     if scanner.lex[lex_en['value']] == 'USING':
@@ -1162,11 +1240,17 @@ def pusing_ref():
         lex_list.append(error('USING or LP', 'pusing_ref'))
     return lex_list
 
+#CASE ptest_elsif
+#GRAMMAR ptest_elsif ::=
+#               | proc_elseif
 def ptest_elsif():
     lex_list = ['ptest_elsif']
     lex_list.append(proc_elseif())
     return lex_list
 
+#CASE proc_elseif
+#GRAMMAR proc_elseif ::= ELSEIF pcondition THEN pactions
+#						| proc_elseif
 def proc_elseif():
     lex_list = ['proc_elseif']
     while scanner.lex[lex_en['value']] == 'ELSEIF':
@@ -1181,6 +1265,9 @@ def proc_elseif():
         lex_list.append(pactions())
     return lex_list
 
+#CASE opt_else
+# opt_else ::=
+#			| ELSE pactions
 def opt_else():
     lex_list = ['opt_else']
     lex_list.append(tuple(scanner.lex))
@@ -1188,21 +1275,26 @@ def opt_else():
     lex_list.append(pactions())
     return lex_list
 
+#CASE: downto
+#GRAMMAR: downto ::= # TO
+#				|  DOWNTO
 def downto():
     lex_list = ['downto']
     lex_list.append(tuple(scanner.lex))
     return lex_list
 
+#CASE: pcase_val
+#GRAMMAR: pcase_val ::= MWHEN expr COLON pactions {MWHEN expr COLON pactions}
 def pcase_val():
     lex_list = ['pcase_val']
     valid_types = ['IDENTIFIER', 'STRING', 'LETTER', 'ICON', 'HCON', 'FCON']
     valid_values = ['MINUS', 'NEGATE', 'MTRUE', 'MFALSE', 'LP']
-    while scanner.lex[lex_en['value']] == 'MWHEN':
+    while scanner.lex[lex_en['value']] == 'MWHEN': # Recursively adds cases
         lex_list.append(tuple(scanner.lex))
         scanner.next()
         if (scanner.lex[lex_en['type']] in valid_types or
                 scanner.lex[lex_en['value']] in valid_values):
-            lex_list.append(expr())
+            lex_list.append(expr()) # Add expr if relevant
         if scanner.lex[lex_en['value']] == 'COLON':
             lex_list.append(tuple(scanner.lex))
             scanner.next()
@@ -1211,16 +1303,19 @@ def pcase_val():
         lex_list.append(pactions())
     return lex_list
 
+#CASE: pcase_def
+#GRAMMAR: pcase_def ::=
+#		  |DEFAULT COLON pactions
 def pcase_def():
     lex_list = ['pcase_def']
-    lex_list.append(tuple(scanner.lex))
+    lex_list.append(tuple(scanner.lex)) # Should be DEFAULT
     scanner.next()
-    if scanner.lex[lex_en['value']] == 'COLON':
+    if scanner.lex[lex_en['value']] == 'COLON': # Check if next lexeme is COLON
         lex_list.append(tuple(scanner.lex))
         scanner.next()
     else:
-        lex_list.append(error('COLON', 'pcase_def'))
-    lex_list.append(pactions())
+        lex_list.append(error('COLON', 'pcase_def')) # Otherwise append error
+    lex_list.append(pactions()) # Add pactions
     return lex_list
 
 if __name__ == '__main__':
