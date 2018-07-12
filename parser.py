@@ -19,7 +19,7 @@ import sys
 # Each of those functions in turn calls other subfunctions that will append
 # the return value of the called function to their own lex_list.
 # However, if there are multiple right hand definitions, only one will be correct, so the correct function must be chosen before we enter it.
-# If the parser encounters an error, it appends an error message instead of a list.
+# If the parser enncounters an error, it appends an error message instead of a list.
 
 lex_en = {'value' : 0, 'type' : 1, 'line_num' : 2}
 scanner = Scanner(sys.argv[1])
@@ -732,7 +732,7 @@ def pother_oper():
 #GRAMMAR ::= const_var_struct ::= const_dec var_dec struct_dec
 def const_var_struct():
 	# Append function header to output list
-	lex_list = ['const_var_struct'
+	lex_list = ['const_var_struct']
 	if(scanner.lex[lex_en['value']] == 'CONSTANTS'):
 		lex_list.append(const_dec())
 	if(scanner.lex[lex_en['value']] == 'VARIABLES'):
@@ -900,11 +900,8 @@ def eq_v():
 		lex_list.append('\tError Keywords EQUALS or GREATER were expected')
 	return lex_list
 
-<<<<<<< HEAD
 #CASE pactions
 #GRAMMAR  pactions ::= action_def {action_def}
-=======
->>>>>>> 96c9ce1987c5ae038e697fe2721e1bd4d1fe587c
 def pactions():
 	# Append function header to output list
     lex_list = ['pactions']
@@ -1473,14 +1470,10 @@ def pcase_def():
         lex_list.append(tuple(scanner.lex))
         scanner.next()
     else:
-<<<<<<< HEAD
-        lex_list.append(error('COLON', 'pcase_def')) # Otherwise append error
-    lex_list.append(pactions()) # Add pactions
-=======
+
 		# Append error message if case specific grammar not found
         lex_list.append(error('COLON', 'pcase_def'))
     lex_list.append(pactions())
->>>>>>> 96c9ce1987c5ae038e697fe2721e1bd4d1fe587c
     return lex_list
 
 if __name__ == '__main__':
