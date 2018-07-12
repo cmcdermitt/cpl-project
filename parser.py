@@ -1506,7 +1506,7 @@ def pusing_ref():
     if scanner.lex[lex_en['value']] == 'USING':
         lex_list.append(tuple(scanner.lex))
         scanner.next()
-        lex_list.appgit gend(arg_list())
+        lex_list.append(arg_list())
     elif scanner.lex[lex_en['value']] == 'LP':
         lex_list.append(parguments())
     else:
