@@ -25,7 +25,7 @@ lex_en = {'value' : 0, 'type' : 1, 'line_num' : 2}
 scanner = Scanner(sys.argv[1])
 
 # Starting point for program and parse tree
-def main():
+def programStart():
 	lex_list = ['Program']
 	scanner.start()
 	lex_list.append(func_main())
@@ -190,7 +190,8 @@ def chk_array():
 
 # CASE: array_dim_list
 # GRAMMAR: array_dim_list ::= LB array_index RB
-#					   		  | array_dim_list LB array_index RB
+#					   		  | {LB array_indexRB} LB array_index RB
+# Recursive call to array_dim_list converted to EBNF using definition of array_dim_list
 def array_dim_list():
 	# Append function header to output list
 	lex_list = ['array_dim_list']
@@ -213,8 +214,8 @@ def array_dim_list():
 	return lex_list
 
 # CASE: array_index
-# GRAMMAR: IDENTIFIER
-#		   | ICON
+# GRAMMAR: array_index ::= IDENTIFIER
+#		   				   | ICON
 def array_index():
 	# Append function header to output list
 	lex_list = ['array_index']
@@ -223,6 +224,9 @@ def array_index():
 	return lex_list
 
 # CASE: ret_type
+# GRAMMAR: ret_type ::= TYPE type_name
+#						| STRUCT IDENTIFIER
+# 						| STRUCTYPE IDENTIFIER
 def ret_type():
 	# Append function header to output list
 	lex_list = ['ret_type']
@@ -247,12 +251,26 @@ def ret_type():
 			return lex_list
 	return lex_list
 
+# CASE: type_name
+# GRAMMAR: type_name ::= MVOID
+#						| INTEGER
+#						| SHORT
+#						| REAL
+#						| FLOAT
+#						| DOUBLE
+#						| TBOOL
+#						| CHAR
+#						| TSTRING OF LENGTH ICON
+#						| TBYTE
 def type_name():
 	# Append function header to output list
 	lex_list = ['type_name']
 	lex_list.append(tuple(scanner.lex))
 	return lex_list
 
+# CASE: struct_enum
+# GRAMMAR: struct_enum ::= STRUCT
+#						   | ENUM
 def struct_enum():
 	# Append function header to output list
 	lex_list = ['struct_enum']
@@ -265,6 +283,10 @@ def struct_enum():
 		lex_list.append('Error: Keyword STRUCT or ENUM expected')
 	return lex_list
 
+# CASE: globals
+# GRAMMAR: globals ::=
+#					   | GLOBAL DECLARATIONS const_dec var_dec struct_dec
+# NOTE: Blank lines interpreted as optional values, allowing for simpler statements
 def f_globals():
 	# Append function header to output list
 	lex_list = ['globals']
@@ -287,6 +309,10 @@ def f_globals():
 	 	lex_list.append(struct_dec())
 	return lex_list
 
+# CASE: const_dec
+# GRAMMAR: const_dec ::=
+#						| CONSTANTS data_declarations
+# NOTE: Blank lines interpreted as optional values, allowing for simpler statements
 def const_dec():
 	# Append function header to output list
 	lex_list = ['const_dec']
@@ -303,6 +329,8 @@ def const_dec():
 		lex_list.append('\tError Keyword DEFINE expected')
 	return lex_list
 
+# CASE: var_decc
+# GRAMMAR: var_dec ::= VARIABLES data_declarations
 def var_dec():
 	# Append function header to output list
 	lex_list = ['var_dec']
@@ -320,6 +348,10 @@ def var_dec():
 		lex_list.append('\tError Keyword DEFINE expected')
 	return lex_list
 
+# CASE: struct_dec
+# GRAMMAR: struct_dec ::=
+#						  | STRUCT data_declarations
+# NOTE: Blank lines interpreted as optional values, allowing for simpler statements
 def struct_dec():
 	# Append function header to output list
 	lex_list = ['struct_dec']
@@ -336,6 +368,10 @@ def struct_dec():
 		lex_list.append('\tError Keyword DEFINE expected')
 	return lex_list
 
+# CASE: data_declarations
+# GRAMMAR: data_declarations ::= comp_declare
+# 								 | {comp_declare} comp_declare
+# Recursive data_declarations call converted to EBNF using first option definition
 def data_declarations():
 	# Append function header to output list
 	lex_list = ['data_declarations']
@@ -347,6 +383,8 @@ def data_declarations():
 		lex_list.append('Error: keyword DEFINE expected in data_declarations')
 	return lex_list
 
+# CASE: comp_declare
+# GRAMMAR: comp_declare ::= DEFINE data_file
 def comp_declare():
 	# Append function header to output list
 	lex_list = ['comp_declare']
@@ -362,6 +400,9 @@ def comp_declare():
 		lex_list.append('\tError IDENTIFIER expected')
 	return lex_list
 
+# CASE: data_declaration
+# GRAMMAR: data_declaration ::= IDENTIFIER  parray_dec OF data_type
+# NOTE: This function is different than data_declaration
 def data_declaration():
 	# Append function header to output list
 	lex_list = ['data_declaration']
@@ -389,6 +430,13 @@ def data_declaration():
 		lex_list.append('\tError Type expected')
 	return lex_list
 
+# CASE: parray_dec
+# GRAMMAR: parray_dec ::=
+#						 | ARRAY plist_const popt_array_val
+#						 | LB
+#						 | VALUE
+#						 | EQUOP
+# NOTE: Blank lines interpreted as optional values, allowing for simpler statements
 def parray_dec():
 	# Append function header to output list
 	lex_list = ['parray_dec']
@@ -405,6 +453,10 @@ def parray_dec():
 		scanner.next()
 	return lex_list
 
+# CASE: plist_const
+# GRAMMAR: plist_const ::= LB iconst_ident RB
+#						   | {LB iconst_ident RB} LB iconst_ident RB
+# NOTE: Recursive plist_const call in second option converted to EBNF
 def plist_const():
 	# Append function header to output list
 	lex_list = ['plist_const']
@@ -438,12 +490,18 @@ def plist_const():
 			lex_list.append('\tError Keyword RB was expected')
 	return lex_list
 
+# CASE: iconst_ident
+# GRAMMAR: iconst_ident ::= ICON
+#							| IDENTIFIER
 def iconst_ident():
 	# Append function header to output list
 	lex_list = ['iconst_ident']
 	lex_list.append(tuple(scanner.lex))
 	return lex_list
 
+# CASE: popt_array_val
+# GRAMMAR: popt_array_val ::=
+#						     | value_eq array_val
 def popt_array_val():
 	# Append function header to output list
 	lex_list = ['popt_array_val']
@@ -455,6 +513,9 @@ def popt_array_val():
 		lex_list.append(error('LB', 'popt_array_val'))
 	return lex_list
 
+# CASE: value_eq
+# GRAMMAR: value_eq ::= VALUE
+#						| EQUOP
 def value_eq():
 	# Append function header to output list
 	lex_list = ['value_eq']
@@ -466,12 +527,16 @@ def value_eq():
 		lex_list.append(error('EQUOP or VALUE', 'value_eq'))
 	return lex_list
 
+# CASE: array_val
+# GRAMMAR: array_val ::= simmp_arr_val
 def array_val():
 	# Append function header to output list
 	lex_list = ['array_val']
 	lex_list.append(simp_arr_val())
 	return lex_list
 
+# CASE: simp_arr_val
+# GRAMMAR: LB arg_list RB
 def simp_arr_val():
 	# Append function header to output list
 	lex_list = ['simp_arr_val']
@@ -488,6 +553,10 @@ def simp_arr_val():
 		lex_list.append('\tError, RB was expected')
 	return lex_list
 
+# CASE: arg_list
+# GRAMMAR: arg_list ::= expr
+#						| {expr} COMMA expr
+# NOTE Recursive reference to expr in second option converted to EBNF
 def arg_list():
 	# Append function header to output list
 	lex_list = ['arg_list']
@@ -502,12 +571,32 @@ def arg_list():
 			return lex_list
 	return lex_list
 
+# CASE: data_type
+# Grammar: data_type ::= TUNSIGNED
+#						 | CHAR
+#						 | INTEGER
+#						 | MVOID
+#						 | DOUBLE
+#						 | LONG
+#						 | SHORT
+#						 | FLOAT
+#						 | REAL
+#						 | TSTRING
+#						 | TBOOL
+#						 | TBYTE
 def data_type():
 	# Append function header to output list
 	lex_list = ['data_type']
+	# Scanner returns the type of the lexeme, so we can simply add it to lex_list
 	lex_list.append(tuple(scanner.lex))
 	return lex_list
 
+# CASE: expr
+# GRAMMAR: expr ::= term PLUS term
+#					| term MINUS term
+#					| term BAND term
+#					| term BOR term
+#					| term BXOR term
 def expr():
 	# Append function header to output list
 	lex_list = ['expr']
@@ -520,6 +609,13 @@ def expr():
 	lex_list.append(term())
 	return lex_list
 
+# CASE: term
+# GRAMMAR: term ::= punary
+#					| punary STAR punary
+#					| punary DIVOP punary
+#					| punary MOD punary
+#					| punary LSHIFT punary
+#					| punary RSHIFT punary
 def term():
 	# Append function header to output list
 	lex_list = ['term']
@@ -532,6 +628,10 @@ def term():
 		lex_list.append(punary)
 	return lex_list
 
+# CASE: punary
+# GRAMMAR: punary ::= element
+#					  | MINUS element
+#					  | NEGATE element
 def punary():
 	# Append function header to output list
 	lex_list = ['punary']
@@ -543,6 +643,16 @@ def punary():
 		lex_list.append(element())
 	return lex_list
 
+# CASE: element
+# GRAMMAR: element ::= IDENTIFIER popt_ref
+#					   | STRING
+#					   | LETTER
+#					   | ICON
+#					   | HCON
+#					   | FCON
+#					   | MTRUE
+#					   | MFALSE
+#					   | LP expr RP
 def element():
 	# Append function header to output list
 	lex_list = ['element']
@@ -602,6 +712,8 @@ def parguments():
 		lex_list.append(error('RP', 'parguments'))
 	return lex_list
 
+# CASE: implement
+# GRAMMAR: implement ::= IMPLEMENTATIONS main_head funct_list
 def implement():
 	# Append function header to output list
 	lex_list = ['implement']
@@ -616,6 +728,10 @@ def implement():
 	lex_list.append(funct_list())
 	return lex_list
 
+# CASE: main_head
+# GRAMMAR: main_head ::=
+#						| MAIN DESCRIPTION parameters
+# NOTE: Blank line in first line interpreted as optional value
 def main_head():
 	# Append function header to output list
 	lex_list = ['main_head']
@@ -653,6 +769,8 @@ def param_def():
 	lex_list.append(data_declaration())
 	return lex_list
 
+# CASE: funct_list
+# GRAMMAR: funct_body ::= FUNCTION phead_fun pother_oper_def
 def funct_list():
 	# Append function header to output list
 	lex_list = ['funct_list']
@@ -661,6 +779,8 @@ def funct_list():
 		lex_list.append(funct_body())
 	return lex_list
 
+# CASE: funct_body
+# GRAMMAR: funct_body ::= FUNCTION phead_fun pother_oper_def
 def funct_body():
 	# Append function header to output list
 	lex_list = ['funct_body']
@@ -673,6 +793,9 @@ def funct_body():
 	lex_list.append(pother_oper_def())
 	return lex_list
 
+# CASE: pother_oper_def
+# GRAMMAR: pother_oper_def ::= pother_oper IS const_var_struct precond
+#								BEGIN pactions ENDFUN IDENTIFIER
 def pother_oper_def():
 	# Append function header to output list
 	lex_list = ['pother_oper_def']
@@ -707,6 +830,9 @@ def pother_oper_def():
 		lex_list.append(error('IDENTIFIER', 'pother_oper_def'))
 	return lex_list
 
+# CASE: pother_oper
+# GRAMMAR: pother_oper ::= acc_mut IDENTIFIER DESCRIPTION oper_type parameters
+# NOTE: acc_mut ignored, because it has no reference or definition in grammar set
 def pother_oper():
 	# Append function header to output list
 	lex_list = ['pother_oper']
@@ -1380,4 +1506,4 @@ def pcase_def():
     return lex_list
 
 if __name__ == '__main__':
-	main()
+	programStart()
