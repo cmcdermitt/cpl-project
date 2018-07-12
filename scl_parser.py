@@ -6,7 +6,6 @@
 # Title:   Final Project - Second Deliverable
 # Date:    09 July 2018
 
-from enum import Enum
 from scanner import Scanner
 import sys
 
@@ -24,24 +23,28 @@ import sys
 lex_en = {'value' : 0, 'type' : 1, 'line_num' : 2}
 scanner = Scanner(sys.argv[1])
 
-# Starting point for program and parse tree
-def programStart():
-	lex_list = ['Program']
+
+# Starting point for parser
+
+# In general, each function checks the unique case that defines its particular grammar as defined by the document
+# The general structure instantiates a new instance of lex_list, and sets its initial value to the name of the function
+# This creates an easy to follow hierarchy and flow of function calls that can be read and debugged via the output
+# The function then retrieves each subsequent lexeme from the symbol table, checks its validity, and adds it to lex_list
+# Once the last lexeme has been appended the lex_list, it is returned and appended to the instance of the calling method
+# If the function encounters an error, it appends an error message and skips over that lexeme.
+# This method of error checking allows to catch each individual error without it crashing the entire system.
+def parse():
 	scanner.start()
+
+	lex_list = ['Program']
 	lex_list.append(func_main())
 
 	if(scanner.lex[lex_en['value']] == 'GLOBAL'):
 		lex_list.append(f_globals()) #called f_globals becasue globals is a function
 
 	lex_list.append(implement())
-	print(printCleanTree(lex_list,0, True))
+	return lex_list
 
-# Returns number of tabs
-def returnTabs(tabNum):
-	tabs = ''
-	for i in range(tabNum):
-		tabs = tabs + '    '
-	return tabs
 
 #convenience function returning an error message
 #first parameter is what was expected, second is optional location
@@ -51,68 +54,7 @@ def error(expected, location = ''):
 	else:
 		return '\tError: {} expected in {}'.format(expected, location)
 
-# Prints out the tree using tabs to represent children
-# This printing function is no longer being used
-# printTree is being replaced by printCleanTree below
-def printTree(tree_list, tab, out_string = ''):
-	if(len(tree_list) == 0):
-		return
-	if len(sys.argv) > 2: #if there's an output file name
-		out_string = out_string + returnTabs(tab) + tree_list[0] + '\n' # Print out the first item in the list; this is the parent node
-		if(len(tree_list) == 1):
-			return
-		for x in range(1, len(tree_list)): # Print out all of its children
-			if(isinstance(tree_list[x], str)): # If the child is a string, print it out
-				out_string = out_string + returnTabs(tab) + tree_list[x] + '\n'
-			elif(isinstance(tree_list[x], list)): #If the child is a list, indent by 1 and print out that list
-				out_string = printTree(tree_list[x], tab + 1, out_string)
-			else:
-				out_string = out_string + returnTabs(tab + 1) + str(tree_list[x]) + '\n'
-		with open(sys.argv[2], 'w') as outfile:
-			outfile.write(out_string)
-	else: #if no output file name is provided, print the output
-		print(returnTabs(tab) + tree_list[0]) # Print out the first item in the list; this is the parent node
-		if(len(tree_list) == 1):
-			return
-		for x in range(1, len(tree_list)): # Print out all of its children
-			if(isinstance(tree_list[x], str)): # If the child is a string, print it out
-				print(returnTabs(tab) + tree_list[x])
-			elif(isinstance(tree_list[x], list)): #If the child is a list, indent by 1 and print out that list
-				printTree(tree_list[x], tab + 1)
-			else:
-				print(returnTabs(tab + 1) + str(tree_list[x]))
-	return out_string
-
-# Primary tree printing function
-# Prints when program is entering and exiting a parser case function
-# Prints type and value of current lexeme when in case function
-def printCleanTree(tree_list, tab, printTree = False, out_string = ''):
-	if(len(tree_list) == 0):
-		return out_string
-	out_string +=  returnTabs(tab) + ( ('Enter <' + tree_list[0] + '>\n'))
-	if(len(tree_list) == 1):
-		return out_string
-	for x in range(1, len(tree_list)):
-		if(isinstance(tree_list[x], str)):
-			out_string +=  returnTabs(tab) + tree_list[x] + '\n'
-		elif(isinstance(tree_list[x], list)):
-			out_string = printCleanTree(tree_list[x],tab + 1, False, out_string)
-		else:
-			out_string +=  returnTabs(tab) + 'Type is ' + str(tree_list[x][lex_en['type']]) + ' Value is ' + str(tree_list[x][lex_en['value']])
-			out_string += ' at line ' + str(tree_list[x][lex_en['line_num']]) + '\n'
-	return out_string
-
-# Begin Parser Case Functions
-# Each function checks the unique case that defines its particular grammar as defined by the document
-# The general structure instantiates a new instance of lex_list, and sets its initial value to the name of the function
-# This creates an easy to follow hierarchy and flow of function calls that can be read and debugged via the output
-# The function then retrieves each subsequent lexeme from the symbol table, checks its validity, and adds it to lex_list
-# Once the last lexeme has been appended the lex_list, it is returned and appended to the instance of the calling method
-# If the function encounters an error, it appends an error message and skips over that lexeme.
-# This method of error checking allows to catch each individual error without it crashing the entire system.
-#
-#
-# First case: Called by main()
+# First case: Called by parse()
 # GRAMMAR: func_main ::= FUNCTION IDENTIFIER oper_type
 #						 | MAIN
 def func_main():
@@ -1617,6 +1559,3 @@ def pcase_def():
         lex_list.append(error('COLON', 'pcase_def'))
     lex_list.append(pactions())
     return lex_list
-
-if __name__ == '__main__':
-	programStart()
