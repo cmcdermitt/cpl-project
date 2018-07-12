@@ -52,6 +52,8 @@ def error(expected, location = ''):
 		return '\tError: {} expected in {}'.format(expected, location)
 
 # Prints out the tree using tabs to represent children
+# This printing function is no longer being used
+# printTree is being replaced by printCleanTree below
 def printTree(tree_list, tab, out_string = ''):
 	if(len(tree_list) == 0):
 		return
@@ -81,7 +83,9 @@ def printTree(tree_list, tab, out_string = ''):
 				print(returnTabs(tab + 1) + str(tree_list[x]))
 	return out_string
 
-
+# Primary tree printing function
+# Prints when program is entering and exiting a parser case function
+# Prints type and value of current lexeme when in case function
 def printCleanTree(tree_list, tab, printTree = False, out_string = ''):
 	if(len(tree_list) == 0):
 		return out_string
@@ -682,6 +686,11 @@ def element():
 		lex_list.append(error('IDENTIFIER or LP or TYPE or MTRUE or MFALSE', 'element'))
 	return lex_list
 
+# CASE: popt_ref
+# GRAMMAR: popt_reg ::=
+#						| array_val
+#						| parguments
+# NOTE: Blank line interpreted as optional input valuues
 def popt_ref():
 	# Append function header to output list
 	lex_list = ['popt_ref']
@@ -694,6 +703,8 @@ def popt_ref():
 		lex_list.append(error('LP or LB', 'popt_ref'))
 	return lex_list
 
+# CASE: parguments
+# GRAMMAR: LP arg_list RP
 def parguments():
 	# Append function header to output list
 	lex_list = ['parguments']
@@ -751,6 +762,9 @@ def main_head():
 		lex_list.append(parameters())
 	return lex_list
 
+# CASE: parameters
+# GRAMMAR: parameters::=
+#						| PARAMETERS param_list
 def parameters():
 	# Append function header to output list
 	lex_list = ['parameters']
@@ -763,6 +777,8 @@ def parameters():
 		lex_list.append(param_def())
 	return lex_list
 
+# CASE: param_def
+# GRAMMAR: param_def ::= data_declaration
 def param_def():
 	# Append function header to output list
 	lex_list = ['param_def']
