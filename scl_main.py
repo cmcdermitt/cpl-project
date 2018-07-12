@@ -10,8 +10,8 @@ import scl_parser
 import sys
 
 def main():
-    lex_tree = scl_parser.parse()
-    print(printAnnotatedTree(lex_tree, 0, True))
+	lex_tree = scl_parser.parse()
+	print(printAnnotatedTree(lex_tree, 0, True))
 
 
 # Prints out the tree using tabs to represent children
@@ -48,7 +48,7 @@ def printAnnotatedTree(tree_list, tab, printTree = False, out_string = ''):
 		else:
 			out_string +=  returnTabs(tab + 1) + 'Type is ' + str(tree_list[x][scl_parser.lex_en['type']]) + ' Value is ' + str(tree_list[x][scl_parser.lex_en['value']])
 			out_string += ' at line ' + str(tree_list[x][scl_parser.lex_en['line_num']]) + '\n'
-
+	out_string +=  returnTabs(tab) + ( ('Exit <' + tree_list[0] + '>\n'))
 	return out_string
 
 # Returns number of tabs
