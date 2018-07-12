@@ -46,8 +46,9 @@ def printAnnotatedTree(tree_list, tab, printTree = False, out_string = ''):
 		elif(isinstance(tree_list[x], list)):
 			out_string = printAnnotatedTree(tree_list[x],tab + 1, False, out_string)
 		else:
-			out_string +=  returnTabs(tab) + 'Type is ' + str(tree_list[x][scl_parser.lex_en['type']]) + ' Value is ' + str(tree_list[x][scl_parser.lex_en['value']])
+			out_string +=  returnTabs(tab + 1) + 'Type is ' + str(tree_list[x][scl_parser.lex_en['type']]) + ' Value is ' + str(tree_list[x][scl_parser.lex_en['value']])
 			out_string += ' at line ' + str(tree_list[x][scl_parser.lex_en['line_num']]) + '\n'
+
 	return out_string
 
 # Returns number of tabs
