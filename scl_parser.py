@@ -54,7 +54,6 @@ def error(expected, location = ''):
 	else:
 		return '\tError: {} expected in {}'.format(expected, location)
 
-
 # First case: Called by parse()
 # GRAMMAR: func_main ::= FUNCTION IDENTIFIER oper_type
 #						 | MAIN
@@ -629,6 +628,11 @@ def element():
 		lex_list.append(error('IDENTIFIER or LP or TYPE or MTRUE or MFALSE', 'element'))
 	return lex_list
 
+# CASE: popt_ref
+# GRAMMAR: popt_reg ::=
+#						| array_val
+#						| parguments
+# NOTE: Blank line interpreted as optional input valuues
 def popt_ref():
 	# Append function header to output list
 	lex_list = ['popt_ref']
@@ -641,6 +645,8 @@ def popt_ref():
 		lex_list.append(error('LP or LB', 'popt_ref'))
 	return lex_list
 
+# CASE: parguments
+# GRAMMAR: LP arg_list RP
 def parguments():
 	# Append function header to output list
 	lex_list = ['parguments']
@@ -698,6 +704,9 @@ def main_head():
 		lex_list.append(parameters())
 	return lex_list
 
+# CASE: parameters
+# GRAMMAR: parameters::=
+#						| PARAMETERS param_list
 def parameters():
 	# Append function header to output list
 	lex_list = ['parameters']
@@ -710,6 +719,8 @@ def parameters():
 		lex_list.append(param_def())
 	return lex_list
 
+# CASE: param_def
+# GRAMMAR: param_def ::= data_declaration
 def param_def():
 	# Append function header to output list
 	lex_list = ['param_def']
