@@ -25,10 +25,10 @@ def main():
 
 def convertToTree(lex_tree):
 	tree = Node(lex_tree[0])
-	for x in range(1, len(lex_tree)):
+	for x in lex_tree:
 		if isinstance(x, list):
 			if len(x) > 0:
-				tree.addChild(convertToTree[x])
+				tree.addChild(convertToTree(x))
 		elif isinstance(x, tuple):
 			tree.addChild(Node(x[0], x[1]))
 	return tree
@@ -36,9 +36,9 @@ def convertToTree(lex_tree):
 def printTree(tree, tab = 0, out_string = ''):
 	out_string = out_string + returnTabs(tab) + tree.value + ', ' + tree.type + '\n' # Print out the first item in the list; this is the parent node
 	if(len(tree.children) == 0):
-		return
-	for x in tree.children: # Print out all of its children
-		out_string = printTree(tree.children, tab + 1, out_string)
+		return out_string
+	for child in tree.children: # Print out all of its children
+		out_string = printTree(child, tab + 1, out_string)
 	return out_string
 
 # Prints out the tree using tabs to represent children

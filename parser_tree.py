@@ -2,11 +2,10 @@ terminal_types = ['ICON', 'FCON', 'HCON', 'IDENTIFIER'] #COMPLETE LATER
 
 class Node:
 
-    #empty string for type means nonterminal
-    def __init__ (self, in_val, in_type = '', in_children = []):
+    def __init__ (self, in_val, in_type = 'nonterm'):
         self.value = in_val
         self.type = in_type
-        self.children = in_children
+        self.children = []
 
 
     #returns the child at the given index
@@ -38,4 +37,4 @@ class Node:
         for i, child in enumerate(self.children):
             if child.type == value:
                 return i
-        return false #if the for loop completes without finding a child
+        return -1 #if the for loop completes without finding a child
