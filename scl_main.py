@@ -8,7 +8,7 @@
 
 import scl_parser
 import scl_interpreter
-from parser_tree import Tree
+from parser_tree import Node
 import sys
 
 def main():

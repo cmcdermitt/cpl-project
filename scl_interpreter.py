@@ -8,10 +8,10 @@ def interpret(lex_tree):
 
 def rglobal(lex_tree):
     dict = {}
-    if lex_tree[2][0] == 'const_dec':
-        dict +=
+    #if lex_tree[2][0] == 'const_dec':
 
-def rdata_declarations(lex_tree, isconst):
+
+#def rdata_declarations(lex_tree, isconst):
 
 
 # Checks func_main for errors
