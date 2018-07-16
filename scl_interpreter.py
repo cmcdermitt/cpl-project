@@ -4,7 +4,7 @@ globals = {}
 # Then we execute the main function. <- done in implement
 def interpret(lex_tree):
     global globals
-    globals = rglobal(lex_tree[1]) # 1 being the index of the global subtree
+    globals = rglobal(lex_tree) # 1 being the index of the global subtree
 
 def rglobal(lex_tree):
     dict = {}

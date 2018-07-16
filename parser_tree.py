@@ -4,7 +4,6 @@ class Node:
 
     #empty string for type means nonterminal
     def __init__ (self, in_val, in_type = '', in_children = []):
-        self.name = in_name
         self.value = in_val
         self.type = in_type
         self.children = in_children

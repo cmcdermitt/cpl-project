@@ -13,7 +13,7 @@ import sys
 
 def main():
 	lex_tree = scl_parser.parse()
-	result = scl_interpreter.interpret(lex_tree)
+	result = scl_interpreter.interpret(convertToTree(lex_tree))
 	# No longer doing this (was for part 2)
 	#if len(sys.argv) > 2:
 	#	with open(sys.argv[2], 'w') as outfile:
