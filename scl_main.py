@@ -13,6 +13,7 @@ import sys
 
 def main():
 	lex_tree = scl_parser.parse()
+	print(printTree(convertToTree(lex_tree)))
 	result = scl_interpreter.interpret(convertToTree(lex_tree))
 	# No longer doing this (was for part 2)
 	#if len(sys.argv) > 2:
@@ -32,21 +33,29 @@ def convertToTree(lex_tree):
 			tree.addChild(Node(x[0], x[1]))
 	return tree
 
-# Prints out the tree using tabs to represent children
-def printTree(tree_list, tab, out_string = ''):
-	if(len(tree_list) == 0):
+def printTree(tree, tab = 0, out_string = ''):
+	out_string = out_string + returnTabs(tab) + tree.value + ', ' + tree.type + '\n' # Print out the first item in the list; this is the parent node
+	if(len(tree.children) == 0):
 		return
-	out_string = out_string + returnTabs(tab) + tree_list[0] + '\n' # Print out the first item in the list; this is the parent node
-	if(len(tree_list) == 1):
-		return
-	for x in range(1, len(tree_list)): # Print out all of its children
-		if(isinstance(tree_list[x], str)): # If the child is a string, print it out
-			out_string = out_string + returnTabs(tab) + tree_list[x] + '\n'
-		elif(isinstance(tree_list[x], list)): #If the child is a list, indent by 1 and print out that list
-			out_string = printTree(tree_list[x], tab + 1, out_string)
-		else:
-			out_string = out_string + returnTabs(tab + 1) + str(tree_list[x]) + '\n'
+	for x in tree.children: # Print out all of its children
+		out_string = printTree(tree.children, tab + 1, out_string)
 	return out_string
+
+# Prints out the tree using tabs to represent children
+# def printTree(tree_list, tab, out_string = ''):
+# 	if(len(tree_list) == 0):
+# 		return
+# 	out_string = out_string + returnTabs(tab) + tree_list[0] + '\n' # Print out the first item in the list; this is the parent node
+# 	if(len(tree_list) == 1):
+# 		return
+# 	for x in range(1, len(tree_list)): # Print out all of its children
+# 		if(isinstance(tree_list[x], str)): # If the child is a string, print it out
+# 			out_string = out_string + returnTabs(tab) + tree_list[x] + '\n'
+# 		elif(isinstance(tree_list[x], list)): #If the child is a list, indent by 1 and print out that list
+# 			out_string = printTree(tree_list[x], tab + 1, out_string)
+# 		else:
+# 			out_string = out_string + returnTabs(tab + 1) + str(tree_list[x]) + '\n'
+# 	return out_string
 
 #Prints a version of the tree with more information
 def printAnnotatedTree(tree_list, tab, printTree = False, out_string = ''):

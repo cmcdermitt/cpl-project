@@ -19,8 +19,8 @@ class Node:
             if isinstance(child, Node):
                 if child.type == in_type:
                     return child
-        return False #if the for loop completes without finding a child
-
+        return [] #if the for loop completes without finding a child
+    
     #returns all child nodes with type = in_type
     def getChildrenOfType(self, in_type):
         targets = []
