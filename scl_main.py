@@ -24,10 +24,10 @@ def main():
 
 def convertToTree(lex_tree):
 	tree = Node(lex_tree[0])
-	for x in range(1, len(lex_tree)):
+	for x in lex_tree:
 		if isinstance(x, list):
 			if len(x) > 0:
-				tree.addChild(convertToTree[x])
+				tree.addChild(convertToTree(x))
 		elif isinstance(x, tuple):
 			tree.addChild(Node(x[0], x[1]))
 	return tree

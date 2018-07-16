@@ -4,12 +4,13 @@ globals = {}
 # Then we execute the main function. <- done in implement
 def interpret(node):
     global globals
-    current = node.getChildOfType('Global')
-    if(current == False):
-        print("no")
+    rglobal(node)
 
-def rglobal(lex_tree):
+def rglobal(node):
     dict = {}
+    print(node.getChildLen())
+    for x in range(0, node.getChildLen()):
+        print(node.getChildAt(x).value)
     #if lex_tree[2][0] == 'const_dec':
 
 
