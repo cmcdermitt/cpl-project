@@ -7,16 +7,19 @@
 # Date:    09 July 2018
 
 import scl_parser
+import scl_interpreter
 import sys
 
 def main():
 	lex_tree = scl_parser.parse()
-	if len(sys.argv) > 2:
-		with open(sys.argv[2], 'w') as outfile:
-			outfile.write(printAnnotatedTree(lex_tree, 0, True))
-	else:
-		print(printAnnotatedTree(lex_tree, 0, True))
-
+	result = scl_interpreter.interpret(lex_tree)
+	# No longer doing this (was for part 2)
+	#if len(sys.argv) > 2:
+	#	with open(sys.argv[2], 'w') as outfile:
+	#		outfile.write(printAnnotatedTree(lex_tree, 0, True))
+	#else:
+	#	print(printAnnotatedTree(lex_tree, 0, True))
+	print(result)
 
 # Prints out the tree using tabs to represent children
 def printTree(tree_list, tab, out_string = ''):
