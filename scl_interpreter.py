@@ -2,9 +2,11 @@ globals = {}
 
 # Then we add all of the global variablse to the globals dictionary
 # Then we execute the main function. <- done in implement
-def interpret(lex_tree):
+def interpret(node):
     global globals
-    globals = rglobal(lex_tree) # 1 being the index of the global subtree
+    current = node.getChildOfType('Global')
+    if(current == False):
+        print("no")
 
 def rglobal(lex_tree):
     dict = {}
