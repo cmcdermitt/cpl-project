@@ -8,6 +8,7 @@
 
 import scl_parser
 import scl_interpreter
+from parser_tree import Tree
 import sys
 
 def main():
@@ -20,6 +21,16 @@ def main():
 	#else:
 	#	print(printAnnotatedTree(lex_tree, 0, True))
 	print(result)
+
+def convertToTree(lex_tree):
+	tree = Node(lex_tree[0])
+	for x in range(1, len(lex_tree)):
+		if isinstance(x, list):
+			if len(x) > 0:
+				tree.addChild(convertToTree[x])
+		elif isinstance(x, tuple):
+			tree.addChild(Node(x[0], x[1]))
+	return tree
 
 # Prints out the tree using tabs to represent children
 def printTree(tree_list, tab, out_string = ''):
