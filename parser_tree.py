@@ -2,7 +2,7 @@ terminal_types = ['ICON', 'FCON', 'HCON', 'IDENTIFIER'] #COMPLETE LATER
 
 class Node:
 
-    def __init__ (self, in_val, in_type = 'nonterm'):
+    def __init__ (self, in_val, in_type = 'nonterminal'):
         self.value = in_val
         self.type = in_type
         self.children = []
@@ -11,6 +11,9 @@ class Node:
     #returns the child at the given index
     def getChildAt(self, index):
         return self.children[index]
+
+    def getChildLen(self):
+        return len(self.children)
 
     #returns the first child node with type = in_type
     def getChildOfType(self, in_type):
