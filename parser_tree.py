@@ -7,7 +7,6 @@ class Node:
         self.type = in_type
         self.children = []
 
-
     #returns the child at the given index
     def getChildAt(self, index):
         return self.children[index]
@@ -19,15 +18,15 @@ class Node:
     def getChildOfType(self, in_type):
         for i, child in enumerate(self.children):
             if isinstance(child, Node):
-                if child.type == in_type:
+                if child.value == in_type:
                     return child
         return [] #if the for loop completes without finding a child
-    
+
     #returns all child nodes with type = in_type
     def getChildrenOfType(self, in_type):
         targets = []
         for i, child in enumerate(self.children):
-            if child.type == in_type:
+            if child.value == in_type:
                 targets.append(child)
         return targets
 
@@ -38,6 +37,6 @@ class Node:
     #returns the index of the first child of that type, or -1 if there isn't one.
     def hasChild(self, value):
         for i, child in enumerate(self.children):
-            if child.type == value:
+            if child.value == value:
                 return i
         return -1 #if the for loop completes without finding a child
