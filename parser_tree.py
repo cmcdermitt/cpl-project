@@ -2,8 +2,9 @@ terminal_types = ['ICON', 'FCON', 'HCON', 'IDENTIFIER'] #COMPLETE LATER
 
 class Node:
 
-    def __init__ (self, in_type = 'nonterminal'):
+    def __init__ (self, in_type, in_value = None):
         self.type = in_type
+        self.value = in_value
         self.children = []
 
     #returns the first child node with type = in_type

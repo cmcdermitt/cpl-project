@@ -8,6 +8,7 @@
 
 from scanner import Scanner
 import sys
+from parser_tree import Node
 
 # The parser uses the recursive-descent method of parsing, where each left hand definition is represented as a function.
 # The root of the parse tree is the function program.
@@ -50,9 +51,10 @@ def parse():
 #first parameter is what was expected, second is optional location
 def error(expected, location = ''):
 	if location == '':
-		return '\tError: {} expected'.format(expected)
+		print ('\tError: {} expected'.format(expected))
 	else:
-		return '\tError: {} expected in {}'.format(expected, location)
+		print('\tError: {} expected in {}'.format(expected, location))
+	exit()
 
 # First case: Called by parse()
 # GRAMMAR: func_main ::= FUNCTION IDENTIFIER oper_type
@@ -482,16 +484,21 @@ def data_type():
 #					| term BOR term
 #					| term BXOR term
 def expr():
-	# Append function header to output list
-	lex_list = ['expr']
-	lex_list.append(term())
-	if (scanner.lex[lex_en['value']] == 'PLUS' or scanner.lex[lex_en['value']] == 'MINUS'
-			or scanner.lex[lex_en['value']] == 'BAND' or scanner.lex[lex_en['value']] == 'BOR'
-			or scanner.lex[lex_en['value']] == 'BXOR'):
-		lex_list.append(tuple(scanner.lex))
+	#process the first <term>, but don't add it to a node yet
+	first_term = term() 
+
+	#check whether there are multiple terms
+	this_lex = scanner.lex(lex_en['value'])
+	if (this_lex == 'PLUS' or this_lex == 'MINUS' or this_lex == 'BAND' or this_lex == 'BOR' or this_lex == 'BXOR'):
+		node = Node(this_lex)
+		node.children.append(first_term)
 		scanner.next()
-	lex_list.append(term())
-	return lex_list
+		node.children.append(term())
+	else:
+		node = first_term
+	return node
+
+	
 
 # CASE: term
 # GRAMMAR: term ::= punary
@@ -502,15 +509,16 @@ def expr():
 #					| punary RSHIFT punary
 def term():
 	# Append function header to output list
-	lex_list = ['term']
-	lex_list.append(punary())
-	if (scanner.lex[lex_en['value']] == 'STAR' or scanner.lex[lex_en['value']] == 'DIVOP'
-			or scanner.lex[lex_en['value']] == 'MOD' or scanner.lex[lex_en['value']] == 'LSHIFT'
-			or scanner.lex[lex_en['value']] == 'RSHIFT'):
-		lex_list.append(tuple(scanner.lex))
+	first_punary = punary()
+	this_lex = scanner.lex[lex_en['value']]
+	if (this_lex == 'STAR' or this_lex == 'DIVOP' or this_lex == 'MOD' or this_lex == 'LSHIFT' or this_lex == 'RSHIFT'):
+		node = Node(this_lex)
+		node.children.append(first_punary)
 		scanner.next()
-		lex_list.append(punary)
-	return lex_list
+		node.children.append(punary)
+	else:
+		node = first_punary
+	return node
 
 # CASE: punary
 # GRAMMAR: punary ::= element
@@ -518,14 +526,12 @@ def term():
 #					  | NEGATE element
 def punary():
 	# Append function header to output list
-	lex_list = ['punary']
 	if scanner.lex[lex_en['value']] == 'MINUS' or scanner.lex[lex_en['value']] == 'NEGATE':
-		lex_list.append(tuple(scanner.lex))
-		scanner.next()
-		lex_list.append(element())
+		node = Node(scanner.lex[lex_en['value']])
+		node.children.append(element())
 	else:
-		lex_list.append(element())
-	return lex_list
+		node = element()
+	return node
 
 # CASE: element
 # GRAMMAR: element ::= IDENTIFIER popt_ref
@@ -539,32 +545,37 @@ def punary():
 #					   | LP expr RP
 def element():
 	# Append function header to output list
-	lex_list = ['element']
 	valid_types = ['STRING', 'LETTER', 'ICON', 'HCON', 'FCON']
 	valid_values = ['MTRUE', 'MFALSE']
-	if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
-		lex_list.append(tuple(scanner.lex))
+	if scanner.lex[lex_en['type']] in valid_types:
+		node = Node(scanner.lex[lex_en['value']])
+	elif scanner.lex[lex_en['value']] in valid_values:
+		node = Node('BOOL', scanner.lex[lex_en['value']])
 		scanner.next()
 	elif scanner.lex[lex_en['type']] == 'IDENTIFIER':
-		lex_list.append(tuple(scanner.lex))
+		node = Node(scanner.lex[lex_en['value']], scanner.lex[lex_en['type']]) #identifier name and type
 		scanner.next()
-		if scanner.lex[lex_en['value']] == 'LB' or scanner.lex[lex_en['value']] == 'LB':
-			lex_list.append(popt_ref())
-	elif scanner.lex[lex_en['value']] == 'LP':
-		lex_list.append(tuple(scanner.lex))
-		scanner.next()
-		lex_list.append(expr())
-		if scanner.lex[lex_en['value']] == 'RP':
-			lex_list.append(tuple(scanner.lex))
-			scanner.next()
-		else:
-			# Append error message if case specific grammar not found
-			lex_list.append(error('RP', 'element'))
-			return lex_list
+
+		# for arrays
+		# if scanner.lex[lex_en['value']] == 'LB':
+		# 	lex_list.append(popt_ref())
+
+		#for functions
+		# elif scanner.lex[lex_en['value']] == 'LP':
+		# 	lex_list.append(tuple(scanner.lex))
+		# 	scanner.next()
+		# 	lex_list.append(expr())
+		# 	if scanner.lex[lex_en['value']] == 'RP':
+		# 		lex_list.append(tuple(scanner.lex))
+		# 		scanner.next()
+		# 	else:
+		# 	# Append error message if case specific grammar not found
+		# 	lex_list.append(error('RP', 'element'))
+		# 	return lex_list
 	else:
 		# Append error message if case specific grammar not found
-		lex_list.append(error('IDENTIFIER or LP or TYPE or MTRUE or MFALSE', 'element'))
-	return lex_list
+		error('IDENTIFIER or LP or TYPE or MTRUE or MFALSE', 'element')
+	return node
 
 # CASE: popt_ref
 # GRAMMAR: popt_reg ::=

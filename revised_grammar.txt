@@ -1,0 +1,105 @@
+func_main ::= FUNCTION IDENTIFIER RETURN MVOID
+                  | MAIN
+globals ::= [GLOBAL DECLARATIONS const_dec var_dec]
+const_var_struct ::= const_dec var_dec
+const_dec ::= [CONSTANTS data_declarations]
+var_dec ::= VARIABLES data_declarations
+data_declarations ::=  DEFINE data_declaration {DEFINE data_declaration}
+data_declaration ::= IDENTIFIER  parray_dec OF data_type 
+data_type ::= TUNSIGNED
+    | CHAR 
+    | INTEGER
+    | MVOID
+    | DOUBLE
+    | LONG
+    | SHORT	
+    | FLOAT
+    | REAL
+    | TSTRING
+    | TBOOL
+    | TBYTE
+parray_dec ::= [ARRAY plist_const popt_array_val]
+plist_const ::= LB (ICON | IDENTIFIER) RB { LB (ICON | IDENTIFIER) RB }
+popt_array_val ::= [(VALUE | EQUOP) array_val]
+array_val ::= LB arg_list RB 
+arg_list ::= expr { COMMA expr }
+implement ::= IMPLEMENTATIONS [pother_oper] funct_list
+funct_list ::= FUNCTION pother_oper_def { FUNCTION pother_oper_def }
+
+pother_oper_def ::= IDENTIFIER DESCRIPTION parameters IS const_var_struct BEGIN pactions ENDFUN IDENTIFIER
+
+pcondition ::= pcond1 [(OR | AND) pcond1]
+pcond1 ::= [NOT] pcond2
+pcond2 ::= LP pcondition RP
+    | expr eq_v expr
+    | expr {NOT} (MTRUE | MFALSE)
+    | element
+eq_v ::= EQUALS
+    | GREATER THAN 
+    | LESS THAN
+    | GREATER OR EQUAL
+    | LESS OR EQUAL
+parameters ::= [PARAMETERS data_declaration {COMMA data_declaration}]
+
+expr ::= term [ term (PLUS | MINUS | BAND | BOR | BXOR) term ]
+term ::= punary [ (STAR | DIVOP | MOD | LSHIFT | RSHIFT) punary]
+punary ::= [(MINUS | NEGATE)] element
+element ::= IDENTIFIER [(array_val | parguments)]
+    | STRING
+    | LETTER
+    | ICON
+    | HCON
+    | FCON
+    | MTRUE
+    | MFALSE
+    | LP expr RP
+pactions ::= action_def { action_def }
+action_def ::=  SET name_ref  EQUOP expr
+    | READ arg_list
+    | INPUT name_ref
+    | DISPLAY arg_list
+    | DISPLAYN arg_list
+    | INCREMENT name_ref
+    | DECREMENT name_ref
+    | CALL name_ref pusing_ref
+    | IF pcondition THEN pactions ptest_elsif  [ELSE pactions] ENDIF
+    | FOR name_ref EQUOP expr ( TO | DOWNTO) expr DO pactions ENDFOR
+    | REPEAT pactions UNTIL pcondition ENDREPEAT
+    | WHILE pcondition DO pactions ENDWHILE
+    | CASE name_ref pcase_val pcase_def MENDCASE
+    | MBREAK
+    | MEXIT
+ptest_elsif ::= { ELSEIF pcondition THEN pactions }
+pusing_ref ::= [( USING arg_list | LP arg_list RP)]
+
+pcase_val ::= MWHEN expr COLON pactions {MWHEN expr COLON pactions}
+pcase_def ::= [DEFAULT COLON pactions]
+name_ref ::= IDENTIFIER array_val
+
+Lexical rules (are using a regular expression notation)
+
+white_space       [ \t]
+sign	          [+-]?
+digit             [0-9]
+alpha             [A-Za-z]
+alpha_num         ({alpha}|{digit}|_)
+hex_digit         [0-9A-F]
+
+wordiden          ((_?{alpha}+({alpha_num}*\.{alpha_num}+)*)
+   |(_?{alpha}+({alpha_num}*"->"{alpha_num}+)*))
+unsigned_integer  {digit}+
+sinteger          {sign}{digit}+
+hex_integer       (0{hex_digit}+h)
+exponent          e[+-]?{digit}+
+i                 {unsigned_integer}
+real              ({i}\.{i}?|{i}?\.{i}){exponent}?
+sreal             {sign}{real}
+bad_string        \"([^"\n]|\"\")+
+schar             \'{alpha_num}\'
+string            \"[^"\n]*["\n]
+
+Results:
+No file I/O
+No structs
+No members
+
