@@ -1,5 +1,4 @@
-# globals = {}
-
+'''
 # Then we add all of the global variablse to the globals dictionary
 # Then we execute the main function. <- done in implement
 def interpret(node):
@@ -8,10 +7,10 @@ def interpret(node):
 
 def rglobal(node):
     dict = {}
-    if node.hasChild('const_dec'):
-        const_node = node.getChildOfType('const_dec')
-        const_node = const_node.getChildOfType('data_declarations')
-        rdata_declarations(const_node, dict, True)
+    const_node = node.children[0]
+    const_node = const_node.getChildOfType('data_declarations')
+    rdata_declarations(const_node, dict, True)
+
     if node.hasChild('var_dec'):
         var_node = node.getChildOfType('var_dec')
         var_node = var_node.getChildOfType('data_declarations')
@@ -31,3 +30,4 @@ def rdata_declaration(node):
     if data_dec.hasChild('parray_dec'):
         parray = data_dec.getChildOfType('parray_dec')
     return[1,2,3]
+    '''

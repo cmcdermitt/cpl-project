@@ -13,23 +13,25 @@ import sys
 
 def main():
 	lex_tree = scl_parser.parse()
-	result = scl_interpreter.interpret(convertToTree(lex_tree))
+	result = convertToTree(lex_tree)
 	# No longer doing this (was for part 2)
-	#if len(sys.argv) > 2:
-	#	with open(sys.argv[2], 'w') as outfile:
-	#		outfile.write(printAnnotatedTree(lex_tree, 0, True))
-	#else:
-	#	print(printAnnotatedTree(lex_tree, 0, True))
+	if len(sys.argv) > 2:
+		with open(sys.argv[2], 'w') as outfile:
+			outfile.write(printAnnotatedTree(lex_tree, 0, True))
+	else:
+		print(printAnnotatedTree(lex_tree, 0, True))
 	print(result)
 
 def convertToTree(lex_tree):
-	tree = Node(lex_tree[0])
+	tree = Node()
 	for x in lex_tree:
 		if isinstance(x, list):
 			if len(x) > 0:
-				tree.addChild(convertToTree(x))
+				tree.children.append(convertToTree(x))
 		elif isinstance(x, tuple):
-			tree.addChild(Node(x[0], x[1]))
+			tree.children.append(Node(x[1]))
+		elif isinstance(x, str) and x == lex_tree[0]:
+			tree.type = x
 	return tree
 
 def printTree(tree, tab = 0, out_string = ''):
@@ -62,6 +64,7 @@ def printAnnotatedTree(tree_list, tab, printTree = False, out_string = ''):
 		return out_string
 	out_string +=  returnTabs(tab) + ( ('Enter <' + tree_list[0] + '>\n'))
 	if(len(tree_list) == 1):
+		out_string += returnTabs(tab) + (('Exit <' + tree_list[0] + '>\n'))
 		return out_string
 	for x in range(1, len(tree_list)):
 		if(isinstance(tree_list[x], str)):

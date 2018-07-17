@@ -115,8 +115,7 @@ def chk_ptr():
 	if(scanner.lex[lex_en['value']] == 'OF'):
 		lex_list.append(tuple(scanner.lex))
 	else:
-		# Append error message if case specific grammar not found
-		lex_list.append('\tERROR: Keyword OF was expected')
+		return lex_list
 	return lex_list
 
 # CASE chk_array
@@ -214,21 +213,6 @@ def type_name():
 	lex_list.append(tuple(scanner.lex))
 	return lex_list
 
-# CASE: struct_enum
-# GRAMMAR: struct_enum ::= STRUCT
-#						   | ENUM
-def struct_enum():
-	# Append function header to output list
-	lex_list = ['struct_enum']
-	lex_list.append(tuple(scanner.lex))
-	scanner.next()
-	if scanner.lex[lex_en['value']] == 'STRUCT' or scanner.lex[lex_en['value']] == 'ENUM':
-		lex_list.append(tuple(scanner.lex))
-	else:
-		# Append error message if case specific grammar not found
-		lex_list.append('Error: Keyword STRUCT or ENUM expected')
-	return lex_list
-
 # CASE: globals
 # GRAMMAR: globals ::=
 #					   | GLOBAL DECLARATIONS const_dec var_dec struct_dec
@@ -243,16 +227,8 @@ def f_globals():
 		scanner.next()
 	else:
 		lex_list.append('\tError Keyword DECLARATIONS was expected')
-	if(scanner.lex[lex_en['value']] == 'CONSTANTS'):
-		lex_list.append(const_dec())
-	if(scanner.lex[lex_en['value']] == 'VARIABLES'):
-	 	lex_list.append(var_dec())
-	else:
-		# Append error message if case specific grammar not found
-		lex_list.append(error('VARIABLES', 'f_globals'))
-		return lex_list
-	if(scanner.lex[lex_en['value']] == 'STRUCT'):
-	 	lex_list.append(struct_dec())
+	lex_list.append(const_dec())
+	lex_list.append(var_dec())
 	return lex_list
 
 # CASE: const_dec
@@ -266,7 +242,6 @@ def const_dec():
 		lex_list.append(tuple(scanner.lex))
 		scanner.next()
 	else:
-		lex_list.append('Error: Keyword CONSTANTS expected')
 		return lex_list
 	if(scanner.lex[lex_en['value']] == 'DEFINE'):
 		lex_list.append(data_declarations())
@@ -294,26 +269,6 @@ def var_dec():
 		lex_list.append('\tError Keyword DEFINE expected')
 	return lex_list
 
-# CASE: struct_dec
-# GRAMMAR: struct_dec ::=
-#						  | STRUCT data_declarations
-# NOTE: Blank lines interpreted as optional values, allowing for simpler statements
-def struct_dec():
-	# Append function header to output list
-	lex_list = ['struct_dec']
-	if scanner.lex[lex_en['value']] == 'STRUCT':
-		lex_list.append(tuple(scanner.lex))
-		scanner.next()
-	else:
-		# Append error message if case specific grammar not found
-		lex_list.append('Error: Keyword STRUCT expected in struct_dec')
-	if(scanner.lex[lex_en['value']] == 'DEFINE'):
-		lex_list.append(data_declarations())
-	else:
-		# Append error message if case specific grammar not found
-		lex_list.append('\tError Keyword DEFINE expected')
-	return lex_list
-
 # CASE: data_declarations
 # GRAMMAR: data_declarations ::= comp_declare
 # 								 | {comp_declare} comp_declare
@@ -323,27 +278,12 @@ def data_declarations():
 	lex_list = ['data_declarations']
 	if scanner.lex[lex_en['value']] == 'DEFINE': #check validity before starting while loop
 		while(scanner.lex[lex_en['value']] == 'DEFINE'):
-			lex_list.append(comp_declare())
+			lex_list.append(tuple(scanner.lex))
+			scanner.next()
+			lex_list.append(data_declaration())
 	else:
 		# Append error message if case specific grammar not found
 		lex_list.append('Error: keyword DEFINE expected in data_declarations')
-	return lex_list
-
-# CASE: comp_declare
-# GRAMMAR: comp_declare ::= DEFINE data_file
-def comp_declare():
-	# Append function header to output list
-	lex_list = ['comp_declare']
-	if scanner.lex[lex_en['value']] == 'DEFINE':
-		lex_list.append(tuple(scanner.lex))
-		scanner.next()
-	else:
-		lex_list.append('Error: keyword DEFINE expected in comp_declare')
-	if(scanner.lex[lex_en['type']] == 'IDENTIFIER'):
-		lex_list.append(data_declaration())
-	else:
-		# Append error message if case specific grammar not found
-		lex_list.append('\tError IDENTIFIER expected')
 	return lex_list
 
 # CASE: data_declaration
@@ -395,8 +335,7 @@ def parray_dec():
 		if(scanner.lex[lex_en['value']] == 'VALUE'):
 			lex_list.append(popt_array_val())
 	else:
-		lex_list.append(tuple(scanner.lex))
-		scanner.next()
+		return lex_list
 	return lex_list
 
 # CASE: plist_const
@@ -455,8 +394,7 @@ def popt_array_val():
 	if(scanner.lex[lex_en['value']] == 'LB'):
 		lex_list.append(array_val())
 	else:
-		# Append error message if case specific grammar not found
-		lex_list.append(error('LB', 'popt_array_val'))
+		return lex_list
 	return lex_list
 
 # CASE: value_eq
@@ -641,8 +579,7 @@ def popt_ref():
 	elif scanner.lex[lex_en['value']] == 'LP':
 		lex_list.append(parguments())
 	else:
-		# Append error message if case specific grammar not found
-		lex_list.append(error('LP or LB', 'popt_ref'))
+		return lex_list
 	return lex_list
 
 # CASE: parguments
@@ -692,16 +629,14 @@ def main_head():
 		lex_list.append(tuple(scanner.lex))
 		scanner.next()
 	else:
-		# Append error message if case specific grammar not found
-		lex_list.append(error('MAIN', 'main_head'))
+		return lex_list
 	if scanner.lex[lex_en['value']] == 'DESCRIPTION':
 		lex_list.append(tuple(scanner.lex))
 		scanner.next()
 	else:
 		# Append error message if case specific grammar not found
 		lex_list.append(error('DESCRIPTION','main_head'))
-	if scanner.lex[lex_en['value']] == 'PARAMETERS':
-		lex_list.append(parameters())
+	lex_list.append(parameters())
 	return lex_list
 
 # CASE: parameters
@@ -710,8 +645,11 @@ def main_head():
 def parameters():
 	# Append function header to output list
 	lex_list = ['parameters']
-	lex_list.append(tuple(scanner.lex))
-	scanner.next()
+	if scanner.lex[lex_en['value']] == 'PARAMETERS':
+		lex_list.append(tuple(scanner.lex))
+		scanner.next()
+	else:
+		return lex_list
 	lex_list.append(param_def())
 	while scanner.lex[lex_en['value']] == 'COMMA':
 		lex_list.append(tuple(scanner.lex))
@@ -765,8 +703,6 @@ def pother_oper_def():
 		# Append error message if case specific grammar not found
 		lex_list.append(error('IS', 'pother_oper_def'))
 	lex_list.append(const_var_struct())
-	if(scanner.lex[lex_en['value']] == 'PRECONDITION'):
-		lex_list.append(precond())
 	if scanner.lex[lex_en['value']] == 'BEGIN':
 		lex_list.append(tuple(scanner.lex))
 		scanner.next()
@@ -825,23 +761,6 @@ def const_var_struct():
 		# Append error message if case specific grammar not found
 		lex_list.append(error('VARIABLES', 'const_var_struct'))
 		return lex_list
-	if(scanner.lex[lex_en['value']] == 'STRUCT'):
-	 	lex_list.append(struct_dec())
-	return lex_list
-
-#CASE precond
-#GRAMMAR precond ::=
-#				| PRECONDITION pcondition
-def precond():
-	# Append function header to output list
-	lex_list = ['PRECONDITION']
-	if scanner.lex[lex_en['value']] == 'PRECONDITION':
-		lex_list.append(tuple(scanner.lex))
-		scanner.next()
-	else:
-		# Append error message if case specific grammar not found
-		lex_list.append(error('PRECONDITION', 'precond'))
-	lex_list.append(pcondition())
 	return lex_list
 
 #CASE pcondition
@@ -930,8 +849,7 @@ def opt_not():
 		lex_list.append(tuple(scanner.lex))
 		scanner.next()
 	else:
-		# Append error message if case specific grammar not found
-		lex_list.append(error('NOT', 'opt_not'))
+		return lex_list
 	return lex_list
 
 #CASE true_false
@@ -989,9 +907,9 @@ def eq_v():
 def pactions():
 	# Append function header to output list
     lex_list = ['pactions']
-    valid_values = ['SET', 'READ', 'INPUT', 'DISPLAY', 'DISPLAYN', 'MCLOSE', 'MOPEN', 'MFILE',
+    valid_values = ['SET', 'READ', 'INPUT', 'DISPLAY', 'DISPLAYN',
                     'INCREMENT', 'DECREMENT', 'RETURN', 'CALL', 'IF', 'FOR', 'REPEAT',
-                    'WHILE', 'CASE', 'MBREAK', 'MEXIT','POSTCONDITION']
+                    'WHILE', 'CASE', 'MBREAK', 'MEXIT','POSTCONDITION', 'THEN', 'DO']
     times = 0
     while scanner.lex[lex_en['value']] in valid_values:
         lex_list.append(action_def())
@@ -1007,9 +925,6 @@ def pactions():
 #						| INPUT name_ref
 #						| DISPLAY pvar_value_list
 #						| DISPLAYN pvar_value_list
-#						| MCLOSE IDENTIFIER
-#						| MOPEN in_out
-#						| MFILE read_write
 #						| INCREMENT name_ref
 #						| DECREMENT name_ref
 #						| RETURN expr
@@ -1081,33 +996,6 @@ def action_def():
         else:
 			# Append error message if case specific grammar not found
             lex_list.append(error('expr keyword', 'action_def'))
-    # Following 'MCLOSE' path
-    elif scanner.lex[lex_en['value']] == 'MCLOSE':
-        scanner.next()
-        if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-            lex_list.append(tuple(scanner.lex))
-            scanner.next()
-        else:
-			# Append error message if case specific grammar not found
-            lex_list.append(error('IDENTIFIER', 'action_def'))
-    # Following 'MOPEN' path
-    elif scanner.lex[lex_en['value']] == 'MOPEN':
-        scanner.next()
-        if (scanner.lex[lex_en['value']] == 'INPUT' or
-                scanner.lex[lex_en['value']] == 'OUTPUT'):
-            lex_list.append(in_out())
-        else:
-			# Append error message if case specific grammar not found
-            lex_list.append(error('INPUT or OUTPUT', 'action_def'))
-    # Following 'MFILE' path
-    elif scanner.lex[lex_en['value']] == 'MFILE':
-        scanner.next()
-        if (scanner.lex[lex_en['value']] == 'READ' or
-                scanner.lex[lex_en['value']] == 'WRITE'):
-                lex_list.append(read_write())
-        else:
-			# Append error message if case specific grammar not found
-            lex_list.append(error('READ or WRITE', 'action_def'))
     # Following 'INCREMENT' or 'DECREMENT' path
     elif (scanner.lex[lex_en['value']] == 'INCREMENT' or
             scanner.lex[lex_en['value']] == 'DECREMENT'):
@@ -1119,12 +1007,12 @@ def action_def():
         else:
 			# Append error message if case specific grammar not found
             lex_list.append(error('IDENTIFIER', 'action_def'))
-    # Following 'RETURN' path
-    elif scanner.lex[lex_en['value']] == 'RETURN':
-        scanner.next()
-        if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
-            lex_list.append(expr())
-        else:
+    ## Following 'RETURN' path
+    #elif scanner.lex[lex_en['value']] == 'RETURN':
+     #   scanner.next()
+      #  if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
+       #     lex_list.append(expr())
+        #else:
 			# Append error message if case specific grammar not found
             lex_list.append(error('expr keyword', 'action_def'))
     # Following 'CALL' path
@@ -1137,9 +1025,7 @@ def action_def():
         else:
 			# Append error message if case specific grammar not found
             lex_list.append(error('IDENTIFIER', 'action_def'))
-        if (scanner.lex[lex_en['value']] == 'USING' or
-                scanner.lex[lex_en['value']] == 'LP'):
-            lex_list.append(pusing_ref())
+        lex_list.append(pusing_ref())
     # Following 'IF' path
     elif scanner.lex[lex_en['value']] == 'IF':
         scanner.next()
@@ -1182,13 +1068,6 @@ def action_def():
         else:
 			# Append error message if case specific grammar not found
             lex_list.append(error('expr keyword', 'action_def'))
-        if (scanner.lex[lex_en['value']] == 'TO' or
-                scanner.lex[lex_en['value']] == 'DOWNTO'):
-            lex_list.append(downto())
-            scanner.next()
-        else:
-			# Append error message if case specific grammar not found
-            lex_list.append(error('TO or DOWNTO', 'action_def'))
         if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
             lex_list.append(expr())
         else:
@@ -1256,8 +1135,7 @@ def action_def():
         else:
 			# Append error message if case specific grammar not found
             lex_list.append(error('MWHEN', 'action_def'))
-        if scanner.lex[lex_en['value']] == 'DEFAULT':
-            lex_list.append(pcase_def())
+        lex_list.append(pcase_def())
         if scanner.lex[lex_en['value']] == 'MENDCASE':
             lex_list.append(tuple(scanner.lex))
             scanner.next()
@@ -1288,10 +1166,6 @@ def name_ref():
     else:
 		# Append error message if case specific grammar not found
         lex_list.append(error('LB', 'name_ref'))
-    if scanner.lex[lex_en['value']] == 'OF':
-        lex_list.append(pmember_opt())
-    if scanner.lex[lex_en['value']] == 'DOT':
-        lex_list.append(popt_dot())
     return lex_list
 
 #CASE opt_ref
@@ -1301,92 +1175,6 @@ def opt_ref():
     lex_list = ['opt_ref']
     lex_list.append(array_val())
     return lex_list
-
-#CASSE pmember_opt
-#GRAMMAR pmember_opt ::= pmember_of
-def pmember_opt():
-	# Append function header to output list
-    lex_list = ['pmember_opt']
-    lex_list.append(pmember_of())
-    return lex_list
-
-#CASE pmemeber_of
-#GRAMMAR pmember_of ::= OF IDENTIFIER opt_ref {OF IDENTIFIER opt_ref }
-def pmember_of():
-	# Append function header to output list
-    lex_list = ['pmember_of']
-    lex_list.append(tuple(scanner.lex))
-    scanner.next()
-    if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-        lex_list.append(tuple(scanner.lex))
-        scanner.next()
-    else:
-        lex_list.append(error('IDENTIFIER', 'pmember_of'))
-    if scanner.lex[lex_en['value']] == 'LB':
-        lex_list.append(opt_ref())
-    else:
-        lex_list.append(error('LB', 'pmember_of'))
-    while scanner.lex[lex_en['value']] == 'OF': # Recursively add pmemeber_of info
-        lex_list.append(tuple(scanner.lex))
-        scanner.next()
-        if scanner.lex[lex_en['value']] == 'IDENTIFIER':
-            lex_list.append(tuple(scanner.lex))
-            scanner.next()
-        else:
-			# Append error message if case specific grammar not found
-            lex_list.append(error('IDENTIFIER', 'pmember_of'))
-        if scanner.lex[lex_en['value']] == 'LB':
-            lex_list.append(opt_ref())
-        else:
-			# Append error message if case specific grammar not found
-            lex_list.append(error('LB', 'pmember_of'))
-    else:
-        return lex_list
-
-#CASE popt_dot
-#GRAMMAR popt_dot ::=
-#				| proc_dot
-def popt_dot():
-	# Append function header to output list
-    lex_list = ['popt_def']
-    lex_list.append(proc_dot())
-    return lex_list
-
-#CASE proc_dot
-#GRAMMAR proc_dot ::=  DOT IDENTIFIER opt_ref
-def proc_dot():
-	# Append function header to output list
-    lex_list = ['proc_dot']
-    lex_list.append(tuple(scanner.lex))
-    scanner.next()
-    if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-        lex_list.append(tuple(scanner.lex))
-        scanner.next()
-    else:
-		# Append error message if case specific grammar not found
-        lex_list.append(error('IDENTIFIER', 'proc_dot'))
-    if scanner.lex[lex_en['value']] == 'LB':
-        lex_list.append((opt_ref()))
-    else:
-		# Append error message if case specific grammar not found
-        lex_list.append(error('LB', 'proc_dot'))
-    while scanner.lex[lex_en['value']] == 'DOT':
-        lex_list.append(tuple(scanner.lex))
-        scanner.next()
-        if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-            lex_list.append(tuple(scanner.lex))
-            scanner.next()
-        else:
-			# Append error message if case specific grammar not found
-            lex_list.append(error('IDENTIFIER', 'proc_dot'))
-            return lex_list
-        if scanner.lex[lex_en['value']] == 'LB':
-            lex_list.append((opt_ref()))
-        else:
-			# Append error message if case specific grammar not found
-            lex_list.append(error('LB', 'proc_dot'))
-    else:
-        return lex_list
 
 # CASE pvar_value_list
 #GRAMMAR pvar_value_list  ::= expr
@@ -1404,62 +1192,11 @@ def pvar_value_list():
             scanner.next()
     return lex_list
 
-#CASE in_out
-#GRAMMAR in_out ::= INPUT MFILE IDENTIFIER
-def in_out():
-	# Append function header to output list
-    lex_list = ['in_out']
-    lex_list.append(tuple(scanner.lex))
-    scanner.next()
-    if scanner.lex[lex_en['value']] == 'MFILE':
-        lex_list.append(tuple(scanner.lex))
-        scanner.next()
-    else:
-		# Append error message if case specific grammar not found
-        lex_list.append(error('MFILE', 'in_out'))
-    if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-        lex_list.append(tuple(scanner.lex))
-        scanner.next()
-    else:
-		# Append error message if case specific grammar not found
-        lex_list.append(error('IDENTIFIER', 'in_out'))
-    return lex_list
-
-#CASES read_write
-#GRAMMAR READ pvar_value_list FROM IDENTIFIER
-def read_write():
-	# Append function header to output list
-    lex_list = ['read_write']
-    # Valid types and values for following the pvar_value_list() path
-    valid_types = ['IDENTIFIER', 'STRING', 'LETTER', 'ICON', 'HCON', 'FCON']
-    valid_values = ['MINUS', 'NEGATE', 'MTRUE', 'MFALSE', 'LP']
-    lex_list.append(tuple(scanner.lex))
-    scanner.next()
-    if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
-        lex_list.append(pvar_value_list()) # add pvar_value_lsit
-    else:
-		# Append error message if case specific grammar not found
-        lex_list.append(error('pvar_value_list keyword', 'read_write'))
-    if (scanner.lex[lex_en['value']] == 'FROM' or
-            scanner.lex[lex_en['value']] == 'TO'):
-        lex_list.append(tuple(scanner.lex)) # Add FROM or TO
-        scanner.next()
-    else:
-		# Append error message if case specific grammar not found
-        lex_list.append(error('FROM or TO', 'read_write'))
-    if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-        lex_list.append(tuple(scanner.lex))
-        scanner.next()
-    else:
-		# Append error message if case specific grammar not found
-        lex_list.append(error('IDENTIFIER', 'read_write'))
-    return lex_list
-
 #CASE pusing_ref
 #GRAMMAR pusing_ref ::=
 #					| USING arg_list
 def pusing_ref():
-	# Append function header to output list
+    # Append function header to output list
     lex_list = ['pusing_ref']
     if scanner.lex[lex_en['value']] == 'USING':
         lex_list.append(tuple(scanner.lex))
@@ -1468,17 +1205,19 @@ def pusing_ref():
     elif scanner.lex[lex_en['value']] == 'LP':
         lex_list.append(parguments())
     else:
-		# Append error message if case specific grammar not found
-        lex_list.append(error('USING or LP', 'pusing_ref'))
+        return lex_list
     return lex_list
 
 #CASE ptest_elsif
 #GRAMMAR ptest_elsif ::=
 #               | proc_elseif
 def ptest_elsif():
-	# Append function header to output list
+    # Append function header to output list
     lex_list = ['ptest_elsif']
-    lex_list.append(proc_elseif())
+    if scanner.lex[lex_en['value']] == 'ELSEIF':
+        lex_list.append(proc_elseif())
+    else:
+        return lex_list
     return lex_list
 
 #CASE proc_elseif
@@ -1504,20 +1243,14 @@ def proc_elseif():
 # opt_else ::=
 #			| ELSE pactions
 def opt_else():
-	# Append function header to output list
+    # Append function header to output list
     lex_list = ['opt_else']
-    lex_list.append(tuple(scanner.lex))
-    scanner.next()
+    if scanner.lex[lex_en['value']] == 'ELSE':
+        lex_list.append(tuple(scanner.lex))
+        scanner.next()
+    else:
+        return lex_list
     lex_list.append(pactions())
-    return lex_list
-
-#CASE: downto
-#GRAMMAR: downto ::= # TO
-#				|  DOWNTO
-def downto():
-	# Append function header to output list
-    lex_list = ['downto']
-    lex_list.append(tuple(scanner.lex))
     return lex_list
 
 #CASE: pcase_val
@@ -1546,15 +1279,17 @@ def pcase_val():
 #GRAMMAR: pcase_def ::=
 #		  |DEFAULT COLON pactions
 def pcase_def():
-	# Append function header to output list
+    # Append function header to output list
     lex_list = ['pcase_def']
-    lex_list.append(tuple(scanner.lex)) # Should be DEFAULT
+    if scanner.lex[lex_en['value']] == 'DEFAULT':
+        lex_list.append(tuple(scanner.lex)) # Should be DEFAULT
+    else:
+        return lex_list
     scanner.next()
     if scanner.lex[lex_en['value']] == 'COLON': # Check if next lexeme is COLON
         lex_list.append(tuple(scanner.lex))
         scanner.next()
     else:
-
 		# Append error message if case specific grammar not found
         lex_list.append(error('COLON', 'pcase_def'))
     lex_list.append(pactions())
