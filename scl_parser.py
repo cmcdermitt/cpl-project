@@ -37,14 +37,18 @@ scanner = Scanner(sys.argv[1])
 def parse():
 	scanner.start()
 
-	lex_list = ['Program']
-	lex_list.append(func_main())
+	node = Node('Program')
+	node.children.append(expr)
+	return node
 
-	if(scanner.lex[lex_en['value']] == 'GLOBAL'):
-		lex_list.append(f_globals()) #called f_globals becasue globals is a function
+	# lex_list = ['Program']
+	# lex_list.append(func_main())
 
-	lex_list.append(implement())
-	return lex_list
+	# if(scanner.lex[lex_en['value']] == 'GLOBAL'):
+	# 	lex_list.append(f_globals()) #called f_globals becasue globals is a function
+
+	# lex_list.append(implement())
+	# return lex_list
 
 
 #convenience function returning an error message
@@ -549,6 +553,7 @@ def element():
 	valid_values = ['MTRUE', 'MFALSE']
 	if scanner.lex[lex_en['type']] in valid_types:
 		node = Node(scanner.lex[lex_en['value']])
+		scanner.next()
 	elif scanner.lex[lex_en['value']] in valid_values:
 		node = Node('BOOL', scanner.lex[lex_en['value']])
 		scanner.next()

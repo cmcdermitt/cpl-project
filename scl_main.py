@@ -13,14 +13,15 @@ import sys
 
 def main():
 	lex_tree = scl_parser.parse()
-	result = convertToTree(lex_tree)
-	# No longer doing this (was for part 2)
-	if len(sys.argv) > 2:
-		with open(sys.argv[2], 'w') as outfile:
-			outfile.write(printAnnotatedTree(lex_tree, 0, True))
-	else:
-		print(printAnnotatedTree(lex_tree, 0, True))
-	print(result)
+	print(printTree(lex_tree))
+	# result = convertToTree(lex_tree)
+	# # No longer doing this (was for part 2)
+	# if len(sys.argv) > 2:
+	# 	with open(sys.argv[2], 'w') as outfile:
+	# 		outfile.write(printAnnotatedTree(lex_tree, 0, True))
+	# else:
+	# 	print(printAnnotatedTree(lex_tree, 0, True))
+	# print(result)
 
 def convertToTree(lex_tree):
 	tree = Node()
@@ -35,7 +36,10 @@ def convertToTree(lex_tree):
 	return tree
 
 def printTree(tree, tab = 0, out_string = ''):
-	out_string = out_string + returnTabs(tab) + tree.value + ', ' + tree.type + '\n' # Print out the first item in the list; this is the parent node
+	if (tree.value is not None):
+		out_string = out_string + returnTabs(tab) + tree.type + ', ' + tree.value + '\n' # Print out the first item in the list; this is the parent node
+	else:
+		out_string = out_string + returnTabs(tab) + tree.type + ', None\n' # Print out the first item in the list; this is the parent node
 	if(len(tree.children) == 0):
 		return out_string
 	for child in tree.children: # Print out all of its children

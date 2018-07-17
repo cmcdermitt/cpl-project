@@ -32,7 +32,7 @@ pcondition ::= pcond1 [(OR | AND) pcond1]
 pcond1 ::= [NOT] pcond2
 pcond2 ::= LP pcondition RP
     | expr eq_v expr
-    | expr {NOT} (MTRUE | MFALSE)
+    | expr [NOT] (MTRUE | MFALSE)
     | element
 eq_v ::= EQUALS
     | GREATER THAN 
