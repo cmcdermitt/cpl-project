@@ -38,7 +38,7 @@ def parse():
 	scanner.start()
 
 	node = Node('Program')
-	node.children.append(expr)
+	node.children.append(expr())
 	return node
 
 	# lex_list = ['Program']
@@ -492,7 +492,7 @@ def expr():
 	first_term = term() 
 
 	#check whether there are multiple terms
-	this_lex = scanner.lex(lex_en['value'])
+	this_lex = scanner.lex[lex_en['value']]
 	if (this_lex == 'PLUS' or this_lex == 'MINUS' or this_lex == 'BAND' or this_lex == 'BOR' or this_lex == 'BXOR'):
 		node = Node(this_lex)
 		node.children.append(first_term)
@@ -519,7 +519,7 @@ def term():
 		node = Node(this_lex)
 		node.children.append(first_punary)
 		scanner.next()
-		node.children.append(punary)
+		node.children.append(punary())
 	else:
 		node = first_punary
 	return node
@@ -549,34 +549,26 @@ def punary():
 #					   | LP expr RP
 def element():
 	# Append function header to output list
-	valid_types = ['STRING', 'LETTER', 'ICON', 'HCON', 'FCON']
+	valid_types = ['STRING', 'LETTER', 'ICON', 'HCON', 'FCON', 'IDENTIFIER']
 	valid_values = ['MTRUE', 'MFALSE']
+	print(scanner.lex[lex_en['type']])
 	if scanner.lex[lex_en['type']] in valid_types:
-		node = Node(scanner.lex[lex_en['value']])
+		node = Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']])
 		scanner.next()
 	elif scanner.lex[lex_en['value']] in valid_values:
 		node = Node('BOOL', scanner.lex[lex_en['value']])
-		scanner.next()
-	elif scanner.lex[lex_en['type']] == 'IDENTIFIER':
-		node = Node(scanner.lex[lex_en['value']], scanner.lex[lex_en['type']]) #identifier name and type
 		scanner.next()
 
 		# for arrays
 		# if scanner.lex[lex_en['value']] == 'LB':
 		# 	lex_list.append(popt_ref())
-
-		#for functions
-		# elif scanner.lex[lex_en['value']] == 'LP':
-		# 	lex_list.append(tuple(scanner.lex))
-		# 	scanner.next()
-		# 	lex_list.append(expr())
-		# 	if scanner.lex[lex_en['value']] == 'RP':
-		# 		lex_list.append(tuple(scanner.lex))
-		# 		scanner.next()
-		# 	else:
-		# 	# Append error message if case specific grammar not found
-		# 	lex_list.append(error('RP', 'element'))
-		# 	return lex_list
+	elif scanner.lex[lex_en['value']] == 'LP':
+		scanner.next()
+		node = expr()
+		if scanner.lex[lex_en['value']] == 'RP':
+			scanner.next()
+		else:
+			error('RP', 'element')
 	else:
 		# Append error message if case specific grammar not found
 		error('IDENTIFIER or LP or TYPE or MTRUE or MFALSE', 'element')
