@@ -25,17 +25,17 @@ class VarTable:
         else:
             self.variables[var].value = value
 
-    def getValue(self, var)
+    def getValue(self, var):
         if var not in self.variables.keys():
             print('Error in get(): variable {} has not been declared'.format(var))
-        elif (variables[var].value = None):
+        elif (self.variables[var].value == None):
             print('Error in get(): variable {} has not been assigned a value'.format(var))
         else:
-            return variables[var].value
+            return self.variables[var].value
 
-    def getType(self, var)
+    def getType(self, var):
         if var not in self.variables.keys():
             print('Error in get(): variable {} has not been declared'.format(var))
         else:
-            return variables[var].type
+            return self.variables[var].type
 

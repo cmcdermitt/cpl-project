@@ -1,33 +1,99 @@
-'''
 # Then we add all of the global variablse to the globals dictionary
+import scl_var_table
 # Then we execute the main function. <- done in implement
-def interpret(node):
-    global globals
-    globals = rglobal(node.getChildOfType('globals'))
+interpreterDict = {
+    'INPUT': input
+}
+#     'DISPLAY'
+#     'CALL'
+#     'INCREMENT'
+#     'DECREMENT'
+#     'IFELSE'
+#     'FORLOOP'
+#     'WHILELOOP'
+#     'CASE'
+#     'REPEATLOOP'
+#     'MBREAK'
+#     'MEXIT'
+#     'AND'
+#     'OR'
+#     'NOT'
+#     'MTRUE'
+#     'MFALSE'
+#     'EQUALS'
+#     'GREATERTHAN'
+#     'LESSTHAN'
+#     'GREATEROREQUAL'
+#     'PLUS'
+#     'MINUS'
+#     'BAND'
+#     'BOR'
+#     'BXOR'
+#     'STAR'
+#     'DIVOP'
+#     'MOD'
+#     'LSHIFT'
+#     'RSHIFT'
+#     'NEGATE'
+#     'func_main'
+#     'f_globals'
+#     'const_var_struct'
+#     'const_dec'
+#     'var_dec'
+#     'data_declarations'
+#     'data_type'
+#     'arg_list'
+#     'implement'
+#     'funct_list'
+#     'pother_oper_def'
+#     'pactions'
+#     'data_declaration'
+#     'ptest_elsif'
+#     'pusing_ref'
+#     'pcase_val'
+#     'pcase_def'
+#     'name_ref'
+# }
+variables = scl_var_table.VarTable()
 
-def rglobal(node):
-    dict = {}
-    const_node = node.children[0]
-    const_node = const_node.getChildOfType('data_declarations')
-    rdata_declarations(const_node, dict, True)
+# Main interpreter function
+# Name: processNode(node)
+# Summary: The processNode function is invoked by the main file after the parser has
+#          generated the tree based on the input data.
+#          The purpose of the interpret function is recognize keywords and parsed functions
+#          and call corresponding functions based on the value.
+#          Each function will receive a subtree containing the nodes from that keyword down,
+#          and will set the new starting node after it has finished processing any related nodes
+# Return: No output currently
+def processNode(node):
+    nodeType = node.type.upper()
+    if nodeType in interpreterDict:
+        funct = interpreterDict[nodeType]
+        node = funct(node)
+    return node
 
-    if node.hasChild('var_dec'):
-        var_node = node.getChildOfType('var_dec')
-        var_node = var_node.getChildOfType('data_declarations')
-        rdata_declarations(var_node, dict, False)
+# Expected Structure:
+# Type: INPUT
+# Children: IDENTIFIER
+def input(node):
+    # Get associated identifier
+    nodeValue = node.children
+    # Add identifier to variable table
+    variables.declare(nodeValue)
+    # Node has no children -> IDENTIFIER is just a string
+    # Return node to processNode
+    return node
 
-def rdata_declarations(node, dict, isConst):
-    data_decs = node.getChildrenOfType('comp_declare')
-    for comp_dec in data_decs:
-        data_dec = rdata_declaration(comp_dec)
-        dict[data_dec[0]] = [data_dec[1], data_dec[2], isConst]
+def display(node):
+    nodeType = node.type
+    nodeValue = node.children
 
-def rdata_declaration(node):
-    data_dec = node.getChildOfType('data_declaration')
-    id = data_dec.getChildAt(1)
-    type = data_dec.getChildOfType('data_type')
-    parray = None
-    if data_dec.hasChild('parray_dec'):
-        parray = data_dec.getChildOfType('parray_dec')
-    return[1,2,3]
-    '''
+
+
+
+
+
+
+
+
+
