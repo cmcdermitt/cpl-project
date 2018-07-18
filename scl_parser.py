@@ -21,7 +21,7 @@ from parser_tree import Node
 # However, if there are multiple right hand definitions, only one will be correct, so the correct function must be chosen before we enter it.
 # If the parser enncounters an error, it appends an error message instead of a list.
 
-lex_en = {'type' : 0, 'value' : 1, 'line_num' : 2}
+lex_en = {'type' : 1, 'value' : 0, 'line_num' : 2}
 scanner = Scanner(sys.argv[1])
 
 
@@ -38,7 +38,8 @@ def parse():
 	scanner.start()
 
 	node = Node('Program')
-	node.children.append(expr())
+	node.children.append(func_main())
+	node.children.append(f_globals())
 	return node
 
 	# lex_list = ['Program']
@@ -72,7 +73,7 @@ def func_main():
 	elif(scanner.lex[lex_en['value']] == 'FUNCTION'):
 		scanner.next()
 		if(scanner.lex[lex_en['type']] == 'IDENTIFIER'):
-			node.children.append(scanner.lex[lex_en['value'])
+			node.children.append(scanner.lex[lex_en['value']])
 			scanner.next()
 		else:
 			# Append error message if case specific grammar not found
@@ -109,10 +110,10 @@ def f_globals():
 # CASE: const_dec
 # GRAMMAR: const_dec ::= [CONSTANTS data_declarations]
 def const_dec():
-	node = node('const_dec')
+	node = Node('const_dec')
 	if scanner.lex[lex_en['value']] == 'CONSTANTS':
 		scanner.next()
-		node.children.append(data_declarations)
+		node.children.append(data_declarations())
 	return node
 
 # CASE: var_dec
@@ -166,7 +167,7 @@ def parray_dec():
 	if(scanner.lex[lex_en['value']] == 'ARRAY'):
 		scanner.next()
 		node.children.append(plist_const())
-		else:
+		#else:
 		if(scanner.lex[lex_en['value']] == 'VALUE' or scanner.lex[lex_en['value']] == 'EQUOP'):
 			node.children.append(popt_array_val())
 	else:
@@ -196,7 +197,7 @@ def plist_const():
 		else:
 			# Append error message if case specific grammar not found
 			error('IDENTIFIER or ICON', 'plist_const')
-		if (scanner.lex[lex_en['value']] == 'RB')
+		if (scanner.lex[lex_en['value']] == 'RB'):
 			scanner.next()
 		else:
 			error('RB', 'plist_const')
@@ -285,6 +286,7 @@ def data_type():
 					'SHORT', 'FLOAT', 'REAL', 'TSTRING', 'TBOOL', 'TBYTE']
 	if scanner.lex[lex_en['value']] in valid_types:
 		node.children.append(scanner.lex[lex_en['value']])
+		scanner.next()
 	else:
 		error('valid type', 'data_type')
 	return node
@@ -946,7 +948,7 @@ def name_ref():
 			node.children.append(array_val)
 	else:
 		error('IDENTIFIER', 'name_ref')
-    return lex_list
+	return node
 
 # CASE pvar_value_list
 #GRAMMAR pvar_value_list  ::= expr
