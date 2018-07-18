@@ -14,9 +14,8 @@ keywords = dict(zip([ 'IMPLEMENTATION',
 	'MAIN', 'DESCRIPTION', 'PARAMETERS', 'OF', 'IDENTIFIER',
   	'VALUE', 'ARRAY', 'ICON',
    	'BAND', 'BOR', 'BXOR',
-    'MOD', 'LSHIFT', 'RSHIFT', 'NEGATE', 'POINTER', 'STRUCT',
-	'STRUCTYPE', 'ARRAY',
-	'RETURN', '[empty]', 'FUNCTION', 'IS', 'BEGIN',
+    'MOD', 'LSHIFT', 'RSHIFT', 'NEGATE',
+	'RETURN', 'FUNCTION', 'IS', 'BEGIN',
 	'ENDFUN', 'PRECONDITION', 'MTRUE', 'MFALSE', 'CONSTANTS',
 	'VARIABLES', 'DEFINE', 'NOT', 'AND', 'OR',
 	'SET', 'READ', 'INPUT', 'DISPLAY', 'DISPLAYN',
@@ -29,7 +28,10 @@ keywords = dict(zip([ 'IMPLEMENTATION',
 	'USING', 'MVOID', 'INTEGER', 'SHORT', 'REAL',
 	'FLOAT', 'DOUBLE', 'TBOOL', 'CHAR', 'TSTRING',
 	'LENGTH', 'TBYTE', 'TUNSIGNED', 'MTRUE', 'LETTER',
-	'HCON', 'FCON', 'RELOP', 'OUTPUT', 'LB', 'RB'], range(1,120)))
+	'HCON', 'FCON', 'RELOP', 'OUTPUT', 'LB', 'RB',
+	'PLUS', 'MINUS', 'LP', 'RP', 'STAR',
+	'DIVOP', 'GREATER', 'LESS', 'THAN', 'EQUOP',
+	'EQUALS', 'EQUAL' ], range(1,150)))
 
 identifiers = {}
 identifier_id = 701

@@ -23,17 +23,17 @@ def main():
 	# 	print(printAnnotatedTree(lex_tree, 0, True))
 	# print(result)
 
-def convertToTree(lex_tree):
-	tree = Node()
-	for x in lex_tree:
-		if isinstance(x, list):
-			if len(x) > 0:
-				tree.children.append(convertToTree(x))
-		elif isinstance(x, tuple):
-			tree.children.append(Node(x[1]))
-		elif isinstance(x, str) and x == lex_tree[0]:
-			tree.type = x
-	return tree
+# def convertToTree(lex_tree):
+# 	tree = Node()
+# 	for x in lex_tree:
+# 		if isinstance(x, list):
+# 			if len(x) > 0:
+# 				tree.children.append(convertToTree(x))
+# 		elif isinstance(x, tuple):
+# 			tree.children.append(Node(x[1]))
+# 		elif isinstance(x, str) and x == lex_tree[0]:
+# 			tree.type = x
+# 	return tree
 
 def printTree(tree, tab = 0, out_string = ''):
 	if (tree.value is not None):

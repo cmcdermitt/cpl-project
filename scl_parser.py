@@ -494,9 +494,11 @@ def expr():
 	#check whether there are multiple terms
 	this_lex = scanner.lex[lex_en['value']]
 	if (this_lex == 'PLUS' or this_lex == 'MINUS' or this_lex == 'BAND' or this_lex == 'BOR' or this_lex == 'BXOR'):
+
 		node = Node(this_lex)
 		node.children.append(first_term)
 		scanner.next()
+
 		node.children.append(term())
 	else:
 		node = first_term
@@ -512,13 +514,16 @@ def expr():
 #					| punary LSHIFT punary
 #					| punary RSHIFT punary
 def term():
+
 	# Append function header to output list
 	first_punary = punary()
 	this_lex = scanner.lex[lex_en['value']]
 	if (this_lex == 'STAR' or this_lex == 'DIVOP' or this_lex == 'MOD' or this_lex == 'LSHIFT' or this_lex == 'RSHIFT'):
 		node = Node(this_lex)
+
 		node.children.append(first_punary)
 		scanner.next()
+
 		node.children.append(punary())
 	else:
 		node = first_punary
@@ -529,9 +534,11 @@ def term():
 #					  | MINUS element
 #					  | NEGATE element
 def punary():
+
 	# Append function header to output list
-	if scanner.lex[lex_en['value']] == 'MINUS' or scanner.lex[lex_en['value']] == 'NEGATE':
+	if scanner.lex[lex_en['value']] == 'NEGATE':
 		node = Node(scanner.lex[lex_en['value']])
+		scanner.next()
 		node.children.append(element())
 	else:
 		node = element()
@@ -551,7 +558,6 @@ def element():
 	# Append function header to output list
 	valid_types = ['STRING', 'LETTER', 'ICON', 'HCON', 'FCON', 'IDENTIFIER']
 	valid_values = ['MTRUE', 'MFALSE']
-	print(scanner.lex[lex_en['type']])
 	if scanner.lex[lex_en['type']] in valid_types:
 		node = Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']])
 		scanner.next()
