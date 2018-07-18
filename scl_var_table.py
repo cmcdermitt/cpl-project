@@ -28,7 +28,7 @@ class VarTable:
     def getValue(self, var)
         if var not in self.variables.keys():
             print('Error in get(): variable {} has not been declared'.format(var))
-        elseif (variables[var].value = None):
+        elif (variables[var].value = None):
             print('Error in get(): variable {} has not been assigned a value'.format(var))
         else:
             return variables[var].value

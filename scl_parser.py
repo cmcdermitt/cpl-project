@@ -676,15 +676,11 @@ def action_def():
     # Valid types and values for following the expr() path
     valid_types = ['IDENTIFIER', 'STRING', 'LETTER', 'ICON', 'HCON', 'FCON']
     valid_values = ['MINUS', 'NEGATE', 'MTRUE', 'MFALSE', 'LP']
-    # Add current lexeme to lex_list
-    word = scanner.lex[lex_en['value']]
-    if(word == 'SET' or word == 'INPUT' or word == 'DISPLAY' or word == 'INCREMENT' or word == 'DECREMENT' or word == 'CALL' or word == 'IF' or word == 'FOR' or word == 'REPEAT' or word == 'WHILE' or word == 'CASE' or word == 'MBREAK' or word == 'MEXIT'):
-        node = Node(scanner.lex[lex_en['value']])
-    else:
-        error('action_def word', 'action_def')
+
     # Determine path of execution for action_def group
     # Following 'SET' path
     if scanner.lex[lex_en['value']] == 'SET':
+        node = Node(scanner.lex[lex_en['value']])
         scanner.next()
         if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             node.children.append(name_ref())
@@ -703,6 +699,7 @@ def action_def():
             error('expr keyword', 'action_def')
     # Following 'INPUT' path
     elif scanner.lex[lex_en['value']] == 'INPUT':
+        node = Node(scanner.lex[lex_en['value']])
         scanner.next()
         if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             node.children.append(name_ref())
@@ -711,6 +708,7 @@ def action_def():
             error('IDENTIFIER', 'action_def')
     # Following 'DISPLAY' or 'DISPLAYN' path
     elif (scanner.lex[lex_en['value']] == 'DISPLAY'):
+        node = Node(scanner.lex[lex_en['value']])
         scanner.next()
         if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
             node.children.append(arg_list())
@@ -720,12 +718,13 @@ def action_def():
     # Following 'INCREMENT' or 'DECREMENT' path
     elif (scanner.lex[lex_en['value']] == 'INCREMENT' or
             scanner.lex[lex_en['value']] == 'DECREMENT'):
+        node = Node(scanner.lex[lex_en['value']])
         scanner.next()
         if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             node.children.append(name_ref())
         else:
             # Append error message if case specific grammar not found
-            lex_list.append(error('IDENTIFIER', 'action_def'))
+            error('IDENTIFIER', 'action_def')
     ## Following 'RETURN' path
     #elif scanner.lex[lex_en['value']] == 'RETURN':
      #   scanner.next()
@@ -733,9 +732,10 @@ def action_def():
        #     lex_list.append(expr())
         #else:
             # Append error message if case specific grammar not found
-            lex_list.append(error('expr keyword', 'action_def'))
+            error('expr keyword', 'action_def')
     # Following 'CALL' path
     elif scanner.lex[lex_en['value']] == 'CALL':
+        node = Node(scanner.lex[lex_en['value']])
         scanner.next()
         if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             node.children.append(name_ref())
@@ -745,6 +745,7 @@ def action_def():
         node.children.append(pusing_ref())
     # Following 'IF' path
     elif scanner.lex[lex_en['value']] == 'IF':
+        node = Node(scanner.lex[lex_en['value']])
         scanner.next()
         node.children.append(pcondition())
         if scanner.lex[lex_en['value']] == 'THEN':
@@ -762,9 +763,10 @@ def action_def():
             scanner.next()
         else:
             # Append error message if case specific grammar not found
-            lex_list.append(error('ENDIF', 'action_def'))
+            error('ENDIF', 'action_def')
     # Following 'FOR' path
     elif scanner.lex[lex_en['value']] == 'FOR':
+        node = Node(scanner.lex[lex_en['value']])
         scanner.next()
         if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             node.children.append(name_ref())
@@ -800,9 +802,10 @@ def action_def():
             scanner.next()
         else:
             # Append error message if case specific grammar not found
-            lex_list.append(error('ENDFOR', 'action_def'))
+            error('ENDFOR', 'action_def')
     # Following 'REPEAT' path
     elif scanner.lex[lex_en['value']] == 'REPEAT':
+        node = Node(scanner.lex[lex_en['value']])
         scanner.next()
         node.children.append(pactions())
         if scanner.lex[lex_en['value']] == 'UNTIL':
@@ -818,6 +821,7 @@ def action_def():
             error('ENDREPEAT', 'action_def')
     # Following 'WHILE' path
     elif scanner.lex[lex_en['value']] == 'WHILE':
+        node = Node(scanner.lex[lex_en['value']])
         scanner.next()
         node.children.append(pcondition())
         if scanner.lex[lex_en['value']] == 'DO':
@@ -833,17 +837,14 @@ def action_def():
             error('ENDWHILE', 'action_def')
     # Following 'CASE' path
     elif scanner.lex[lex_en['value']] == 'CASE':
+        node = Node(scanner.lex[lex_en['value']])
         scanner.next()
         if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             node.children.append(name_ref())
         else:
             # Append error message if case specific grammar not found
             error('IDENTIFIER', 'action_def')
-        if scanner.lex[lex_en['value']] == 'MWHEN':
-            node.children.append(pcase_val())
-        else:
-            # Append error message if case specific grammar not found
-            error('MWHEN', 'action_def')
+        node.children.append(pcase_val())
         node.children.append(pcase_def())
         if scanner.lex[lex_en['value']] == 'MENDCASE':
             scanner.next()
@@ -852,10 +853,11 @@ def action_def():
             error('MENDCASE', 'action_def')
     # Following 'POSTCONDITION' path
     elif scanner.lex[lex_en['value']] == 'MEXIT':
+        node = Node(scanner.lex[lex_en['value']])
         scanner.next()
     elif scanner.lex[lex_en['value']] == 'MBREAK':
+        node = Node(scanner.lex[lex_en['value']])
         scanner.next()
-        node.children.append(pcondition())
     # Default error
     else:
         # Append error message if case specific grammar not found
@@ -916,10 +918,7 @@ def pcase_val():
     if scanner.lex[lex_en['value']] == 'MWHEN':
         while scanner.lex[lex_en['value']] == 'MWHEN':
             scanner.next()
-            print('in expr')
-            print(scanner.lex[lex_en['value']])
             node.children.append(expr())
-            print(scanner.lex[lex_en['value']])
             if scanner.lex[lex_en['value']] == 'COLON':
                 scanner.next()
             else:
