@@ -40,6 +40,7 @@ def parse():
 	node = Node('Program')
 	node.children.append(func_main())
 	node.children.append(f_globals())
+	node.children.append(implement())
 	return node
 
 	# lex_list = ['Program']
@@ -248,10 +249,10 @@ def arg_list():
 	node = Node('arg_list')
 	node.children.append(expr())
 	while (scanner.lex[lex_en['value']] == 'COMMA'):
-		node.children.append(scanner.lex)
+		node.children.append(scanner.lex[lex_en['value']])
 		scanner.next()
 		node.children.append(expr())
-	return lex_list
+	return node
 
 # CASE: data_type
 # Grammar: data_type ::= TUNSIGNED
@@ -415,7 +416,7 @@ def implement():
 		scanner.next()
 		if scanner.lex[lex_en['value']] == 'DESCRIPTION':
 			scanner.next()
-			node.children.append(parameters)
+			node.children.append(parameters())
 		else:
 			error('DESCRIPTION', 'implement')
 	node.children.append(funct_list())
@@ -466,6 +467,7 @@ def param_def():
 # GRAMMAR: funct_list ::= FUNCTION pother_oper_def { FUNCTION pother_oper_def }
 def funct_list():
 	node = Node('funct_list')
+	
 	if scanner.lex[lex_en['value']] == 'FUNCTION': #check validity before loop
 		while scanner.lex[lex_en['value']] == 'FUNCTION':
 			scanner.next()
@@ -785,8 +787,6 @@ def action_def():
     elif scanner.lex[lex_en['value']] == 'CALL':
         scanner.next()
         if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-            lex_list.append(tuple(scanner.lex))
-            scanner.next()
             lex_list.append(name_ref())
         else:
 			# Append error message if case specific grammar not found
@@ -927,6 +927,7 @@ def action_def():
 def name_ref():
 	node = Node('name_ref')
 	# Append function header to output list
+	print(scanner.lex[lex_en['value']])
 	if scanner.lex[lex_en['type']] == 'IDENTIFIER':
 		node.children.append(scanner.lex[lex_en['value']])
 		scanner.next()
