@@ -635,10 +635,11 @@ def eq_v():
 #GRAMMAR  pactions ::= action_def {action_def}
 def pactions():
     # Append function header to output list
+    print (scanner.lex[lex_en['value']])
     valid_values = ['SET', 'READ', 'INPUT', 'DISPLAY', 'DISPLAYN',
                     'INCREMENT', 'DECREMENT', 'RETURN', 'CALL', 'IF', 'FOR', 'REPEAT',
                     'WHILE', 'CASE', 'MBREAK', 'MEXIT','POSTCONDITION', 'THEN', 'DO']
-    if scanner.lex[lex_en['value']] in valid_values:
+    if scanner.lex[lex_en['value']] not in valid_values:
         error('action_def keyword', 'pactions')
     node = Node('pactions')
     while scanner.lex[lex_en['value']] in valid_values:
@@ -877,6 +878,7 @@ def name_ref():
 def pusing_ref():
     node = Node('pusing_ref')
     if scanner.lex[lex_en['value']] == 'USING':
+        scanner.next()
         node.children.append(arg_list())
     elif scanner.lex[lex_en['value']] == 'LP':
         scanner.next()
