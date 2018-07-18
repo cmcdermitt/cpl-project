@@ -100,7 +100,7 @@ def f_equals(node):
 # Expected Structure:
 # Type greater_than
 # Children: expr, expr
-def greater_than(node):
+def f_greater_than(node):
     arg1 = processNode(node.children[0])
     if isinstance(str, arg1):
         arg1 = lookup(arg1)
@@ -112,7 +112,7 @@ def greater_than(node):
 # Expected Structure:
 # Type less_than
 # Children: expr, expr
-def less_than(node):
+def f_less_than(node):
     arg1 = processNode(node.children[0])
     if isinstance(str, arg1):
         arg1 = lookup(arg1)
@@ -124,7 +124,7 @@ def less_than(node):
 # Expected Structure:
 # Type greater_or_equal
 # Children: expr, expr
-def greater_or_equal(node):
+def f_greater_or_equal(node):
     arg1 = processNode(node.children[0])
     if isinstance(str, arg1):
         arg1 = lookup(arg1)
@@ -137,7 +137,7 @@ def greater_or_equal(node):
 # Type less_or_equal
 # Children: expr, expr
 
-def less_than_or_equal(node):
+def f_less_than_or_equal(node):
     arg1 = processNode(node.children[0])
     if isinstance(str, arg1):
         arg1 = lookup(arg1)
