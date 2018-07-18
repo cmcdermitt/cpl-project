@@ -59,10 +59,8 @@ element ::= IDENTIFIER [(array_val | parguments)]
 
 pactions ::= action_def { action_def }
 action_def ::=  SET name_ref  EQUOP expr
-    | READ arg_list
-    | INPUT name_ref
+    | INPUT IDENTIFIER
     | DISPLAY arg_list
-    | DISPLAYN arg_list
     | INCREMENT name_ref
     | DECREMENT name_ref
     | CALL name_ref pusing_ref
