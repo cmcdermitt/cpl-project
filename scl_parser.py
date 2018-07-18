@@ -151,8 +151,7 @@ def data_declaration():
 		scanner.next()
 	else:
 		error('IDENTIFIER', 'data_declaration')
-	if(scanner.lex[lex_en['value']] == 'ARRAY'):
-		node.children.append(parray_dec())
+	node.children.append(parray_dec())
 	if(scanner.lex[lex_en['value']] == 'OF'):
 		scanner.next()
 	else:
@@ -167,11 +166,7 @@ def parray_dec():
 	if(scanner.lex[lex_en['value']] == 'ARRAY'):
 		scanner.next()
 		node.children.append(plist_const())
-		#else:
-		if(scanner.lex[lex_en['value']] == 'VALUE' or scanner.lex[lex_en['value']] == 'EQUOP'):
-			node.children.append(popt_array_val())
-	else:
-		error('ARRAY', 'parray_dec')
+		node.children.append(popt_array_val())
 	return node
 
 # CASE: plist_const
@@ -202,14 +197,6 @@ def plist_const():
 		else:
 			error('RB', 'plist_const')
 	return node
-# CASE: iconst_ident
-# GRAMMAR: iconst_ident ::= ICON
-#							| IDENTIFIER
-def iconst_ident():
-	# Append function header to output list
-	lex_list = ['iconst_ident']
-	lex_list.append(tuple(scanner.lex))
-	return lex_list
 
 # CASE: popt_array_val
 # GRAMMAR: popt_array_val ::= (VALUE | EQUOP) array_val
@@ -218,9 +205,8 @@ def popt_array_val():
 	node = Node('popt_array_val')
 	if scanner.lex[lex_en['value']] == 'VALUE' or scanner.lex[lex_en['value']] == 'EQUOP':
 		node.children.append(scanner.lex[lex_en['value']])
-	else:
-		error('VALUE or EQUOP', 'popt_array_val')
-	node.children.append(array_val)
+		scanner.next()
+		node.children.append(array_val())
 	return node
 
 # CASE: value_eq

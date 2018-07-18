@@ -5,7 +5,7 @@ const_var_struct ::= const_dec var_dec
 const_dec ::= [CONSTANTS data_declarations]
 var_dec ::= VARIABLES data_declarations
 data_declarations ::=  DEFINE data_declaration {DEFINE data_declaration}
-data_declaration ::= IDENTIFIER [parray_dec] OF data_type 
+data_declaration ::= IDENTIFIER parray_dec OF data_type 
 data_type ::= TUNSIGNED
     | CHAR 
     | INTEGER
@@ -18,9 +18,9 @@ data_type ::= TUNSIGNED
     | TSTRING
     | TBOOL
     | TBYTE
-parray_dec ::= ARRAY plist_const [popt_array_val]
+parray_dec ::= [ARRAY plist_const popt_array_val]
 plist_const ::= LB (ICON | IDENTIFIER) RB { LB (ICON | IDENTIFIER) RB }
-popt_array_val ::= (VALUE | EQUOP) array_val
+popt_array_val ::= [(VALUE | EQUOP) array_val]
 array_val ::= LB arg_list RB 
 arg_list ::= expr { COMMA expr }
 implement ::= IMPLEMENTATIONS [MAIN DESCRIPTION parameters] funct_list
