@@ -699,33 +699,22 @@ def action_def():
         else:
 			# Append error message if case specific grammar not found
             error('expr keyword', 'action_def')
-    # Following 'READ' path
-    elif scanner.lex[lex_en['value']] == 'READ':
-        scanner.next()
-        if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
-            lex_list.append(pvar_value_list())
-        else:
-			# Append error message if case specific grammar not found
-            lex_list.append(error('expr keyword', 'action_def'))
     # Following 'INPUT' path
     elif scanner.lex[lex_en['value']] == 'INPUT':
         scanner.next()
         if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-            lex_list.append(tuple(scanner.lex))
-            scanner.next()
-            lex_list.append(name_ref())
+            node.children.append(name_ref())
         else:
 			# Append error message if case specific grammar not found
-            lex_list.append(error('IDENTIFIER', 'action_def'))
+            error('IDENTIFIER', 'action_def')
     # Following 'DISPLAY' or 'DISPLAYN' path
-    elif (scanner.lex[lex_en['value']] == 'DISPLAY' or
-            scanner.lex[lex_en['value']] == 'DISPLAYN'):
+    elif (scanner.lex[lex_en['value']] == 'DISPLAY'):
         scanner.next()
         if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
-            lex_list.append(pvar_value_list())
+            node.children.append(arg_list())
         else:
 			# Append error message if case specific grammar not found
-            lex_list.append(error('expr keyword', 'action_def'))
+            error('expr keyword', 'action_def')
     # Following 'INCREMENT' or 'DECREMENT' path
     elif (scanner.lex[lex_en['value']] == 'INCREMENT' or
             scanner.lex[lex_en['value']] == 'DECREMENT'):
