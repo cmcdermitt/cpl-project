@@ -40,6 +40,9 @@ def printTree(tree, tab = 0, out_string = ''):
 		out_string = out_string + returnTabs(tab) + tree + '\n'
 		return out_string
 	
+	elif isinstance(tree,list):
+		print(tree)
+
 	elif (tree.value is not None):
 		out_string = out_string + returnTabs(tab) + tree.type + ', ' + tree.value + '\n' # Print out the first item in the list; this is the parent node
 	else:
