@@ -835,8 +835,6 @@ def action_def():
     elif scanner.lex[lex_en['value']] == 'CASE':
         scanner.next()
         if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-            node.children.append(scanner.lex[lex_en['value']])
-            scanner.next()
             node.children.append(name_ref())
         else:
             # Append error message if case specific grammar not found
@@ -845,25 +843,23 @@ def action_def():
             node.children.append(pcase_val())
         else:
             # Append error message if case specific grammar not found
-            node.children.append(error('MWHEN', 'action_def'))
+            error('MWHEN', 'action_def')
         node.children.append(pcase_def())
         if scanner.lex[lex_en['value']] == 'MENDCASE':
             scanner.next()
         else:
             # Append error message if case specific grammar not found
-            lex_list.append(error('MENDCASE', 'action_def'))
+            error('MENDCASE', 'action_def')
     # Following 'POSTCONDITION' path
     elif scanner.lex[lex_en['value']] == 'MEXIT':
         scanner.next()
     elif scanner.lex[lex_en['value']] == 'MBREAK':
         scanner.next()
-    elif scanner.lex[lex_en['value']] == 'POSTCONDITION':
-        scanner.next()
         node.children.append(pcondition())
     # Default error
     else:
         # Append error message if case specific grammar not found
-        lex_list.append(error('action_def keyword', 'action_def'))
+        error('action_def keyword', 'action_def')
     return node
 
 #CASE name_ref
@@ -920,7 +916,10 @@ def pcase_val():
     if scanner.lex[lex_en['value']] == 'MWHEN':
         while scanner.lex[lex_en['value']] == 'MWHEN':
             scanner.next()
+            print('in expr')
+            print(scanner.lex[lex_en['value']])
             node.children.append(expr())
+            print(scanner.lex[lex_en['value']])
             if scanner.lex[lex_en['value']] == 'COLON':
                 scanner.next()
             else:
