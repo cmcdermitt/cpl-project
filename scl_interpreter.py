@@ -37,7 +37,7 @@ def display(node):
 # Expected Structure:
 # Type AND
 # Children: pcond1 and pcond 1 or pcond 1 
-def And(node):
+def f_and(node):
     arg1 = processNode(node.children[0])
     if len(node.children > 1):
         arg2 = processNode(node[1])
@@ -48,7 +48,7 @@ def And(node):
 # Expected Structure:
 # Type OR
 # Children: pcond1 and pcond 1 or pcond 1
-def Or(node):
+def f_or(node):
     arg1 = processNode(node.children[0])
     if len(node.children > 1):
         arg2 = processNode(node[1])
@@ -59,29 +59,37 @@ def Or(node):
 #Expected Structure
 #TYPE NOT
 #Children: Expr
-def Not(node):
+def f_not(node):
     arg1 = processNode(node.children[0])
     return arg1
 
 # Expected Structure:
 # Type MTRUE
 # Children: None returns True
-def MTrue(node):
+def f_mtrue(node):
     return True
 
 # Expected Structure:
 # Type MFALSE
 # Children: None and returns False
-def MFalse(node):
+def f_mfalse(node):
     return False 
 
 # Expected Structure:
 # Type Equal
 # Children: expr, expr
-def Equals(node):
+def f_equals(node):
     arg1 = processNode(node.children[0])
     arg2 = processNode(node.children[1])
     return arg1 == arg2
+
+def GreaterThan(node):
+    arg1 = processNode(node.children[0])
+    arg2 = processNode(node.children[1])     
+    return arg1 > arg2
+
+
+
 
 interpreterDict = {
     'INPUT': finput,
