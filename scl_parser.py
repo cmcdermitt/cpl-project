@@ -59,9 +59,9 @@ def error(expected, location = ''):
     print("***ERROR***")
     print(scanner.lex[lex_en['value']])
     if location == '':
-        print ('\tError: {} expected'.format(expected))
+        print ('Parser error: {} expected'.format(expected))
     else:
-        print('\tError: {} expected in {}'.format(expected, location))
+        print('Parser error: {} expected in {}'.format(expected, location))
     exit()
 
 # First case: Called by parse()
