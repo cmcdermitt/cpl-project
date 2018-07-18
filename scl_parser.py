@@ -56,6 +56,8 @@ def parse():
 #convenience function returning an error message
 #first parameter is what was expected, second is optional location
 def error(expected, location = ''):
+    print("***ERROR***")
+    print(scanner.lex[lex_en['value']])
     if location == '':
         print ('\tError: {} expected'.format(expected))
     else:
@@ -640,6 +642,7 @@ def pactions():
                     'INCREMENT', 'DECREMENT', 'RETURN', 'CALL', 'IF', 'FOR', 'REPEAT',
                     'WHILE', 'CASE', 'MBREAK', 'MEXIT','POSTCONDITION', 'THEN', 'DO']
     if scanner.lex[lex_en['value']] not in valid_values:
+        #print(scanner.lex[lex_en['value']])
         error('action_def keyword', 'pactions')
     node = Node('pactions')
     while scanner.lex[lex_en['value']] in valid_values:
@@ -753,6 +756,7 @@ def action_def():
         if scanner.lex[lex_en['value']] == 'ELSEIF':
             node.children.append(ptest_elsif())
         if scanner.lex[lex_en['value']] == 'ELSE':
+            scanner.next()
             node.children.append(pactions())
         if scanner.lex[lex_en['value']] == 'ENDIF':
             scanner.next()
@@ -777,6 +781,10 @@ def action_def():
         else:
             # Append error message if case specific grammar not found
             error('expr keyword', 'action_def')
+
+        if scanner.lex[lex_en['value']] == 'DOWNTO' or scanner.lex[lex_en['value']] == 'TO':
+            scanner.next()
+
         if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
             node.children.append(expr())
         else:
