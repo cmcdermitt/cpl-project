@@ -525,7 +525,7 @@ def const_var_struct():
 	if(scanner.lex[lex_en['value']] == 'CONSTANTS'):
 		node.children.append(const_dec())
 	if(scanner.lex[lex_en['value']] == 'VARIABLES'):
-	 	node.children.append(var_dec())
+		 node.children.append(var_dec())
 	else:
 		# Append error message if case specific grammar not found
 		error('VARIABLES', 'const_var_struct')
@@ -635,18 +635,16 @@ def eq_v():
 #GRAMMAR  pactions ::= action_def {action_def}
 def pactions():
 	# Append function header to output list
-    valid_values = ['SET', 'READ', 'INPUT', 'DISPLAY', 'DISPLAYN',
-                    'INCREMENT', 'DECREMENT', 'RETURN', 'CALL', 'IF', 'FOR', 'REPEAT',
-                    'WHILE', 'CASE', 'MBREAK', 'MEXIT','POSTCONDITION', 'THEN', 'DO']
-    times = 0
-    node = Node('pactions')
-    while scanner.lex[lex_en['value']] in valid_values:
-        node.children.append(action_def())
-        times += 1
-    if times == 0:
-		# Append error message if case specific grammar not found
-        error('action_def keyword', 'paction')
-    return node
+	valid_values = ['SET', 'READ', 'INPUT', 'DISPLAY', 'DISPLAYN',
+					'INCREMENT', 'DECREMENT', 'RETURN', 'CALL', 'IF', 'FOR', 'REPEAT',
+					'WHILE', 'CASE', 'MBREAK', 'MEXIT','POSTCONDITION', 'THEN', 'DO']
+	if scanner.lex[lex_en['value']] in valid_values:
+		error('action_def keyword', 'pactions')
+	node = Node('pactions')
+	while scanner.lex[lex_en['value']] in valid_values:
+		node.children.append(action_def())
+		
+	return node
 
 # CASE action_def
 #GRAMMAR action_def ::= SET name_ref EQUOP exp
@@ -670,49 +668,49 @@ def pactions():
 
 def action_def():
 	# Append function header to output list
-    
-    # Valid types and values for following the expr() path
-    valid_types = ['IDENTIFIER', 'STRING', 'LETTER', 'ICON', 'HCON', 'FCON']
-    valid_values = ['MINUS', 'NEGATE', 'MTRUE', 'MFALSE', 'LP']
-    # Add current lexeme to lex_list
-    word = scanner.lex[lex_en['value']]
-    if(word == 'SET' or word == 'INPUT' or word == 'DISPLAY' or word == 'INCREMENT' or word == 'DECREMENT' or word == 'CALL' or word == 'IF' or word == 'FOR' or word == 'REPEAT' or word == 'WHILE' or word == 'CASE' or word == 'MBREAK' or word == 'MEXIT'):
-        node = Node(scanner.lex[lex_en['value']])
-    else:
-        error('action_def word', 'action_def')
-    # Determine path of execution for action_def group
-    # Following 'SET' path
-    if scanner.lex[lex_en['value']] == 'SET':
-        scanner.next()
-        if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-            node.children.append(name_ref())
-        else:
+	
+	# Valid types and values for following the expr() path
+	valid_types = ['IDENTIFIER', 'STRING', 'LETTER', 'ICON', 'HCON', 'FCON']
+	valid_values = ['MINUS', 'NEGATE', 'MTRUE', 'MFALSE', 'LP']
+	# Add current lexeme to lex_list
+	word = scanner.lex[lex_en['value']]
+	if(word == 'SET' or word == 'INPUT' or word == 'DISPLAY' or word == 'INCREMENT' or word == 'DECREMENT' or word == 'CALL' or word == 'IF' or word == 'FOR' or word == 'REPEAT' or word == 'WHILE' or word == 'CASE' or word == 'MBREAK' or word == 'MEXIT'):
+		node = Node(scanner.lex[lex_en['value']])
+	else:
+		error('action_def word', 'action_def')
+	# Determine path of execution for action_def group
+	# Following 'SET' path
+	if scanner.lex[lex_en['value']] == 'SET':
+		scanner.next()
+		if scanner.lex[lex_en['type']] == 'IDENTIFIER':
+			node.children.append(name_ref())
+		else:
 			# Append error message if case specific grammar not found
-            error('IDENTIFIER','action_def CASE SET')
-        if scanner.lex[lex_en['value']] == 'EQUOP':
-            scanner.next()
-        else:
+			error('IDENTIFIER','action_def CASE SET')
+		if scanner.lex[lex_en['value']] == 'EQUOP':
+			scanner.next()
+		else:
 			# Append error message if case specific grammar not found
-            error('EQUOP', 'action_def')
-        if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
-            node.children.append(expr())
-        else:
+			error('EQUOP', 'action_def')
+		if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
+			node.children.append(expr())
+		else:
 			# Append error message if case specific grammar not found
-            error('expr keyword', 'action_def')
-    # Following 'INPUT' path
-    elif scanner.lex[lex_en['value']] == 'INPUT':
-        scanner.next()
-        if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-            node.children.append(name_ref())
-        else:
+			error('expr keyword', 'action_def')
+	# Following 'INPUT' path
+	elif scanner.lex[lex_en['value']] == 'INPUT':
+		scanner.next()
+		if scanner.lex[lex_en['type']] == 'IDENTIFIER':
+			node.children.append(name_ref())
+		else:
 			# Append error message if case specific grammar not found
-            error('IDENTIFIER', 'action_def')
-    # Following 'DISPLAY' or 'DISPLAYN' path
-    elif (scanner.lex[lex_en['value']] == 'DISPLAY'):
-        scanner.next()
-        if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
-            node.children.append(arg_list())
-        else:
+			error('IDENTIFIER', 'action_def')
+	# Following 'DISPLAY' or 'DISPLAYN' path
+	elif (scanner.lex[lex_en['value']] == 'DISPLAY'):
+		scanner.next()
+		if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
+			node.children.append(arg_list())
+		else:
 			# Append error message if case specific grammar not found
             error('expr keyword', 'action_def')
     # Following 'INCREMENT' or 'DECREMENT' path
@@ -723,13 +721,13 @@ def action_def():
             node.children.append(name_ref())
         else:
 			# Append error message if case specific grammar not found
-            lex_list.append(error('IDENTIFIER', 'action_def'))
-    ## Following 'RETURN' path
-    #elif scanner.lex[lex_en['value']] == 'RETURN':
-     #   scanner.next()
-      #  if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
-       #     lex_list.append(expr())
-        #else:
+			lex_list.append(error('IDENTIFIER', 'action_def'))
+	## Following 'RETURN' path
+	#elif scanner.lex[lex_en['value']] == 'RETURN':
+	 #   scanner.next()
+	  #  if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
+	   #     lex_list.append(expr())
+		#else:
 			# Append error message if case specific grammar not found
             lex_list.append(error('expr keyword', 'action_def'))
     # Following 'CALL' path
@@ -856,8 +854,8 @@ def action_def():
     # Default error
     else:
 		# Append error message if case specific grammar not found
-        lex_list.append(error('action_def keyword', 'action_def'))
-    return node
+		lex_list.append(error('action_def keyword', 'action_def'))
+	return node
 
 #CASE name_ref
 #GRAMMAR name_ref ::= IDENTIFIER array_val
@@ -874,121 +872,63 @@ def name_ref():
 		error('IDENTIFIER', 'name_ref')
 	return node
 
-# CASE pvar_value_list
-#GRAMMAR pvar_value_list  ::= expr
-#		  				| pvar_value_list COMMA expr
-def pvar_value_list():
-	# Append function header to output list
-    lex_list = ['pvar_value_list']
-    # Valid types and values for following the expr() path
-    valid_types = ['IDENTIFIER', 'STRING', 'LETTER', 'ICON', 'HCON', 'FCON']
-    valid_values = ['MINUS', 'NEGATE', 'MTRUE', 'MFALSE', 'LP']
-    while (scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values):
-        lex_list.append(expr())
-        if (scanner.lex[lex_en['value']] == 'COMMA'):
-            lex_list.append(tuple(scanner.lex))
-            scanner.next()
-    return lex_list
-
 #CASE pusing_ref
-#GRAMMAR pusing_ref ::=
-#					| USING arg_list
+#GRAMMAR pusing_ref ::= [( USING arg_list | LP arg_list RP)]
 def pusing_ref():
-    # Append function header to output list
-    lex_list = ['pusing_ref']
-    if scanner.lex[lex_en['value']] == 'USING':
-        lex_list.append(tuple(scanner.lex))
-        scanner.next()
-        lex_list.append(arg_list())
-    elif scanner.lex[lex_en['value']] == 'LP':
-        lex_list.append(parguments())
-    else:
-        return lex_list
-    return lex_list
+	node = Node('pusing_ref')
+	if scanner.lex[lex_en['value']] == 'USING':
+		node.children.append(arg_list())
+	elif scanner.lex[lex_en['value']] == 'LP':
+		scanner.next()
+		node.children.append(arg_list())
+		if scanner.lex[lex_en['value']] == 'RP':
+			scanner.next()
+		else:
+			error('RP', 'pusing_ref')
+	return node
 
 #CASE ptest_elsif
-#GRAMMAR ptest_elsif ::=
-#               | proc_elseif
+#GRAMMAR ptest_elsif ::= { ELSEIF pcondition THEN pactions }
+
 def ptest_elsif():
-    # Append function header to output list
-    lex_list = ['ptest_elsif']
-    if scanner.lex[lex_en['value']] == 'ELSEIF':
-        lex_list.append(proc_elseif())
-    else:
-        return lex_list
-    return lex_list
-
-#CASE proc_elseif
-#GRAMMAR proc_elseif ::= ELSEIF pcondition THEN pactions
-#						| proc_elseif
-def proc_elseif():
-	# Append function header to output list
-    lex_list = ['proc_elseif']
-    while scanner.lex[lex_en['value']] == 'ELSEIF':
-        lex_list.append(tuple(scanner.lex))
-        scanner.next()
-        lex_list.append(pcondition())
-        if scanner.lex[lex_en['value']] == 'THEN':
-            lex_list.append(tuple(scanner.lex))
-            scanner.next()
-        else:
-			# Append error message if case specific grammar not found
-            lex_list.append(error('THEN', 'proc_elseif'))
-        lex_list.append(pactions())
-    return lex_list
-
-#CASE opt_else
-# opt_else ::=
-#			| ELSE pactions
-def opt_else():
-    # Append function header to output list
-    lex_list = ['opt_else']
-    if scanner.lex[lex_en['value']] == 'ELSE':
-        lex_list.append(tuple(scanner.lex))
-        scanner.next()
-    else:
-        return lex_list
-    lex_list.append(pactions())
-    return lex_list
+	node = Node('ptest_elsif')
+	while scanner.lex[lex_en['value']] == 'ELSEIF':
+		scanner.next()
+		node.children.append(pcondition())
+		if scanner.lex[lex_en['value']] == 'THEN':
+			scanner.next()
+			node.children.append(pactions())
+		else:
+			error('THEN', 'ptest_elsif')
+	return node
 
 #CASE: pcase_val
 #GRAMMAR: pcase_val ::= MWHEN expr COLON pactions {MWHEN expr COLON pactions}
 def pcase_val():
-	# Append function header to output list
-    lex_list = ['pcase_val']
-    valid_types = ['IDENTIFIER', 'STRING', 'LETTER', 'ICON', 'HCON', 'FCON']
-    valid_values = ['MINUS', 'NEGATE', 'MTRUE', 'MFALSE', 'LP']
-    while scanner.lex[lex_en['value']] == 'MWHEN': # Recursively adds cases
-        lex_list.append(tuple(scanner.lex))
-        scanner.next()
-        if (scanner.lex[lex_en['type']] in valid_types or
-                scanner.lex[lex_en['value']] in valid_values):
-            lex_list.append(expr()) # Add expr if relevant
-        if scanner.lex[lex_en['value']] == 'COLON':
-            lex_list.append(tuple(scanner.lex))
-            scanner.next()
-        else:
-			# Append error message if case specific grammar not found
-            lex_list.append(error('COLON', 'pcase_val'))
-        lex_list.append(pactions())
-    return lex_list
+	node = Node('pcase_val')
+
+	if scanner.lex[lex_en['value']] == 'MWHEN':
+		while scanner.lex[lex_en['value']] == 'MWHEN':
+			scanner.next()
+			node.children.append(expr())
+			if scanner.lex[lex_en['value']] == 'COLON':
+				scanner.next()
+			else:
+				error('COLON', 'pcase_val')
+			node.children.append(pactions())
+	else:
+		error('MWHEN', 'pcase_val')
+	return node
 
 #CASE: pcase_def
-#GRAMMAR: pcase_def ::=
-#		  |DEFAULT COLON pactions
+#GRAMMAR: pcase_def ::= [DEFAULT COLON pactions]
 def pcase_def():
-    # Append function header to output list
-    lex_list = ['pcase_def']
-    if scanner.lex[lex_en['value']] == 'DEFAULT':
-        lex_list.append(tuple(scanner.lex)) # Should be DEFAULT
-    else:
-        return lex_list
-    scanner.next()
-    if scanner.lex[lex_en['value']] == 'COLON': # Check if next lexeme is COLON
-        lex_list.append(tuple(scanner.lex))
-        scanner.next()
-    else:
-		# Append error message if case specific grammar not found
-        lex_list.append(error('COLON', 'pcase_def'))
-    lex_list.append(pactions())
-    return lex_list
+	node = Node('pcase_def')
+	if scanner.lex[lex_en['value']] == 'DEFAULT':
+		scanner.next()
+		if scanner.lex[lex_en['value']] == 'COLON': # Check if next lexeme is COLON
+			scanner.next()
+			node.children.append(pactions())
+		else:
+			error('COLON', 'pcase_def')
+	return node
