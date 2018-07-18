@@ -38,8 +38,9 @@ def parse():
 	scanner.start()
 
 	node = Node('Program')
-	node.children.append(func_main())
-	node.children.append(f_globals())
+	node.children.append(pcondition())
+	# node.children.append(func_main())
+	# node.children.append(f_globals())
 	return node
 
 	# lex_list = ['Program']
@@ -530,107 +531,74 @@ def const_var_struct():
 	return node
 
 #CASE pcondition
-#GRAMMAR pcondition ::= |pcond1 OR pcond1
-#						| pcond1 AND pcond1
-#						| pcond1
+#GRAMMAR pcond1 [(OR | AND) pcond1]
 def pcondition():
 	# Append function header to output list
-	lex_list = ['pcondition']
-	lex_list.append(pcond1())
+	first_pcond1 = pcond1()
 	word = scanner.lex[lex_en['value']]
 	if word == 'OR' or word == 'AND':
-		lex_list.append(tuple(scanner.lex))
+		node = Node(scanner.lex[lex_en['value']])
+		node.children.append(first_pcond1)
 		scanner.next()
-		lex_list.append(pcond1())
-	return lex_list
+		node.children.append(pcond1())
+	else:
+		node = first_pcond1
+	return node
 
 #CASE pcond1
-#GRAMMAR pcond1 ::= NOT pcond2
-#				|  pcond2
+#GRAMMAR [NOT] pcond2
 def pcond1():
-	# Append function header to output list
-	lex_list = ['pcond1']
 	if scanner.lex[lex_en['value']] == 'NOT':
-		lex_list.append(tuple(scanner.lex))
+		node = Node(scanner.lex[lex_en['value']])
 		scanner.next()
-	lex_list.append(pcond2())
-	return lex_list
+		node.children.append(pcond2())
+	else:
+		node = pcond2()
+	return node
 
-#CASE pcond2
-#GRAMMAR pcond2 ::= LP pcondition RP
-#				| expr RELOP expr
-#				| expr EQOP expr
-#				| expr eq_v expr
-#				| expr opt_not true_false
-#				| element
+# CASE pcond2
+#  GRAMMAR pcond2 ::= LP pcondition RP
+#     | expr eq_v expr
+#     | [NOT] (MTRUE | MFALSE)
+#     | expr
 def pcond2():
 	# Append function header to output list
-	lex_list = ['pcond2']
 	# For LP pcondition RP case
 	if scanner.lex[lex_en['value']] == 'LP':
-		lex_list.append(tuple(scanner.lex))
 		scanner.next()
-		lex_list.append(pcondition())
+		
+		print(scanner.lex[lex_en['value']])
+		node = pcondition()
+		print(scanner.lex[lex_en['value']])
 		if scanner.lex[lex_en['value']] == 'RP':
-			lex_list.append(tuple(scanner.lex))
 			scanner.next()
 		else:
-			# Append error message if case specific grammar not found
-			lex_list.append(error('RP', 'pcond2'))
-		return lex_list
-	valid_types = ['STRING', 'LETTER', 'ICON', 'HCON', 'FCON', 'IDENTIFIER']
-	valid_values = ['MTRUE', 'MFALSE']
-	# For other cases
-	if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
-		word = scanner.peek()[lex_en['value']]
-		if(word == 'PLUS' or word == 'MINUS' or word == 'BAND' or word == 'BOR'
-		or word == 'BXOR' or word == 'STAR' or word == 'DIVOP' or
-		word == 'MOD' or word == 'LSHIFT' or word == 'RSHIFT'):
-			lex_list.append(expr())
-			if scanner.lex[lex_en['value']] == 'RELOP' or scanner.lex[lex_en['value']] == 'EQUOP':
-				lex_list.append(tuple(scanner.lex))
-				scanner.next()
-			elif scanner.lex[lex_en['value']] == 'NOT':
-				lex_list.append(opt_not())
-				lex_list.append(true_false())
-				return lex_list
-			elif scanner.lex[lex_en['value']] == 'MTRUE' or scanner.lex[lex_en['type']] == 'MFALSE':
-				lex_list.append(true_false())
-				return lex_list
-			else:
-				lex_list.append(eq_v())
-			lex_list.append(expr())
-			return lex_list
+			error('RP', 'pcond2')
+
+	elif scanner.lex[lex_en['value']] == 'NOT':
+		node = Node('NOT')
+		scanner.next()
+		if scanner.lex[lex_en['value']] == 'MTRUE' or scanner.lex[lex_en['value']] == 'MFALSE':
+			node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
+			scanner.next()
 		else:
-			lex_list.append(element())
-	return lex_list
+			error('MTRUE or MFALSE', 'pcond2')
 
-#CASE opt_not
-#GRAMMAR opt_not ::=
-#				| NOT
-def opt_not():
-	# Append function header to output list
-	lex_list = ['opt_not']
-	if(scanner.lex[lex_en['value']] == 'NOT'):
-		lex_list.append(tuple(scanner.lex))
+	elif scanner.lex[lex_en['value']] == 'MTRUE' or scanner.lex[lex_en['value']] == 'MFALSE':
+		node = Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']])
 		scanner.next()
-	else:
-		return lex_list
-	return lex_list
 
-#CASE true_false
-#GRAMMAR true_false ::= MTRUE
-#					| MFALSE
-def true_false():
-	# Append function header to output list
-	lex_list = ['true_false']
-	if(scanner.lex[lex_en['value']] == 'MTRUE' or scanner.lex[lex_en['value']] == 'MFALSE'):
-		lex_list.append(tuple(scanner.lex))
-		scanner.next()
 	else:
-		# Append error message if case specific grammar not found
-		lex_list.append(error('MTrue or MFalse', 'true_false'))
-	return lex_list
+		first_expr = expr()
+		word = scanner.lex[lex_en['value']]
+		if(word == 'EQUALS' or word == 'GREATER' or word == 'LESS'):
+			node = eq_v()
+			node.children.append(first_expr)
+			node.children.append(expr())
+		else:
+			node = first_expr
+	return node
+
 
 #CASE eq_v
 #GRAMMAR ::=  EQUALS
@@ -639,34 +607,28 @@ def true_false():
 #			| GREATER OR EQUAL
 #			| LESS OR EQUAL
 def eq_v():
-	# Append function header to output list
-	lex_list = ['eq_v']
-	if(scanner.lex[lex_en['value']] == 'EQUALS'):
-		lex_list.append(tuple(scanner.lex))
+	word = scanner.lex[lex_en['value']]
+	if(word == 'EQUALS'):
+		node = Node('EQUALS')
 		scanner.next()
-		return lex_list
-	elif(scanner.lex[lex_en['value']] == 'GREATER' or scanner.lex[lex_en['value']] == 'LESS'):
-		lex_list.append(tuple(scanner.lex))
+	elif(word == 'GREATER' or word == 'LESS'):
 		scanner.next()
 		if(scanner.lex[lex_en['value']] == 'THAN'):
-			lex_list.append(tuple(scanner.lex))
+			node = Node (word + ' ' + scanner.lex[lex_en['value']])
 			scanner.next()
-			return lex_list
 		elif scanner.lex[lex_en['value']] == 'OR':
-			lex_list.append(tuple(scanner.lex))
 			scanner.next()
 			if scanner.lex[lex_en['value']] == 'EQUAL':
-				lex_list.append(tuple(scanner.lex))
+				node = Node (word + ' OR ' + scanner.lex[lex_en['value']])
 				scanner.next()
 			else:
-				lex_list.append(error('EQUAL', 'eq_v'))
+				error('EQUAL', 'eq_v')
 		else:
 			# Append error message if case specific grammar not found
-			lex_list.append('\tError Keywords GREATER or LESS were expected')
+			error('THAN or OR', 'eq_v')
 	else:
-		# Append error message if case specific grammar not found
-		lex_list.append('\tError Keywords EQUALS or GREATER were expected')
-	return lex_list
+		error('EQUALS, GREATER, or LESS', 'eq_v')
+	return node
 
 #CASE pactions
 #GRAMMAR  pactions ::= action_def {action_def}
