@@ -5,7 +5,7 @@ const_var_struct ::= const_dec var_dec
 const_dec ::= [CONSTANTS data_declarations]
 var_dec ::= VARIABLES data_declarations
 data_declarations ::=  DEFINE data_declaration {DEFINE data_declaration}
-data_declaration ::= IDENTIFIER  parray_dec OF data_type 
+data_declaration ::= IDENTIFIER [parray_dec] OF data_type 
 data_type ::= TUNSIGNED
     | CHAR 
     | INTEGER
@@ -18,15 +18,17 @@ data_type ::= TUNSIGNED
     | TSTRING
     | TBOOL
     | TBYTE
-parray_dec ::= [ARRAY plist_const popt_array_val]
+parray_dec ::= ARRAY plist_const [popt_array_val]
 plist_const ::= LB (ICON | IDENTIFIER) RB { LB (ICON | IDENTIFIER) RB }
-popt_array_val ::= [(VALUE | EQUOP) array_val]
+popt_array_val ::= (VALUE | EQUOP) array_val
 array_val ::= LB arg_list RB 
 arg_list ::= expr { COMMA expr }
-implement ::= IMPLEMENTATIONS [pother_oper] funct_list
+implement ::= IMPLEMENTATIONS [MAIN DESCRIPTION parameters] funct_list
 funct_list ::= FUNCTION pother_oper_def { FUNCTION pother_oper_def }
 
 pother_oper_def ::= IDENTIFIER DESCRIPTION parameters IS const_var_struct BEGIN pactions ENDFUN IDENTIFIER
+
+parameters ::= [PARAMETERS data_declaration {COMMA data_declaration}]
 
 pcondition ::= pcond1 [(OR | AND) pcond1]
 pcond1 ::= [NOT] pcond2
@@ -39,7 +41,8 @@ eq_v ::= EQUALS
     | LESS THAN
     | GREATER OR EQUAL
     | LESS OR EQUAL
-parameters ::= [PARAMETERS data_declaration {COMMA data_declaration}]
+
+
 
 expr ::= term [ (PLUS | MINUS | BAND | BOR | BXOR) term ]
 term ::= punary [ (STAR | DIVOP | MOD | LSHIFT | RSHIFT) punary]
@@ -53,6 +56,7 @@ element ::= IDENTIFIER [(array_val | parguments)]
     | MTRUE
     | MFALSE
     | LP expr RP
+
 pactions ::= action_def { action_def }
 action_def ::=  SET name_ref  EQUOP expr
     | READ arg_list
@@ -74,7 +78,8 @@ pusing_ref ::= [( USING arg_list | LP arg_list RP)]
 
 pcase_val ::= MWHEN expr COLON pactions {MWHEN expr COLON pactions}
 pcase_def ::= [DEFAULT COLON pactions]
-name_ref ::= IDENTIFIER array_val
+
+name_ref ::= IDENTIFIER [array_val]
 
 Lexical rules (are using a regular expression notation)
 

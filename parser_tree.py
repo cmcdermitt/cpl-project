@@ -6,6 +6,7 @@ class Node:
         self.type = in_type
         self.value = in_value
         self.children = []
+        
 
     #returns the first child node with type = in_type
     def getChildOfType(self, in_type):

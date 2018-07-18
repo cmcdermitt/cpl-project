@@ -21,7 +21,7 @@ from parser_tree import Node
 # However, if there are multiple right hand definitions, only one will be correct, so the correct function must be chosen before we enter it.
 # If the parser enncounters an error, it appends an error message instead of a list.
 
-lex_en = {'value' : 0, 'type' : 1, 'line_num' : 2}
+lex_en = {'type' : 0, 'value' : 1, 'line_num' : 2}
 scanner = Scanner(sys.argv[1])
 
 
@@ -61,326 +61,146 @@ def error(expected, location = ''):
 	exit()
 
 # First case: Called by parse()
-# GRAMMAR: func_main ::= FUNCTION IDENTIFIER oper_type
-#						 | MAIN
+# GRAMMAR: func_main ::= FUNCTION IDENTIFIER RETURN MVOID
+#                   | MAIN
 def func_main():
 	# Append function header to output list
-	lex_list = ['func_main']
+	node = Node('func_main')
 	if(scanner.lex[lex_en['value']] == 'MAIN'):
-		lex_list.append(tuple(scanner.lex))
 		scanner.next()
-		return lex_list
+		return node
 	elif(scanner.lex[lex_en['value']] == 'FUNCTION'):
-		lex_list.append(tuple(scanner.lex))
 		scanner.next()
 		if(scanner.lex[lex_en['type']] == 'IDENTIFIER'):
-			lex_list.append(tuple(scanner.lex))
+			node.children.append(scanner.lex[lex_en['value'])
 			scanner.next()
 		else:
 			# Append error message if case specific grammar not found
 			lex_list.append(['\tError: Identifer was expected'])
 		if(scanner.lex[lex_en['value']] == 'RETURN'):
-			lex_list.append(oper_type())
+			scanner.next()
 		else:
 			# Append error message if case specific grammar not found
-			lex_list.append(['\tError: Keyword Return was expected'])
+			error('RETURN', 'func_main')
+		if(scanner.lex[lex_en['value']] == 'MVOID'):
+			scanner.next()
+		else:
+			error('MVOID', 'func_main')
 	else:
 		# Append error message if case specific grammar not found
-		lex_list.append(['\tError Main function missing'])
-	return lex_list
-
-# CASE oper_type
-# GRAMMAR: oper_type ::= RETURN chk_ptr chk_array ret_type
-def oper_type():
-	# Append function header to output list
-	lex_list = ['oper_type']
-	lex_list.append(tuple(scanner.lex))
-	scanner.next()
-	if(scanner.lex[lex_en['value']] == 'POINTER'):
-		lex_list.append(chk_ptr())
-		scanner.next()
-	if(scanner.lex[lex_en['value']] == 'ARRAY'):
-		lex_list.append(chk_array())
-	word = scanner.lex[lex_en['value']]
-	if(word == 'TYPE' or word == 'STRUCT' or word == 'IDENTIFIER'):
-		lex_list.append(ret_type())
-	else:
-		# Append error message if case specific grammar not found
-		lex_list.append('\tError: The keywords STRUCT or TYPE or an IDENTIFIER was expected')
-	return lex_list
-
-# CASE chk_ptr
-# GRAMMAR: chk_ptr ::=
-# 			 		   | POINTER OF
-# NOTE: Blank lines interpreted as optional values, allowing for simpler statements
-def chk_ptr():
-	# Append function header to output list
-	lex_list = ['chk_ptr']
-	lex_list.append(tuple(scanner.lex))
-	scanner.next()
-	if(scanner.lex[lex_en['value']] == 'OF'):
-		lex_list.append(tuple(scanner.lex))
-	else:
-		return lex_list
-	return lex_list
-
-# CASE chk_array
-# GRAMMAR: chk_array ::= [empty]
-#						 | ARRAY array_dim_list
-def chk_array():
-	# Append function header to output list
-	lex_list = ['chk_array']
-	lex_list.append(tuple(scanner.lex))
-	scanner.next()
-	if(scanner.lex[lex_en['value']] != 'LB'):
-		lex_list.append('\t Error Keyword LB expected')
-		return lex_list
-	else:
-		lex_list.append(array_dim_list())
-	return lex_list
-
-# CASE: array_dim_list
-# GRAMMAR: array_dim_list ::= LB array_index RB
-#					   		  | {LB array_indexRB} LB array_index RB
-# Recursive call to array_dim_list converted to EBNF using definition of array_dim_list
-def array_dim_list():
-	# Append function header to output list
-	lex_list = ['array_dim_list']
-	while scanner.lex[lex_en['value']] == 'LB': #use while for multiple array_dim_lists instead of recursion
-		lex_list.append(tuple(scanner.lex))
-		scanner.next()
-		if scanner.lex[lex_en['type']] == 'IDENTIFIER' or scanner.lex[lex_en['value']] == 'ICON':
-			lex_list.append(array_index())
-			if scanner.lex[lex_en['value']] == 'RB':
-				lex_list.append(tuple(scanner.lex))
-				scanner.next()
-			else:
-				scanner.next()
-				# Append error message if case specific grammar not found
-				lex_list.append('Error: Keyword RB expected')
-		else:
-			scanner.next()
-			# Append error message if case specific grammar not found
-			lex_list.append('Error: IDENTIFIER or ICON expected')
-	return lex_list
-
-# CASE: array_index
-# GRAMMAR: array_index ::= IDENTIFIER
-#		   				   | ICON
-def array_index():
-	# Append function header to output list
-	lex_list = ['array_index']
-	lex_list.append(tuple(scanner.lex))
-	scanner.next()
-	return lex_list
-
-# CASE: ret_type
-# GRAMMAR: ret_type ::= TYPE type_name
-#						| STRUCT IDENTIFIER
-# 						| STRUCTYPE IDENTIFIER
-def ret_type():
-	# Append function header to output list
-	lex_list = ['ret_type']
-	lex_list.append(tuple(scanner.lex))
-	if(scanner.lex[lex_en['value']] == 'TYPE'):
-		scanner.next()
-		type = scanner.lex[lex_en['value']]
-		if(type == 'MVOID' or type == 'INTEGER' or type == 'REAL' or type == 'TBOOL'
-		 or type == 'CHAR' or type == 'TSTRING'):
-			lex_list.append(type_name())
-			scanner.next()
-			return lex_list
-	if(scanner.lex[lex_en['value']] == 'STRUCT' or scanner.lex[lex_en['value']] == 'STRUCTYPE'): #STRUCTTYPE?
-		scanner.next()
-		if(scanner.lex[lex_en['type']] == 'IDENTIFIER'):
-			lex_list.append(tuple(scanner.lex))
-			scanner.next()
-			return lex_list
-		else:
-			# Append error message if case specific grammar not found
-			lex_list.append('\tError: Identifier was expected')
-			return lex_list
-	return lex_list
-
-# CASE: type_name
-# GRAMMAR: type_name ::= MVOID
-#						| INTEGER
-#						| SHORT
-#						| REAL
-#						| FLOAT
-#						| DOUBLE
-#						| TBOOL
-#						| CHAR
-#						| TSTRING OF LENGTH ICON
-#						| TBYTE
-def type_name():
-	# Append function header to output list
-	lex_list = ['type_name']
-	lex_list.append(tuple(scanner.lex))
-	return lex_list
+		error('MAIN or FUNCTION', 'func_main')
+	return node
 
 # CASE: globals
-# GRAMMAR: globals ::=
-#					   | GLOBAL DECLARATIONS const_dec var_dec struct_dec
-# NOTE: Blank lines interpreted as optional values, allowing for simpler statements
+# GRAMMAR: globals ::= [GLOBAL DECLARATIONS const_dec var_dec]
+# named f_globals() instead of globals() due to name conflicts
 def f_globals():
-	# Append function header to output list
-	lex_list = ['globals']
-	lex_list.append(tuple(scanner.lex))
-	scanner.next()
-	if(scanner.lex[lex_en['value']] == 'DECLARATIONS'):
-		lex_list.append(tuple(scanner.lex))
+	node = Node('f_globals')
+	if scanner.lex[lex_en['value']] == 'GLOBAL':
 		scanner.next()
-	else:
-		lex_list.append('\tError Keyword DECLARATIONS was expected')
-	lex_list.append(const_dec())
-	lex_list.append(var_dec())
-	return lex_list
+		if(scanner.lex[lex_en['value']] == 'DECLARATIONS'):
+			scanner.next()
+		else:
+			error('DECLARATIONS', 'f_globals')
+		node.children.append(const_dec())
+		node.children.append(var_dec())
+	return node
 
 # CASE: const_dec
-# GRAMMAR: const_dec ::=
-#						| CONSTANTS data_declarations
-# NOTE: Blank lines interpreted as optional values, allowing for simpler statements
+# GRAMMAR: const_dec ::= [CONSTANTS data_declarations]
 def const_dec():
-	# Append function header to output list
-	lex_list = ['const_dec']
+	node = node('const_dec')
 	if scanner.lex[lex_en['value']] == 'CONSTANTS':
-		lex_list.append(tuple(scanner.lex))
 		scanner.next()
-	else:
-		return lex_list
-	if(scanner.lex[lex_en['value']] == 'DEFINE'):
-		lex_list.append(data_declarations())
-	else:
-		# Append error message if case specific grammar not found
-		lex_list.append('\tError Keyword DEFINE expected')
-	return lex_list
+		node.children.append(data_declarations)
+	return node
 
-# CASE: var_decc
+# CASE: var_dec
 # GRAMMAR: var_dec ::= VARIABLES data_declarations
 def var_dec():
-	# Append function header to output list
-	lex_list = ['var_dec']
+	node = Node('var_dec')
 	if scanner.lex[lex_en['value']] == 'VARIABLES':
-		lex_list.append(tuple(scanner.lex))
 		scanner.next()
 	else:
-		# Append error message if case specific grammar not found
-		lex_list.append('Error: Keyword VARIABLES expected')
-		return lex_list
-	if(scanner.lex[lex_en['value']] == 'DEFINE'):
-		lex_list.append(data_declarations())
-	else:
-		# Append error message if case specific grammar not found
-		lex_list.append('\tError Keyword DEFINE expected')
-	return lex_list
+		error('VARIABLES', 'var_dec')
+	
+	node.children.append(data_declarations())
+	return node
 
 # CASE: data_declarations
-# GRAMMAR: data_declarations ::= comp_declare
-# 								 | {comp_declare} comp_declare
-# Recursive data_declarations call converted to EBNF using first option definition
+# GRAMMAR: data_declarations ::=  DEFINE data_declaration {DEFINE data_declaration}
 def data_declarations():
-	# Append function header to output list
-	lex_list = ['data_declarations']
+	node = Node('data_declarations')
 	if scanner.lex[lex_en['value']] == 'DEFINE': #check validity before starting while loop
 		while(scanner.lex[lex_en['value']] == 'DEFINE'):
-			lex_list.append(tuple(scanner.lex))
 			scanner.next()
-			lex_list.append(data_declaration())
+			node.children.append(data_declaration())
 	else:
-		# Append error message if case specific grammar not found
-		lex_list.append('Error: keyword DEFINE expected in data_declarations')
-	return lex_list
+		error('DEFINE', 'data_declarations')
+	return node
 
 # CASE: data_declaration
-# GRAMMAR: data_declaration ::= IDENTIFIER  parray_dec OF data_type
-# NOTE: This function is different than data_declaration
+# GRAMMAR: data_declaration ::= IDENTIFIER [parray_dec] OF data_type
+# This function is different than data_declarations
 def data_declaration():
 	# Append function header to output list
-	lex_list = ['data_declaration']
+	node = Node('data_declaration')
 	if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-		lex_list.append(tuple(scanner.lex))
+		node.children.append(scanner.lex[lex_en['value']])
 		scanner.next()
 	else:
-		lex_list.append(error('IDENTIFIER', 'data_declaration'))
-	word = scanner.lex[lex_en['value']]
-	if(word == 'ARRAY' or word == 'LB' or word == 'VALUE' or word == 'EQUOP'):
-		lex_list.append(parray_dec())
+		error('IDENTIFIER', 'data_declaration')
+	if(scanner.lex[lex_en['value']] == 'ARRAY'):
+		node.children.append(parray_dec())
 	if(scanner.lex[lex_en['value']] == 'OF'):
-		lex_list.append(tuple(scanner.lex))
 		scanner.next()
 	else:
-		# Append error message if case specific grammar not found
-		lex_list.append('\tError Keyword OF expected')
-	word = scanner.lex[lex_en['value']]
-	if(word == 'TUNSIGNED' or word == 'CHAR' or word == 'INTEGER' or
-	word == 'MVOID' or word == 'REAL' or word == 'TSTRING' or word == 'TBOOL'):
-		lex_list.append(data_type())
-		scanner.next()
-	else:
-		# Append error message if case specific grammar not found
-		lex_list.append('\tError Type expected')
-	return lex_list
+		error('OF', 'data_declaration')
+	node.children.append(data_type())
+	return node
 
 # CASE: parray_dec
-# GRAMMAR: parray_dec ::=
-#						 | ARRAY plist_const popt_array_val
-#						 | LB
-#						 | VALUE
-#						 | EQUOP
-# NOTE: Blank lines interpreted as optional values, allowing for simpler statements
+# GRAMMAR: parray_dec ::= ARRAY plist_const [popt_array_val]
 def parray_dec():
-	# Append function header to output list
-	lex_list = ['parray_dec']
+	node = Node('parray_dec')
 	if(scanner.lex[lex_en['value']] == 'ARRAY'):
 		scanner.next()
-		if(scanner.lex[lex_en['value']] == 'LB'):
-			lex_list.append(plist_const())
+		node.children.append(plist_const())
 		else:
-			lex_list.append('\tError Keyword LB was expected')
-		if(scanner.lex[lex_en['value']] == 'VALUE'):
-			lex_list.append(popt_array_val())
+		if(scanner.lex[lex_en['value']] == 'VALUE' or scanner.lex[lex_en['value']] == 'EQUOP'):
+			node.children.append(popt_array_val())
 	else:
-		return lex_list
-	return lex_list
+		error('ARRAY', 'parray_dec')
+	return node
 
 # CASE: plist_const
-# GRAMMAR: plist_const ::= LB iconst_ident RB
-#						   | {LB iconst_ident RB} LB iconst_ident RB
-# NOTE: Recursive plist_const call in second option converted to EBNF
+# plist_const ::= LB (ICON | IDENTIFIER) RB { LB (ICON | IDENTIFIER) RB }
 def plist_const():
-	# Append function header to output list
-	lex_list = ['plist_const']
-	lex_list.append(tuple(scanner.lex))
-	scanner.next()
-	if(scanner.lex[lex_en['type']] == 'IDENTIFIER'):
-		lex_list.append(iconst_ident())
+	node = Node('plist_const')
+	if scanner.lex[lex_en['value']] == 'LB':
+		scanner.next()
+	if(scanner.lex[lex_en['type']] == 'IDENTIFIER' or scanner.lex[lex_en['type']] == 'ICON'):
+		node.children.append(scanner.lex[lex_en['value']])
 		scanner.next()
 	else:
-		lex_list.append('\tError Identifier was expected')
+		error('IDENTIFIER or ICON', 'plist_const')
 	if(scanner.lex[lex_en['value']] == 'RB'):
-		lex_list.append(tuple(scanner.lex))
 		scanner.next()
 	else:
-		# Append error message if case specific grammar not found
-		lex_list.append('\tError Keyword RB was expected')
+		error('RB', 'plist_const')
 	while(scanner.lex[lex_en['value']] == 'LB'):
-		lex_list.append(tuple(scanner.lex))
 		scanner.next()
-		if (scanner.lex[lex_en['type']] == 'IDENTIFIER'):
-			lex_list.append(iconst_ident())
+		if(scanner.lex[lex_en['type']] == 'IDENTIFIER' or scanner.lex[lex_en['type']] == 'ICON'):
+			node.children.append(scanner.lex[lex_en['value']])
 			scanner.next()
 		else:
 			# Append error message if case specific grammar not found
-			lex_list.append('\tError Identifier was expected')
-		if (scanner.lex[lex_en['value']] == 'RB'):
-			lex_list.append(tuple(scanner.lex))
+			error('IDENTIFIER or ICON', 'plist_const')
+		if (scanner.lex[lex_en['value']] == 'RB')
 			scanner.next()
 		else:
-			# Append error message if case specific grammar not found
-			lex_list.append('\tError Keyword RB was expected')
-	return lex_list
-
+			error('RB', 'plist_const')
+	return node
 # CASE: iconst_ident
 # GRAMMAR: iconst_ident ::= ICON
 #							| IDENTIFIER
@@ -391,17 +211,16 @@ def iconst_ident():
 	return lex_list
 
 # CASE: popt_array_val
-# GRAMMAR: popt_array_val ::=
-#						     | value_eq array_val
+# GRAMMAR: popt_array_val ::= (VALUE | EQUOP) array_val
 def popt_array_val():
 	# Append function header to output list
-	lex_list = ['popt_array_val']
-	lex_list.append(value_eq())
-	if(scanner.lex[lex_en['value']] == 'LB'):
-		lex_list.append(array_val())
+	node = Node('popt_array_val')
+	if scanner.lex[lex_en['value']] == 'VALUE' or scanner.lex[lex_en['value']] == 'EQUOP':
+		node.children.append(scanner.lex[lex_en['value']])
 	else:
-		return lex_list
-	return lex_list
+		error('VALUE or EQUOP', 'popt_array_val')
+	node.children.append(array_val)
+	return node
 
 # CASE: value_eq
 # GRAMMAR: value_eq ::= VALUE
@@ -418,30 +237,22 @@ def value_eq():
 	return lex_list
 
 # CASE: array_val
-# GRAMMAR: array_val ::= simmp_arr_val
+# GRAMMAR: LB arg_list RB
 def array_val():
 	# Append function header to output list
-	lex_list = ['array_val']
-	lex_list.append(simp_arr_val())
-	return lex_list
-
-# CASE: simp_arr_val
-# GRAMMAR: LB arg_list RB
-def simp_arr_val():
-	# Append function header to output list
-	lex_list = ['simp_arr_val']
+	node = Node('array_val')
 	if scanner.lex[lex_en['value']] == 'LB':
-		lex_list.append(tuple(scanner.lex))
+		node.children.append(scanner.lex[lex_en['value']])
 		scanner.next()
 	else:
-		lex_list.append(error('LB', 'simp_arr_val'))
+		error('LB', 'array_val')
 	lex_list.append(arg_list())
 	if(scanner.lex[lex_en['value']] == 'RB'):
-		lex_list.append(tuple(scanner.lex))
+		node.children.append(scanner.lex[lex_en['value']])
 		scanner.next()
 	else:
-		lex_list.append('\tError, RB was expected')
-	return lex_list
+		error('RB', 'array_val')
+	return node
 
 # CASE: arg_list
 # GRAMMAR: arg_list ::= expr {COMMA expr}
@@ -469,11 +280,14 @@ def arg_list():
 #						 | TBOOL
 #						 | TBYTE
 def data_type():
-	# Append function header to output list
-	lex_list = ['data_type']
-	# Scanner returns the type of the lexeme, so we can simply add it to lex_list
-	lex_list.append(tuple(scanner.lex))
-	return lex_list
+	node = Node('data_type')
+	valid_types = ['TUNSIGNED', 'CHAR', 'INTEGER', 'MVOID', 'DOUBLE', 'LONG',
+					'SHORT', 'FLOAT', 'REAL', 'TSTRING', 'TBOOL', 'TBYTE']
+	if scanner.lex[lex_en['value']] in valid_types:
+		node.children.append(scanner.lex[lex_en['value']])
+	else:
+		error('valid type', 'data_type')
+	return node
 
 # CASE: expr
 # GRAMMAR: expr ::= term [ (PLUS | MINUS | BAND | BOR | BXOR) term ]
@@ -542,7 +356,7 @@ def element():
 	# Append function header to output list
 	valid_types = ['STRING', 'LETTER', 'ICON', 'HCON', 'FCON', 'IDENTIFIER']
 	valid_values = ['MTRUE', 'MFALSE']
-	if scanner.lex[lex_en['type']] in valid_types:
+	if scanner.lex[lex_en['type']] in valid_types: #needs additional code for identifier if using arrays
 		node = Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']])
 		scanner.next()
 	elif scanner.lex[lex_en['value']] in valid_values:
@@ -601,20 +415,23 @@ def parguments():
 	return lex_list
 
 # CASE: implement
-# GRAMMAR: implement ::= IMPLEMENTATIONS main_head funct_list
+# GRAMMAR: implement ::= IMPLEMENTATIONS [MAIN DESCRIPTION parameters] funct_list
+
 def implement():
-	# Append function header to output list
-	lex_list = ['implement']
+	node = Node('implement')
 	if scanner.lex[lex_en['value']] == 'IMPLEMENTATIONS':
-		lex_list.append(tuple(scanner.lex))
 		scanner.next()
 	else:
-		# Append error message if case specific grammar not found
-		lex_list.append(error('IMPLEMENTATIONS', 'implement'))
+		error('IMPLEMENTATIONS', 'implement')
 	if scanner.lex[lex_en['value']] == 'MAIN':
-		lex_list.append(main_head())
-	lex_list.append(funct_list())
-	return lex_list
+		scanner.next()
+		if scanner.lex[lex_en['value']] == 'DESCRIPTION':
+			scanner.next()
+			node.children.append(parameters)
+		else:
+			error('DESCRIPTION', 'implement')
+	node.children.append(funct_list())
+	return node
 
 # CASE: main_head
 # GRAMMAR: main_head ::=
@@ -638,22 +455,16 @@ def main_head():
 	return lex_list
 
 # CASE: parameters
-# GRAMMAR: parameters::=
-#						| PARAMETERS param_list
+# GRAMMAR: parameters ::= [PARAMETERS data_declaration {COMMA data_declaration}]
 def parameters():
-	# Append function header to output list
-	lex_list = ['parameters']
+	node = Node('parameters')
 	if scanner.lex[lex_en['value']] == 'PARAMETERS':
-		lex_list.append(tuple(scanner.lex))
 		scanner.next()
-	else:
-		return lex_list
-	lex_list.append(param_def())
-	while scanner.lex[lex_en['value']] == 'COMMA':
-		lex_list.append(tuple(scanner.lex))
-		scanner.next()
-		lex_list.append(param_def())
-	return lex_list
+		node.children.append(data_declaration())
+		while scanner.lex[lex_en['value']] == 'COMMA':
+			scanner.next()
+			node.children.append(data_declaration())
+	return node
 
 # CASE: param_def
 # GRAMMAR: param_def ::= data_declaration
@@ -664,102 +475,71 @@ def param_def():
 	return lex_list
 
 # CASE: funct_list
-# GRAMMAR: funct_body ::= FUNCTION phead_fun pother_oper_def
+# GRAMMAR: funct_list ::= FUNCTION pother_oper_def { FUNCTION pother_oper_def }
 def funct_list():
-	# Append function header to output list
-	lex_list = ['funct_list']
-	lex_list.append(funct_body())
-	while scanner.lex[lex_en['value']] == 'FUNCTION':
-		lex_list.append(funct_body())
-	return lex_list
-
-# CASE: funct_body
-# GRAMMAR: funct_body ::= FUNCTION phead_fun pother_oper_def
-def funct_body():
-	# Append function header to output list
-	lex_list = ['funct_body']
-	if scanner.lex[lex_en['value']] == 'FUNCTION':
-		lex_list.append(tuple(scanner.lex))
-		scanner.next()
+	node = Node('funct_list')
+	if scanner.lex[lex_en['value']] == 'FUNCTION': #check validity before loop
+		while scanner.lex[lex_en['value']] == 'FUNCTION':
+			scanner.next()
+			node.children.append(pother_oper_def())
 	else:
-		# Append error message if case specific grammar not found
-		lex_list.append(error('FUNCTION', 'funct_body'))
-	lex_list.append(pother_oper_def())
-	return lex_list
+		error('FUNCTION', 'pother_oper_def')
+	return node
 
 # CASE: pother_oper_def
-# GRAMMAR: pother_oper_def ::= pother_oper IS const_var_struct precond
-#								BEGIN pactions ENDFUN IDENTIFIER
+# GRAMMAR: pother_oper_def ::= IDENTIFIER DESCRIPTION parameters IS const_var_struct BEGIN pactions ENDFUN IDENTIFIER
 def pother_oper_def():
 	# Append function header to output list
-	lex_list = ['pother_oper_def']
-	lex_list.append(pother_oper())
-	if scanner.lex[lex_en['value']] == 'IS':
-		lex_list.append(tuple(scanner.lex))
-		scanner.next()
-	else:
-		# Append error message if case specific grammar not found
-		lex_list.append(error('IS', 'pother_oper_def'))
-	lex_list.append(const_var_struct())
-	if scanner.lex[lex_en['value']] == 'BEGIN':
-		lex_list.append(tuple(scanner.lex))
-		scanner.next()
-	else:
-		# Append error message if case specific grammar not found
-		lex_list.append(error('BEGIN', 'pother_oper_def'))
-	lex_list.append(pactions())
-	if scanner.lex[lex_en['value']] == 'ENDFUN':
-		lex_list.append(tuple(scanner.lex))
-		scanner.next()
-	else:
-		# Append error message if case specific grammar not found
-		lex_list.append(error('ENDFUN', 'pother_oper_def'))
+	node = Node('pother_oper_def')
 	if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-		lex_list.append(tuple(scanner.lex))
+		node.children.append(scanner.lex[lex_en['value']])
 		scanner.next()
 	else:
-		# Append error message if case specific grammar not found
-		lex_list.append(error('IDENTIFIER', 'pother_oper_def'))
-	return lex_list
+		error('IDENTIFIER', 'pother_oper_def')
 
-# CASE: pother_oper
-# GRAMMAR: pother_oper ::= acc_mut IDENTIFIER DESCRIPTION oper_type parameters
-# NOTE: acc_mut ignored, because it has no reference or definition in grammar set
-def pother_oper():
-	# Append function header to output list
-	lex_list = ['pother_oper']
-	if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-		lex_list.append(tuple(scanner.lex))
-		scanner.next()
-	else:
-		# Append error message if case specific grammar not found
-		lex_list.append(error('IDENTIFIER','pother_oper'))
 	if scanner.lex[lex_en['value']] == 'DESCRIPTION':
-		lex_list.append(tuple(scanner.lex))
 		scanner.next()
 	else:
-		# Append error message if case specific grammar not found
-		lex_list.append(error('DESCRIPTION', 'pother_oper'))
-	if scanner.lex[lex_en['value']] == 'RETURN':
-		lex_list.append(oper_type())
-	if scanner.lex[lex_en['value']] == 'PARAMETERS':
-		lex_list.append(parameters())
-	return lex_list
+		error('DESCRIPTION', 'pother_oper_def')
+
+	node.children.append(parameters())
+
+	if scanner.lex[lex_en['value']] == 'IS':
+		scanner.next()
+	else:
+		error('IS', 'pother_oper_def')
+
+	node.children.append(const_var_struct())
+
+	if scanner.lex[lex_en['value']] == 'BEGIN':
+		scanner.next()
+	else:
+		error('BEGIN', 'pother_oper_def')
+	node.children.append(pactions())
+	if scanner.lex[lex_en['value']] == 'ENDFUN':
+		scanner.next()
+	else:
+		error('ENDFUN', 'pother_oper_def')
+	if scanner.lex[lex_en['type']] == 'IDENTIFIER':
+		node.children.append(scanner.lex[lex_en['value']])
+		scanner.next()
+	else:
+		error('IDENTIFIER', 'pother_oper_def')
+	return node
 
 #CASE const_var_struct
 #GRAMMAR ::= const_var_struct ::= const_dec var_dec struct_dec
 def const_var_struct():
 	# Append function header to output list
-	lex_list = ['const_var_struct']
+	node = Node('const_var_struct')
 	if(scanner.lex[lex_en['value']] == 'CONSTANTS'):
-		lex_list.append(const_dec())
+		node.children.append(const_dec())
 	if(scanner.lex[lex_en['value']] == 'VARIABLES'):
-	 	lex_list.append(var_dec())
+	 	node.children.append(var_dec())
 	else:
 		# Append error message if case specific grammar not found
-		lex_list.append(error('VARIABLES', 'const_var_struct'))
-		return lex_list
-	return lex_list
+		error('VARIABLES', 'const_var_struct')
+	return node
 
 #CASE pcondition
 #GRAMMAR pcondition ::= |pcond1 OR pcond1
@@ -1155,23 +935,17 @@ def action_def():
     return lex_list
 
 #CASE name_ref
-#GRAMMAR name_ref ::= IDENTIFIER opt_ref pmember_opt popt_dot
+#GRAMMAR name_ref ::= IDENTIFIER array_val
 def name_ref():
+	node = Node('name_ref')
 	# Append function header to output list
-    lex_list = ['name_ref']
-    if (scanner.lex[lex_en['value']] == 'LB'):
-        lex_list.append(opt_ref())
-    else:
-		# Append error message if case specific grammar not found
-        lex_list.append(error('LB', 'name_ref'))
-    return lex_list
-
-#CASE opt_ref
-#GRAMMAR opt_ref ::= array_val
-def opt_ref():
-	# Append function header to output list
-    lex_list = ['opt_ref']
-    lex_list.append(array_val())
+	if scanner.lex[lex_en['type']] == 'IDENTIFIER':
+		node.children.append(scanner.lex[lex_en['value']])
+		scanner.next()
+		if (scanner.lex[lex_en['value']] == 'LB'):
+			node.children.append(array_val)
+	else:
+		error('IDENTIFIER', 'name_ref')
     return lex_list
 
 # CASE pvar_value_list

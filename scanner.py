@@ -59,6 +59,9 @@ class Scanner:
         self.fillSymbolTable()
         self.lex = self.symbol_table[0][0]
         self.lex.append(1)
+
+    def lineNum():
+        return current_row
     # Name: next
     # Summary: Advance lex by one position in the row and save the new attribute list to self.lex
     #          If the current_attribute is greater than or equal to the length of the current row,
