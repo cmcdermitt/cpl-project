@@ -1,4 +1,4 @@
-# Then we add all of the global variablse to the globals dictionary
+# Then we add all of the global variables to the globals dictionary
 import scl_var_table
 # Then we execute the main function. <- done in implement
 interpreterDict = {
@@ -54,7 +54,25 @@ interpreterDict = {
 #     'pcase_def'
 #     'name_ref'
 # }
-variables = scl_var_table.VarTable()
+global_vars = scl_var_table.VarTable()
+
+def error(msg, location = ''):
+    if location == '':
+        print ('Interpreter error: {}'.format(msg))
+    else:
+        print('Interpreter error: {} in {}'.format(msg, location))
+    exit()
+
+def lookup(var_name, local_scope = None):
+    if local_scope is not None:
+        if local_scope.isDeclared(var_name):
+            return local_scope.getValue(var_name)
+        if global_vars.isDeclared(var_name):
+            return global_vars.isDeclared(var_name)
+    elif global_vars.isDeclared(var_name):
+        return global_vars.getValue(var_name)
+    else:
+        error('variable {} is undeclared and cannnot be looked up'.format(var_name), 'lookup')
 
 # Main interpreter function
 # Name: processNode(node)
@@ -87,6 +105,28 @@ def input(node):
 def display(node):
     nodeType = node.type
     nodeValue = node.children
+
+def plus(node):
+    for child in node.children:
+        if child is instanceof Node:
+            child = processNode()
+        if child is instanceof str:
+            child = variables.getValue()
+        return node.children[0] + node.children[1]
+
+def minus(node):
+    for child in node.children:
+        if child is instanceof Node:
+            processNode()
+        return node.children[0] - node.children[1]
+
+def band(node):
+    for child in node.children:
+        if child is instanceof Node:
+            processNode()
+        return node.children[0]  node.children[1]
+
+
 
 
 

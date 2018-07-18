@@ -11,6 +11,12 @@ class VarTable:
     def __init__(self):
         variables = {}
 
+    def isDeclared(self, var):
+        if var in self.variables.keys():
+            return True
+        else:
+            return False
+
     def declare(self, var, var_type, is_global = False, is_const = False, value = None):
         if var in self.variables.keys():
             print("Error in declare(): variable {} has already been declared".format(var))
