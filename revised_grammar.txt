@@ -41,9 +41,9 @@ eq_v ::= EQUALS
     | LESS OR EQUAL
 parameters ::= [PARAMETERS data_declaration {COMMA data_declaration}]
 
-expr ::= term [ term (PLUS | MINUS | BAND | BOR | BXOR) term ]
+expr ::= term [ (PLUS | MINUS | BAND | BOR | BXOR) term ]
 term ::= punary [ (STAR | DIVOP | MOD | LSHIFT | RSHIFT) punary]
-punary ::= [(MINUS | NEGATE)] element
+punary ::= [NEGATE] element
 element ::= IDENTIFIER [(array_val | parguments)]
     | STRING
     | LETTER

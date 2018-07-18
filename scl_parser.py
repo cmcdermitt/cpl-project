@@ -444,21 +444,15 @@ def simp_arr_val():
 	return lex_list
 
 # CASE: arg_list
-# GRAMMAR: arg_list ::= expr
-#						| {expr} COMMA expr
-# NOTE Recursive reference to expr in second option converted to EBNF
+# GRAMMAR: arg_list ::= expr {COMMA expr}
 def arg_list():
 	# Append function header to output list
-	lex_list = ['arg_list']
-	valid_types = ['IDENTIFIER', 'STRING', 'LETTER', 'ICON', 'HCON', 'FCON']
-	valid_values = ['BAND','BOR', 'BXOR', 'STAR', 'DIVOP', 'MOD', 'LSHIFT', 'RSHIFT' 'PLUS', 'MINUS', 'NEGATE', 'MTRUE', 'MFALSE', 'LP']
-	while (scanner.peek()[lex_en['type']] in valid_types or scanner.peek()[lex_en['value']] in valid_values):
-		lex_list.append(expr())
-		if(scanner.lex[lex_en['value']] == 'COMMA'):
-			lex_list.append(tuple(scanner.lex))
-			scanner.next()
-		else:
-			return lex_list
+	node = Node('arg_list')
+	node.children.append(expr())
+	while (scanner.lex[lex_en['value']] == 'COMMA'):
+		node.children.append(scanner.lex)
+		scanner.next()
+		node.children.append(expr())
 	return lex_list
 
 # CASE: data_type
@@ -482,11 +476,8 @@ def data_type():
 	return lex_list
 
 # CASE: expr
-# GRAMMAR: expr ::= term PLUS term
-#					| term MINUS term
-#					| term BAND term
-#					| term BOR term
-#					| term BXOR term
+# GRAMMAR: expr ::= term [ (PLUS | MINUS | BAND | BOR | BXOR) term ]
+
 def expr():
 	#process the first <term>, but don't add it to a node yet
 	first_term = term() 
@@ -507,12 +498,7 @@ def expr():
 	
 
 # CASE: term
-# GRAMMAR: term ::= punary
-#					| punary STAR punary
-#					| punary DIVOP punary
-#					| punary MOD punary
-#					| punary LSHIFT punary
-#					| punary RSHIFT punary
+# GRAMMAR: term ::= punary [ (STAR | DIVOP | MOD | LSHIFT | RSHIFT) punary]
 def term():
 
 	# Append function header to output list
@@ -530,9 +516,7 @@ def term():
 	return node
 
 # CASE: punary
-# GRAMMAR: punary ::= element
-#					  | MINUS element
-#					  | NEGATE element
+# GRAMMAR: punary ::= [NEGATE] element
 def punary():
 
 	# Append function header to output list
@@ -545,15 +529,15 @@ def punary():
 	return node
 
 # CASE: element
-# GRAMMAR: element ::= IDENTIFIER popt_ref
-#					   | STRING
-#					   | LETTER
-#					   | ICON
-#					   | HCON
-#					   | FCON
-#					   | MTRUE
-#					   | MFALSE
-#					   | LP expr RP
+# GRAMMAR: element ::= IDENTIFIER [(array_val | parguments)]
+#     | STRING
+#     | LETTER
+#     | ICON
+#     | HCON
+#     | FCON
+#     | MTRUE
+#     | MFALSE
+#     | LP expr RP
 def element():
 	# Append function header to output list
 	valid_types = ['STRING', 'LETTER', 'ICON', 'HCON', 'FCON', 'IDENTIFIER']
