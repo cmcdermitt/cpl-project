@@ -44,6 +44,8 @@ def lookup(var_name, arr_pos = 0 ,local_scope = None):
 def processNode(node):
     print('processing {} node {}'.format(node.type, node.value))
     nodeType = node.type.upper()
+    if node.type.upper() == 'KEYWORD':
+        nodeType = node.value.upper() #for MTRUE and MFALSE
     if nodeType in interpreterDict:
         funct = interpreterDict[nodeType]
         node = funct(node)
@@ -53,6 +55,8 @@ def processNode(node):
 # Type: INPUT
 # Children: IDENTIFIER
 def f_input(node):
+    global global_vars
+    global main_vars
     # Get associated identifier
     inputValue = node.children[0]
     # Add identifier to variable table
@@ -550,6 +554,14 @@ def f_data_type(node):
                 
        
          
+def f_hcon(node):
+    string = node.value
+    string = string[:1] + 'x' + string[1:len(string) - 1] #adds x to 0x prefix and strips h suffix
+    return int(node.value, 16)
+
+def f_fcon(node):
+    return float(node.value)
+
 # def arg_list(node):
 #     for child in node.children:
 #         if child is nodes
@@ -559,6 +571,8 @@ def f_data_type(node):
 # Children: pactions
 def f_pcase_def(node):
     processNode(node.children[0])
+
+
 
 
 

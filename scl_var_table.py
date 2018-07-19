@@ -4,14 +4,14 @@ class Variable:
         self.value = var_value
         self.is_const = var_is_const
         self.is_global = var_is_global
+        
+    def __str__(self):
+        return 'Variable type: {} value: {} is_const: {} is_global: {}'.format(self.type, self.value, self.is_const, self.is_global)
 
 
 class VarTable:
-
-    variables = {}
-
     def __init__(self):
-        variables = {}
+        self.variables = {}
 
     def isDeclared(self, var):
         if var in self.variables.keys():
@@ -58,4 +58,7 @@ class VarTable:
             print('Error in get(): variable {} has not been declared'.format(var))
         else:
             return self.variables[var].type
+
+    def __str__(self):
+        return str(self.variables)
 
