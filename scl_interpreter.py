@@ -12,6 +12,9 @@ def error(msg, location = ''):
     exit()
 
 def lookup(var_name, local_scope = None):
+    if var_name[0] == '\"':
+        return var_name
+
     if local_scope is not None:
         if local_scope.isDeclared(var_name):
             return local_scope.getValue(var_name)
