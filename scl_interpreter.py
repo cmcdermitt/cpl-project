@@ -36,6 +36,7 @@ def lookup(var_name, local_scope = None):
 #          and will set the new starting node after it has finished processing any related nodes
 # Return: No output currently
 def processNode(node):
+    print('processing {} node {}'.format(node.type, node.value))
     nodeType = node.type.upper()
     if nodeType in interpreterDict:
         funct = interpreterDict[nodeType]
@@ -45,12 +46,14 @@ def processNode(node):
 # Expected Structure:
 # Type: INPUT
 # Children: IDENTIFIER
+def f_input(node):
     # Get associated identifier
     inputValue = node.children[0]
     # Add identifier to variable table
     main_vars.declare(inputValue)
     # output results
     print('Variable ' + inputValue + ' was declared')
+    global_vars.declare(inputValue)
     # Node has no children -> IDENTIFIER is just a string
     # Return node to processNode
     return node
@@ -59,7 +62,6 @@ def processNode(node):
 # Type: DISPLAY or DISPLAYN
 # Children: IDENTIFIER
 def f_display(node):
-    # Either DISPLAY or DISPLAYNN
     nodeType = node.type
     # Get IDENTIFIER value
     nodeValue = node.children[0]
@@ -147,6 +149,18 @@ def f_for(node):
             main_vars.assign(nodeID, var)
     return node
 
+# Type AND
+# Children: pcond1 and pcond 1 or pcond 1 
+def f_and(node):
+    arg1 = processNode(node.children[0])
+    if isinstance(arg1, str):
+        arg1 = lookup(arg1)
+    if len(node.children) > 1:
+        arg2 = processNode(node.children[1])
+        if isinstance(arg2, str):
+            arg2 = lookup(arg2)
+        return arg1 and arg2
+
 # Expected Structure:
 # Type: REPEAT
 # Children pactions, pcondition
@@ -221,10 +235,10 @@ def f_call(node):
 # Children: pcond1 and pcond 1 or pcond 1
 def f_or(node):
     arg1 = processNode(node.children[0])
-   if isinstance(arg1, str):
+    if isinstance(arg1, str):
         arg1 = lookup(arg1)
-    if len(node.children > 1):
-        arg2 = processNode(node[1])
+    if len(node.children) > 1:
+        arg2 = processNode(node.children[1])
         if isinstance(arg2, str):
             arg2 = lookup(arg2)
         return arg1 or arg2
@@ -257,7 +271,7 @@ def f_mfalse(node):
 # Children: expr, expr
 def f_equals(node):
     arg1 = processNode(node.children[0])
-    if isinstance(str, arg1):
+    if isinstance(arg1, str):
         arg1 = lookup(arg1)
     arg2 = processNode(node.children[1])
     if isinstance(arg2, str):
@@ -269,7 +283,7 @@ def f_equals(node):
 # Children: expr, expr
 def f_greater_than(node):
     arg1 = processNode(node.children[0])
-    if isinstance(str, arg1):
+    if isinstance(arg1, str):
         arg1 = lookup(arg1)
     arg2 = processNode(node.children[1])
     if isinstance(arg2, str):
@@ -281,7 +295,7 @@ def f_greater_than(node):
 # Children: expr, expr
 def f_less_than(node):
     arg1 = processNode(node.children[0])
-    if isinstance(str, arg1):
+    if isinstance(arg1, str):
         arg1 = lookup(arg1)
     arg2 = processNode(node.children[1])
     if isinstance(arg2, str):
@@ -293,7 +307,7 @@ def f_less_than(node):
 # Children: expr, expr
 def f_greater_or_equal(node):
     arg1 = processNode(node.children[0])
-    if isinstance(str, arg1):
+    if isinstance(arg1, str):
         arg1 = lookup(arg1)
     arg2 = processNode(node.children[1])
     if isinstance(arg2, str):
@@ -304,62 +318,155 @@ def f_greater_or_equal(node):
 # Type less_or_equal
 # Children: expr, expr
 
-def f_less_than_or_equal(node):
+def f_less_or_equal(node):
     arg1 = processNode(node.children[0])
-    if isinstance(str, arg1):
+    if isinstance(arg1, str):
         arg1 = lookup(arg1)
     arg2 = processNode(node.children[1])
     if isinstance(arg2, str):
         arg2 = lookup(arg2)
     return arg1 <= arg2 
 
-
-
-# Expected Structure:
-# Type: INPUT
-# Children: IDENTIFIER
-def input(node):
-    # Get associated identifier
-    nodeValue = node.children
-    # Add identifier to variable table
-    variables.declare(nodeValue)
-    # Node has no children -> IDENTIFIER is just a string
-    # Return node to processNode
-    return node
-
-def display(node):
-    nodeType = node.type
-    nodeValue = node.children
-
-def plus(node):
+def f_plus(node):
     arg1 = processNode(node.children[0])
-    if len(node.children > 1):
-        arg2 = processNode(node[1])
-        return arg1 and arg2
+    if isinstance(arg1, str):
+        arg1 = lookup(arg1)
+    arg2 = processNode(node.children[1])
+    return arg1 + arg2 
+
+def f_minus(node):
+    arg1 = processNode(node.children[0])
+    if isinstance(arg1, str):
+        arg1 = lookup(arg1)
+    arg2 = processNode(node.children[1])
+    if isinstance(arg2, str):
+        arg2 = lookup(arg2)
+    return arg1 - arg2
+
+def f_band(node):
+    arg1 = processNode(node.children[0])
+    if isinstance(arg1, str):
+        arg1 = lookup(arg1)
+    arg2 = processNode(node.children[1])
+    if isinstance(arg2, str):
+        arg2 = lookup(arg2)
+    return arg1 & arg2
+
+def f_bor(node):
+    arg1 = processNode(node.children[0])
+    if isinstance(arg1, str):
+        arg1 = lookup(arg1)
+    arg2 = processNode(node.children[1])
+    if isinstance(arg2, str):
+        arg2 = lookup(arg2)
+    return arg1 | arg2 
+
+def f_bxor(node):
+    arg1 = processNode(node.children[0])
+    if isinstance(arg1, str):
+        arg1 = lookup(arg1)
+    arg2 = processNode(node.children[1])
+    if isinstance(arg2, str):
+        arg2 = lookup(arg2)
+    return arg1 ^ arg2
+
+def f_star(node):
+    arg1 = processNode(node.children[0])
+    if isinstance(arg1, str):
+        arg1 = lookup(arg1)
+    arg2 = processNode(node.children[1])
+    if isinstance(arg2, str):
+        arg2 = lookup(arg2)
+    return arg1 * arg2
+
+def f_divop(node):
+    arg1 = processNode(node.children[0])
+    if isinstance(arg1, str):
+        arg1 = lookup(arg1)
+    arg2 = processNode(node.children[1])
+    if isinstance(arg2, str):
+        arg2 = lookup(arg2)
+
+    if isinstance(arg1, int) and isinstance(arg2, int):
+        return arg1 // arg2 #floor division
     else:
-        return arg1
+        return arg1 / arg2 #normal division
 
-def minus(node):
-    for child in node.children:
-        if child is instanceof Node:
-            processNode()
-        return node.children[0] - node.children[1]
+def f_mod(node):
+    arg1 = processNode(node.children[0])
+    if isinstance(arg1, str):
+        arg1 = lookup(arg1)
+    arg2 = processNode(node.children[1])
+    if isinstance(arg2, str):
+        arg2 = lookup(arg2)
+    return arg1 % arg2 
 
-def band(node):
-    for child in node.children:
-        if child is instanceof Node:
-            processNode()
-        return node.children[0]  node.children[1]
+def f_lshift(node):
+    arg1 = processNode(node.children[0])
+    if isinstance(arg1, str):
+        arg1 = lookup(arg1)
+    arg2 = processNode(node.children[1])
+    if isinstance(arg2, str):
+        arg2 = lookup(arg2)
+    return arg1 << arg2
 
-def arg_list(node):
-    for child in node.children:
-        if child is nodes
+def f_rshift(node):
+    arg1 = processNode(node.children[0])
+    if isinstance(arg1, str):
+        arg1 = lookup(arg1)
+    arg2 = processNode(node.children[1])
+    if isinstance(arg2, str):
+        arg2 = lookup(arg2)
+    return arg1 >> arg2 
+
+def f_negate(node):
+    arg = processNode(node.children[0])
+    if isinstance(arg, str):
+        arg = lookup(arg)
+    return -arg
+
+def f_icon(node):
+    return int(node.value)
+
+# def arg_list(node):
+#     for child in node.children:
+#         if child is nodes
+
+# Expected structure:
+# Type: pcase_def
+# Children: pactions
+def f_pcase_def():
+    processNode(node.children[0])
+
 
 
 interpreterDict = {
-    'INPUT': finput,
-    'MFALSE': MFalse 
+    'INPUT': f_input,
+    'MFALSE': f_mfalse,
+    'PCASE_DEF':f_pcase_def,
+    'NEGATE': f_negate,
+    'PLUS': f_plus,
+    'MINUS': f_minus,
+    'BOR' : f_bor,
+    'BAND' : f_band,
+    'BXOR' : f_bxor,
+    'STAR' : f_star,
+    'DIVOP' : f_divop,
+    'LSHIFT' : f_lshift,
+    'RSHIFT' : f_rshift,
+    'MOD' : f_mod,
+    'MTRUE' : f_mtrue,
+    'EQUALS' : f_equals,
+    'GREATER THAN' : f_greater_than,
+    'GREATER OR EQUAL' : f_greater_or_equal,
+    'LESS THAN' : f_less_than,
+    'LESS OR EQUAL' : f_less_or_equal,
+    'AND' : f_and,
+    'OR' : f_or,
+    'NOT' : f_not,
+    'ICON' : f_icon
 }
+
 #     'DISPLAY'
 #     'CALL'
 #     'INCREMENT'

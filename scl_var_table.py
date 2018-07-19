@@ -3,10 +3,12 @@ class Variable:
         self.type = var_type
         self.value = var_value
         self.is_const = var_is_const
-        self.is_global = is_global
+        self.is_global = var_is_global
 
 
 class VarTable:
+
+    variables = {}
 
     def __init__(self):
         variables = {}
@@ -22,7 +24,7 @@ class VarTable:
             print("Error in declare(): variable {} has already been declared".format(var))
             exit()
         else:
-            self.variables[var] = Variable(var_type, value, var_type, is_global, is_const)
+            self.variables[var] = Variable(var_type, value, is_global, is_const)
 
     def assign(self, var, value):
         if var not in self.variables.keys():
