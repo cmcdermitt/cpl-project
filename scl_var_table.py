@@ -35,13 +35,25 @@ class VarTable:
         else:
             self.variables[var].value = value
 
-    def getValue(self, var):
+    def getValue(self, var, pos = 0):
         if var not in self.variables.keys():
             print('Error in get(): variable {} has not been declared'.format(var))
         elif (self.variables[var].value == None):
             print('Error in get(): variable {} has not been assigned a value'.format(var))
-        else:
-            return self.variables[var].value
+        else: 
+            var = self.variables[var].value
+            if isinstance(var, list): # value will be a list if a variable is declared as an array
+                if isinstance(pos, list): # checking that optional param pos was passed in as list
+                    if len(pos) == var[0]: # Make sure that the number of [] is appropriate I.E. a 2 dimensional array needs to be accessed with [][]
+                        index = 1
+                        for x in range(0, pos):
+                            if pos[x] < var[1][x]: # Make sure that each index does not go over bounds
+                                index = index * pos[x + 1]  # Calculate index as if it is in grid starting with index 1
+                        index = index - 1 # Subtract 1 to get 0 based position
+                        return var[2][index]
+            else:
+                return var # For non arrays
+
 
     def getType(self, var):
         if var not in self.variables.keys():

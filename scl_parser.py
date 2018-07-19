@@ -36,12 +36,12 @@ scanner = Scanner(sys.argv[1])
 # This method of error checking allows to catch each individual error without it crashing the entire system.
 def parse():
     scanner.start()
-
-
+    
+    #node = pcondition()
     node = Node('Program')
-    # node.children.append(func_main())
-    # node.children.append(f_globals())
-    # node.children.append(implement())
+    node.children.append(func_main())
+    node.children.append(f_globals())
+    node.children.append(implement())
     return node
 
     # lex_list = ['Program']
@@ -81,7 +81,7 @@ def func_main():
             scanner.next()
         else:
             # Append error message if case specific grammar not found
-            lex_list.append(['\tError: Identifer was expected'])
+            error('IDENTIFIER', 'func_main')
         if(scanner.lex[lex_en['value']] == 'RETURN'):
             scanner.next()
         else:
@@ -154,7 +154,7 @@ def data_declaration():
         scanner.next()
     else:
         error('IDENTIFIER', 'data_declaration')
-    # node.children.append(parray_dec())
+    node.children.append(parray_dec())
     if(scanner.lex[lex_en['value']] == 'OF'):
         scanner.next()
     else:

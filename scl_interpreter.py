@@ -3,8 +3,8 @@ import scl_var_table
 # declare globals
 global_vars = scl_var_table.VarTable()
 main_vars = scl_var_table.VarTable()
-isGlobal = False
 isConst = False
+currentTable = None
 breakCalled = False
 
 
@@ -15,32 +15,28 @@ def error(msg, location = ''):
         print('Interpreter error: {} in {}'.format(msg, location))
     exit()
 
-# scope management functions
-# currently only global scope and main function scope
-# get a value from the variable table
-def lookup(var_name):
+def lookup(var_name, arr_pos = 0):
     global global_vars
-    global main_vars
+    global currentTable
+    
     if var_name[0] == '\"':
         return var_name
 
-    if main_vars.isDeclared(var_name):
-        return main_vars.getValue(var_name)
-    if global_vars.isDeclared(var_name):
-        return global_vars.getValue(var_name)
+    if currentTable is not None:
+        if currentTable.isDeclared(var_name):
+            return currentTable.getValue(var_name, arr_pos)
+        if global_vars.isDeclared(var_name):
+            return global_vars.isDeclared(var_name)
+    elif global_vars.isDeclared(var_name):
+        return global_vars.getValue(var_name, arr_pos)
     else:
         error('variable {} is undeclared and cannnot be looked up'.format(var_name), 'lookup')
 
 #declare a variable
 def declare(name, var_type):
-    global global_vars
-    global main_vars
-    global isGlobal
+    global currentTable
     global isConst
-    if isGlobal:
-        global_vars.declare(name, var_type, isConst)
-    else:
-        main_vars.declare(name, var_type, isConst)
+    currentTable.declare(name, var_type, isConst)
 
 #assign a variable a value
 def assign(name, value):
@@ -73,22 +69,32 @@ def processNode(node):
         node = funct(node)
     return node
 
-# Expected structure:
-# Type: f_globals
-# Children: const_var_struct
-def f_f_globals(node):
-    global isGlobal
-    isGlobal = True #set flag telling child nodes to declare variables as global
-    print(node.children)
-    processNode(node.children[0])
-    isGlobal = False #unset flag
 
-# Expected structure:
-# Type: const_var_struct
-# Children: const_dec var_dec
-def f_const_var_struct(node):
+
+# Expected Structure:
+# Type program
+# Children: func_main, f_globals, implement
+def program(node):
     processNode(node.children[0])
     processNode(node.children[1])
+    processNode(node.children[2])
+
+# Expected Structure:
+# Type func_main
+# Children: none
+def func_main(node):
+    #func_main should already be verified by the parser and does not do anything
+    return
+
+# Expected Structure:
+# Type f_globals
+# Children: const_dec, var_dec
+def f_f_globals(node):
+    global currentTable
+    global global_vars
+    currentTable = global_vars # switch to global scope
+    processNode(node.children[0])
+    currentTable = main_vars #switch to main function scope
 
 # Expected structure:
 # Type: const_dec
@@ -100,8 +106,8 @@ def f_const_dec(node):
         processNode(node.children[0])
         isConst = False #unset flag
 
-# Expected structure:
-# Type: var_dec
+# Expected Structure:
+# Type var_dec
 # Children: data_declarations
 def f_var_dec(node):
     processNode(node.children[0])
@@ -113,12 +119,73 @@ def f_data_declarations(node):
     for child in node.children:
         processNode(child)
 
-# Expected structure:
+# Expected Structure:
 # Type: data_declaration
-# Children: IDENTIFIER, data_type
+# Children: 
 def f_data_declaration(node):
-    data_type = processNode(node.children[1])
-    declare(node.children[0], data_type)
+    global currentTable # Table to append to
+    val = node.children[0] # name of variable
+    arrayness = processNode(node.children[1]) # Size of variable (if it is an array or not) NOTE: Lookup will need to be changed to support this
+    data_type = processNode(node.children[2]) # Data type of variable; currently no type checking
+    declare(val, data_type) # Append variable to proper table
+    
+
+# Expected Structure:
+# Type array_dec
+# Children: plist_const, popt_array_val  
+def f_parray_dec(node):
+    #size = processNode(node.children[0]) # Get size of array from plist_const
+    # contents = processNode(node.children[1]) # Get contents of array from popt_array_val
+    # if len(contents) <= len(size): # Fill array
+    #     for count in range(0, len(contents)):
+    #         size[count] = contents[count]
+    # else:
+    #     error('parameters is too big for plist')
+    # return size
+    return
+
+# STRUCTURE
+# Type f_plist_const
+# Children: IDs
+
+def f_plist_const(node):
+    dimensions = [] # All of the elements in the array
+    total_num = 1 # Initial size
+    dimension_lim = []
+    for x in range(len(node.children)):
+        c_id = node.children[x]
+        if isinstance(c_id, str):
+            c_id = lookup(c_id)
+        dimension_lim.append(c_id)
+        total_num = c_id * total_num # Find the total number of locations in the array by multiplying all the dimensions
+    for a in range (0,total_num):
+        dimensions.append(0) # Fill dimensions with the number of items (when accessed, the dimension numbers will be multiplied together to reach the index)
+    if len(dimensions) == 0:
+        dimensions = 0
+        return dimensions
+    return [len(node.children),dimension_lim,dimensions] # The length of the children is used to see how many dimensions there are. I.E. array int[5][6]; array[24] would be wrong
+
+# STRUCTURE
+# Type popt_array_val
+# Children: Expressions
+
+def f_popt_array_val(node):
+    expressions = []
+    temp = 0
+    for expr in node.children: # evaluate all expressions
+        temp = processNode(expr)
+        if isinstance(str, temp): # lookup expression if it is identifier
+            temp = lookup(temp)
+        expressions.append(temp) # add it to list
+    return expressions
+
+# Expected structure:
+# Type: const_var_struct
+# Children: const_dec var_dec
+def f_const_var_struct(node):
+    processNode(node.children[0])
+    processNode(node.children[1])
+
 
 # Expected structure:
 # Type: data_type
@@ -560,12 +627,15 @@ interpreterDict = {
     'MEXIT' : f_mexit,
     'F_GLOBALS' : f_f_globals,
     'CONST_VAR_STRUCT' : f_const_var_struct,
+    'PROGRAM' : program,
     'CONST_DEC' : f_const_dec,
     'VAR_DEC' : f_var_dec,
     'DATA_DECLARATIONS' : f_data_declarations,
     'DATA_DECLARATION' : f_data_declaration,
+    'PARRAY_DEC' : f_parray_dec,
+    'PLIST_CONST' : f_plist_const,
+    'POPT_ARRAY_VAL' : f_popt_array_val,
     'DATA_TYPE' : f_data_type
-
 }
 
 #     'INCREMENT'
@@ -576,7 +646,6 @@ interpreterDict = {
 #     'CASE'
 #     'REPEATLOOP'
 #     'func_main'
-
 #     'implement'
 #     'funct_list'
 #     'pother_oper_def'

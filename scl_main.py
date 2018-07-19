@@ -16,8 +16,9 @@ def main():
     lex_tree = scl_parser.parse()
     print('\n**************PARSER OUTPUT***************\n')
     print(printTree(lex_tree))
-    out = scl_interpreter.processNode(lex_tree)
+    
     print('\n***********INTERPRETER OUTPUT*************\n')
+    out = scl_interpreter.processNode(lex_tree)
     # result = convertToTree(lex_tree)
     # # No longer doing this (was for part 2)
     # if len(sys.argv) > 2:
@@ -43,7 +44,9 @@ def printTree(tree, tab = 0, out_string = ''):
     if isinstance(tree, str):
         out_string = out_string + returnTabs(tab) + tree + '\n'
         return out_string
-    
+    elif isinstance(tree, int):
+        out_string = out_string + returnTabs(tab) + str(tree) + '\n'
+        return out_string
     elif isinstance(tree,list):
         print(tree)
 
