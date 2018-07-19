@@ -37,8 +37,8 @@ scanner = Scanner(sys.argv[1])
 def parse():
     scanner.start()
 
-    node = pcondition()
-    # node = Node('Program')
+
+    node = Node('Program')
     # node.children.append(func_main())
     # node.children.append(f_globals())
     # node.children.append(implement())
@@ -97,7 +97,7 @@ def func_main():
     return node
 
 # CASE: globals
-# GRAMMAR: globals ::= [GLOBAL DECLARATIONS const_dec var_dec]
+# GRAMMAR: globals ::= [GLOBAL DECLARATIONS const_var_struct]
 # named f_globals() instead of globals() due to name conflicts
 def f_globals():
     node = Node('f_globals')
@@ -107,8 +107,7 @@ def f_globals():
             scanner.next()
         else:
             error('DECLARATIONS', 'f_globals')
-        node.children.append(const_dec())
-        node.children.append(var_dec())
+        node.children.append(const_var_struct())
     return node
 
 # CASE: const_dec
@@ -155,7 +154,7 @@ def data_declaration():
         scanner.next()
     else:
         error('IDENTIFIER', 'data_declaration')
-    node.children.append(parray_dec())
+    # node.children.append(parray_dec())
     if(scanner.lex[lex_en['value']] == 'OF'):
         scanner.next()
     else:
@@ -525,13 +524,8 @@ def pother_oper_def():
 def const_var_struct():
     # Append function header to output list
     node = Node('const_var_struct')
-    if(scanner.lex[lex_en['value']] == 'CONSTANTS'):
-        node.children.append(const_dec())
-    if(scanner.lex[lex_en['value']] == 'VARIABLES'):
-         node.children.append(var_dec())
-    else:
-        # Append error message if case specific grammar not found
-        error('VARIABLES', 'const_var_struct')
+    node.children.append(const_dec())
+    node.children.append(var_dec())
     return node
 
 #CASE pcondition

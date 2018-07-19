@@ -1,12 +1,14 @@
 class Variable:
-    def __init__(self, var_type, var_value, var_is_const, var_is_global):
+    def __init__(self, var_type, var_value, var_is_const):
         self.type = var_type
         self.value = var_value
         self.is_const = var_is_const
-        self.is_global = var_is_global
         
     def __str__(self):
-        return 'Variable type: {} value: {} is_const: {} is_global: {}'.format(self.type, self.value, self.is_const, self.is_global)
+        if self.value is not None:
+            return 'Variable type: {} value: {} is_const: {}'.format(self.type, self.value, self.is_const)
+        else:
+            return 'Variable type: {} value: None is_const: {}'.format(self.type, self.is_const)
 
 
 class VarTable:
@@ -19,12 +21,12 @@ class VarTable:
         else:
             return False
 
-    def declare(self, var, var_type, is_global = False, is_const = False, value = None):
+    def declare(self, var, var_type, is_const = False, value = None):
         if var in self.variables.keys():
             print("Error in declare(): variable {} has already been declared".format(var))
             exit()
         else:
-            self.variables[var] = Variable(var_type, value, is_global, is_const)
+            self.variables[var] = Variable(var_type, value, is_const)
 
     def assign(self, var, value):
         if var not in self.variables.keys():
@@ -48,5 +50,10 @@ class VarTable:
             return self.variables[var].type
 
     def __str__(self):
-        return str(self.variables)
+        out = ''
+        for name in self.variables:
+            out = out + 'Name: {} {}\n'.format(name, self.variables[name])
+        return out
+
+
 

@@ -1,6 +1,6 @@
 func_main ::= FUNCTION IDENTIFIER RETURN MVOID
                   | MAIN
-globals ::= [GLOBAL DECLARATIONS const_dec var_dec]
+globals ::= [GLOBAL DECLARATIONS const_var_struct]
 const_var_struct ::= const_dec var_dec
 const_dec ::= [CONSTANTS data_declarations]
 var_dec ::= VARIABLES data_declarations

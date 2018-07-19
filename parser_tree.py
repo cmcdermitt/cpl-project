@@ -1,5 +1,3 @@
-terminal_types = ['ICON', 'FCON', 'HCON', 'IDENTIFIER'] #COMPLETE LATER
-
 class Node:
 
     def __init__ (self, in_type, in_value = None):
@@ -23,4 +21,7 @@ class Node:
             if child.type == in_type:
                 targets.append(child)
         return targets
+
+    def __str__(self):
+        return 'Node type: {} value: {}'.format(self.type, self.value)
 
