@@ -16,6 +16,8 @@ def error(msg, location = ''):
     exit()
 
 def lookup(var_name, local_scope = None):
+    global global_vars
+    global main_vars
     if var_name[0] == '\"':
         return var_name
 
@@ -52,6 +54,8 @@ def processNode(node):
 # Type: INPUT
 # Children: IDENTIFIER
 def f_input(node):
+    global global_vars
+    global main_vars
     # Get associated identifier
     inputValue = node.children[0]
     # Add identifier to variable table
@@ -433,6 +437,14 @@ def f_negate(node):
 def f_icon(node):
     return int(node.value)
 
+def f_hcon(node):
+    string = node.value
+    string = string[:1] + 'x' + string[1:len(string) - 1] #adds x to 0x prefix and strips h suffix
+    return int(node.value, 16)
+
+def f_fcon(node):
+    return float(node.value)
+
 # def arg_list(node):
 #     for child in node.children:
 #         if child is nodes
@@ -440,8 +452,10 @@ def f_icon(node):
 # Expected structure:
 # Type: pcase_def
 # Children: pactions
-def f_pcase_def():
+def f_pcase_def(node):
     processNode(node.children[0])
+
+
 
 
 
