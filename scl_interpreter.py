@@ -41,6 +41,8 @@ def lookup(var_name, local_scope = None):
 def processNode(node):
     print('processing {} node {}'.format(node.type, node.value))
     nodeType = node.type.upper()
+    if node.type.upper() == 'KEYWORD':
+        nodeType = node.value.upper() #for MTRUE and MFALSE
     if nodeType in interpreterDict:
         funct = interpreterDict[nodeType]
         node = funct(node)
