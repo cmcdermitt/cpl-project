@@ -786,6 +786,7 @@ def action_def():
             error('expr keyword', 'action_def')
 
         if scanner.lex[lex_en['value']] == 'DOWNTO' or scanner.lex[lex_en['value']] == 'TO':
+            node.children.append(Node(scanner.lex[lex_en['value']], 'KEYWORD'))
             scanner.next()
 
         if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
