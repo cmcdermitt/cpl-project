@@ -4,6 +4,7 @@ import scl_var_table
 
 global_vars = scl_var_table.VarTable()
 main_vars = scl_var_table.VarTable()
+relevantVarTable = None
 controlHeads = []
 breakCalled = False
 
@@ -15,17 +16,19 @@ def error(msg, location = ''):
         print('Interpreter error: {} in {}'.format(msg, location))
     exit()
 
-def lookup(var_name, local_scope = None):
+def lookup(var_name, arr_pos = 0 ,local_scope = None):
     if var_name[0] == '\"':
         return var_name
 
+    
+
     if local_scope is not None:
         if local_scope.isDeclared(var_name):
-            return local_scope.getValue(var_name)
+            return local_scope.getValue(var_name, arr_pos)
         if global_vars.isDeclared(var_name):
             return global_vars.isDeclared(var_name)
     elif global_vars.isDeclared(var_name):
-        return global_vars.getValue(var_name)
+        return global_vars.getValue(var_name, arr_pos)
     else:
         error('variable {} is undeclared and cannnot be looked up'.format(var_name), 'lookup')
 
@@ -431,6 +434,122 @@ def f_negate(node):
 def f_icon(node):
     return int(node.value)
 
+# Expected Structure:
+# Type program
+# Children: func_main, f_globals, implement
+def program(node):
+    processNode(node.children[0])
+    processNode(node.children[1])
+    processNode(node.children[2])
+
+# Expected Structure:
+# Type func_main
+# Children: none
+def func_main(node):
+    #func_main should already be verified by the parser and does not do anythign
+    return
+
+# Expected Structure:
+# Type f_globals
+# Children: const_dec, var_dec
+def f_globals(node):
+    global relevantVarTable
+    global global_vars
+    relevantVarTable = global_vars # Set global table to current "relevant table" This way data_declaration knows what table to append to 
+    relevantVarTable
+    processNode(node.children[0])
+    processNode(node.children[1])
+
+# Expected Structure:
+# Type const_dec
+# Children: data_declarations
+def f_const_dec(node):
+    if len(node.children):
+        processNode(node.children[0])
+
+# Expected Structure:
+# Type var_dec
+# Children: data_declarations
+def f_var_dec(node):
+    processNode(node.children[0])
+
+# Expected Structure:
+# Type data_declarations
+# Children: list of data_declaration
+def f_data_declarations(node):
+    for n in node.children:
+        processNode(n)
+
+# Expected Structure:
+# Type less_or_equal
+# Children: expr, expr
+def f_data_declaration(node):
+    global relevantVarTable # Table to append to
+    val = node.children[0] # name of variable
+    p_dec = processNode(node.children[1]) # Size of variable (if it is an array or not) NOTE: Lookup will need to be changed to support this
+    data_type = processNode(node.children[2]) # Data type of variable; currently no type checking
+    relevantVarTable.declare(val,data_type,False,False,p_dec) # Append variable to proper table
+    
+
+# Expected Structure:
+# Type array_dec
+# Children: plist, popt_array  
+def f_parray_dec(node):
+    plist = 0 # plist is initialized to 1 as it might be empty 
+    if len(node.children) == 2:
+        plist = processNode(node.children[0]) # Get plist (size of array)
+        popt = processNode(node.children[1]) # Get popt (contents of array)
+        if len(popt) <= len(plist): # Fill array
+            for count in range(0, len(popt)):
+                plist[count] = popt[count]
+        else:
+            error('parameters is too big for plist')
+    return plist
+
+# STRUCTURE
+# Type f_plist_const
+# Children: IDs
+
+def f_plist_const(node):
+    dimensions = [] # All of the elements in the array
+    total_num = 1 # Initial size
+    dimension_lim = []
+    for x in range(len(node.children)):
+        c_id = node.children[x]
+        if isinstance(c_id, str):
+            c_id = lookup(c_id)
+        dimension_lim.append(c_id)
+        total_num = c_id * total_num # Find the total number of locations in the array by multiplying all the dimensions
+    for a in range (0,total_num):
+        dimensions.append(0) # Fill dimensions with the number of items (when accessed, the dimension numbers will be multiplied together to reach the index)
+    if len(dimensions) == 0:
+        dimensions = 0
+        return dimensions
+    return [len(node.children),dimension_lim,dimensions] # The length of the children is used to see how many dimensions there are. I.E. array int[5][6]; array[24] would be wrong
+
+# STRUCTURE
+# Type popt_array_val
+# Children: Expressions
+
+def f_popt_array_val(node):
+    expressions = []
+    temp = 0
+    for expr in node.children: # evaluate all expressions
+        temp = processNode(expr)
+        if isinstance(str, temp): # lookup expression if it is identifier
+            temp = lookup(temp)
+        expressions.append(temp) # add it to list
+    return expressions
+
+# STRUCTURE
+# Type data_type
+# Children type
+
+def f_data_type(node):
+    return node.children[0]
+                
+       
+         
 # def arg_list(node):
 #     for child in node.children:
 #         if child is nodes
@@ -438,7 +557,7 @@ def f_icon(node):
 # Expected structure:
 # Type: pcase_def
 # Children: pactions
-def f_pcase_def():
+def f_pcase_def(node):
     processNode(node.children[0])
 
 
@@ -467,7 +586,17 @@ interpreterDict = {
     'AND' : f_and,
     'OR' : f_or,
     'NOT' : f_not,
-    'ICON' : f_icon
+    'ICON' : f_icon,
+    'PROGRAM' : program,
+    'F_GLOBALS' : f_globals,
+    'CONST_DEC' : f_const_dec,
+    'VAR_DEC' : f_var_dec,
+    'DATA_DECLARATIONS' : f_data_declarations,
+    'DATA_DECLARATION' : f_data_declaration,
+    'PARRAY_DEC' : f_parray_dec,
+    'PLIST_CONST' : f_plist_const,
+    'POPT_ARRAY_VAL' : f_popt_array_val,
+    'DATA_TYPE' : f_data_type
 }
 
 #     'DISPLAY'
@@ -502,7 +631,7 @@ interpreterDict = {
 #     'RSHIFT'
 #     'NEGATE'
 #     'func_main'
-#     'f_globals'
+#     ''
 #     'const_var_struct'
 #     'const_dec'
 #     'var_dec'

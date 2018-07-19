@@ -14,7 +14,7 @@ import scl_interpreter
 
 def main():
     lex_tree = scl_parser.parse()
-    print(printTree(lex_tree))
+    #print(printTree(lex_tree))
     out = scl_interpreter.processNode(lex_tree)
     print(out)
     # result = convertToTree(lex_tree)

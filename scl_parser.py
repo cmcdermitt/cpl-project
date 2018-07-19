@@ -37,11 +37,11 @@ scanner = Scanner(sys.argv[1])
 def parse():
     scanner.start()
 
-    node = pcondition()
-    # node = Node('Program')
-    # node.children.append(func_main())
-    # node.children.append(f_globals())
-    # node.children.append(implement())
+    #node = pcondition()
+    node = Node('Program')
+    node.children.append(func_main())
+    node.children.append(f_globals())
+    node.children.append(implement())
     return node
 
     # lex_list = ['Program']

@@ -189,7 +189,7 @@ def processNumeric(line):
 
     if(currentChar.isalpha()): #return an error if there's a letter
         lex_type = error
-    return [token, lex_type]
+    return [int(token), lex_type]
 
 # Name processQuotes
 # Summary: Processes a string at the index charNumber in a line_table
