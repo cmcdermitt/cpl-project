@@ -718,8 +718,7 @@ def action_def():
             # Append error message if case specific grammar not found
              error('THEN', 'action_def')
         node.children.append(pactions())
-        if scanner.lex[lex_en['value']] == 'ELSEIF':
-            node.children.append(ptest_elsif())
+        node.children.append(ptest_elsif())
         if scanner.lex[lex_en['value']] == 'ELSE':
             scanner.next()
             node.children.append(pactions())

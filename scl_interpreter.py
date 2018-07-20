@@ -334,7 +334,7 @@ def f_ifelse(node):
         processNode(node.children[1])
         return node
     else:
-        elseRun = not processNode(node.children[2])
+        elseRun = not processNode(node.children[2]) and len(node.children) == 4 # Check if else stmt exists
     if elseRun == True:
         elseRun = False
         processNode(node.children[3])
@@ -344,6 +344,7 @@ def f_ifelse(node):
 # Type: ptest_elsif
 # Children: pcondition, pactions
 def f_ptest_elsif(node):
+    cond = False
     for i in range(0, len(node.children), 2):
         cond = processNode(node.children[i])
         if cond == True:
