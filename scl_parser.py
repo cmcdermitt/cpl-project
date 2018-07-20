@@ -709,7 +709,7 @@ def action_def():
         node.children.append(pusing_ref())
     # Following 'IF' path
     elif scanner.lex[lex_en['value']] == 'IF':
-        node = Node(scanner.lex[lex_en['value']])
+        node = Node('IFELSE')
         scanner.next()
         node.children.append(pcondition())
         if scanner.lex[lex_en['value']] == 'THEN':

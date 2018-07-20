@@ -334,7 +334,7 @@ def f_ifelse(node):
         processNode(node.children[1])
         return node
     else:
-        processNode(node.children[2])
+        elseRun = not processNode(node.children[2])
     if elseRun == True:
         elseRun = False
         processNode(node.children[3])
@@ -348,8 +348,7 @@ def f_ptest_elsif(node):
         cond = processNode(node.children[i])
         if cond == True:
             processNode(node.children[i + 1])
-            return pactionsResult
-    return node
+    return cond
 
 # Expected Structure:
 # Type: FOR
