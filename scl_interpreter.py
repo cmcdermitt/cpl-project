@@ -200,12 +200,43 @@ def f_const_var_struct(node):
     processNode(node.children[0])
     processNode(node.children[1])
 
-
 # Expected structure:
 # Type: data_type
 # Children: keyword
 def f_data_type(node):
     return node.value
+
+# Expected Structure:
+# Type: pcase_val
+# Children: expr, pactions {expr, pactions}
+# Parameters: identifier tuple with type and value, and pcase_val node
+# Returns: pactions result for the evaluated expr
+def f_pcase_val(identifier, node):
+    global breakCalled
+    # Value of identifier parameter will be our case to check against
+    caseCheck = identifier
+    # Set empty placeholder for returning if no case executes
+    pactionsResult = "Empty"
+    # iterate through node expression children only
+    # evaluate pactions call associated with index
+    for i in range(0, len(node.children), 2):
+        exprResult = processNode(node.children[i])
+        # Check identifier case against expression value
+        if exprResult == caseCheck:
+            pactionsResult = processNode(node.children[i+1])
+            node = pactionsResult
+            if breakCalled:
+                return node
+    node = pactionsResult
+    return node
+
+# Expected structure
+# Type: pcase_def
+# Children: pactions
+# Returns: default pactions result
+def f_pcase_def(node):
+    node = processNode(node)
+    return node
 
 # Begin action_def functions
 # Expected Structure
@@ -284,7 +315,7 @@ def f_if(node):
     if tempNode == "Empty":
         tempNode = processNode(tempNode.children[3])
     node = tempNode
-    return tempNode
+    return node
 
 # Expected Structure:
 # Type: ptest_elsif
@@ -296,7 +327,9 @@ def ptest_elsif(node):
         cond = processNode(node.children[i])
         if cond == True:
             pactionsResult = processNode(node.children[i + 1])
+            node = pactionsResult
             return pactionsResult
+    node = pactionsResult
     return pactionsResult
 
 # Expected Structure:
@@ -384,8 +417,6 @@ def f_while(node):
         cond = processNode(node.children[1])
     return node
 
-
-
 # Expected Structure:
 # Type: CASE
 # Children: namer_ref, pcase_val, pcase_def
@@ -394,11 +425,10 @@ def f_case(node):
     nodeType = node.type
     # Get IDENTIFIER from name_ref
     nodeId = processNode(node.children[0])
-    identifier = ("typePlaceholder", nodeId.children[0])
     tempNode = node
-    tempNode = pcase_val(identifier, tempNode.children[1])
+    tempNode = f_pcase_val(nodeId, tempNode.children[1])
     if tempNode == "Empty":
-        tempNode = pcase_def(identifier, tempNode.children[2])
+        tempNode = f_pcase_def(tempNode.children[2])
     node = tempNode
     return node
 
@@ -423,36 +453,6 @@ def f_mexit(node):
 def name_ref(node):
     # Get nodeType for sentence output
     return processNode(node.children[0])
-
-# Expected Structure:
-# Type: pcase_val
-# Children: expr, pactions {expr, pactions}
-# Parameters: identifier tuple with type and value, and pcase_val node
-# Returns: pactions result for the evaluated expr
-def pcase_val(identifier, node):
-    global breakCalled
-    # Value of identifier parameter will be our case to check against
-    caseCheck = identifier[1]
-    # Set empty placeholder for returning if no case executes
-    pactionResult = "Empty"
-    # iterate through node expression children only
-    # evaluate pactions call associated with index
-    for i in range(0, len(node.children), 2):
-        exprResult = processNode(node.children[i])
-        # Check identifier case against expression value
-        if exprResult == caseCheck:
-            pactionsResult = processNode(node.children[i+1])
-            if breakCalled:
-                return pactionsResult
-    return pactionsResult
-
-# Expected structure
-# Type: pcase_def
-# Children: pactions
-# Returns: default pactions result
-def pcase_def(node):
-    p = processNode(node)
-    return p
 
 # Expected Structure:
 # Type: CALL
@@ -693,15 +693,6 @@ def f_hcon(node):
 
 def f_fcon(node):
     return float(node.value)
-
-# Expected structure:
-# Type: pcase_def
-# Children: pactions
-def f_pcase_def(node):
-    processNode(node.children[0])
-
-
-
 
 #dictionary associating node types with functions
 interpreterDict = {
