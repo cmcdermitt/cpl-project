@@ -774,17 +774,17 @@ interpreterDict = {
     'WHILELOOP' : f_while,
     'CASE' : f_case,
     'REPEATLOOP' : f_repeat,
-    'pcase_val' : f_pcase_val,
-    'pcase_def' : f_pcase_def,
-    'name_ref' : f_name_ref,
-    'pactions' : f_pactions,
-    'ptest_elsif' : f_ptest_elsif
+    'PCASE_VAL' : f_pcase_val,
+    'PCASE_DEF' : f_pcase_def,
+    'NAME_REF' : f_name_ref,
+    'PACTIONS' : f_pactions,
+    'PTEST_ELSIF' : f_ptest_elsif,
+    'IMPLEMENT' : f_implement,
+    'FUNC_MAIN' : f_func_main,
+    'FUNCT_LIST' : f_funct_list,
+    'POTHER_OPER_DEF' : f_pother_oper_def,
+    'PARAMETERS' : f_parameters
 }
-
-#     'func_main'
-#     'implement'
-#     'funct_list'
-#     'pother_oper_def'
 
 #for functions:
 #     'arg_list'

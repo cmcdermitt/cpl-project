@@ -415,36 +415,10 @@ def implement():
         scanner.next()
     else:
         error('IMPLEMENTATIONS', 'implement')
-    if scanner.lex[lex_en['value']] == 'MAIN':
-        scanner.next()
-        if scanner.lex[lex_en['value']] == 'DESCRIPTION':
-            scanner.next()
-            node.children.append(parameters())
-        else:
-            error('DESCRIPTION', 'implement')
+        
+    node.children.append(parameters())
     node.children.append(funct_list())
     return node
-
-# CASE: main_head
-# GRAMMAR: main_head ::=
-#						| MAIN DESCRIPTION parameters
-# NOTE: Blank line in first line interpreted as optional value
-def main_head():
-    # Append function header to output list
-    lex_list = ['main_head']
-    if scanner.lex[lex_en['value']] == 'MAIN':
-        lex_list.append(tuple(scanner.lex))
-        scanner.next()
-    else:
-        return lex_list
-    if scanner.lex[lex_en['value']] == 'DESCRIPTION':
-        lex_list.append(tuple(scanner.lex))
-        scanner.next()
-    else:
-        # Append error message if case specific grammar not found
-        lex_list.append(error('DESCRIPTION','main_head'))
-    lex_list.append(parameters())
-    return lex_list
 
 # CASE: parameters
 # GRAMMAR: parameters ::= [PARAMETERS data_declaration {COMMA data_declaration}]
@@ -457,14 +431,6 @@ def parameters():
             scanner.next()
             node.children.append(data_declaration())
     return node
-
-# CASE: param_def
-# GRAMMAR: param_def ::= data_declaration
-def param_def():
-    # Append function header to output list
-    lex_list = ['param_def']
-    lex_list.append(data_declaration())
-    return lex_list
 
 # CASE: funct_list
 # GRAMMAR: funct_list ::= FUNCTION pother_oper_def { FUNCTION pother_oper_def }
@@ -502,7 +468,8 @@ def pother_oper_def():
     else:
         error('IS', 'pother_oper_def')
 
-    node.children.append(const_var_struct())
+    if scanner.lex[lex_en['value']] == 'CONSTANTS' or scanner.lex[lex_en['value']] == 'VARIABLES':
+        node.children.append(const_var_struct())
 
     if scanner.lex[lex_en['value']] == 'BEGIN':
         scanner.next()
