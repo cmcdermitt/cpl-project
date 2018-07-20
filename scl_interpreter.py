@@ -6,6 +6,7 @@ functionNames = []
 isConst = False
 currentTable = None
 breakCalled = False
+elseRun = False
 
 def error(msg, location = ''):
     if location == '':
@@ -51,7 +52,13 @@ def declare(name, var_type):
 #assign a variable a value
 def assign(name, value):
     global currentTable
-    currentTable.assign(name, value)
+    if currentTable is not None:
+        if currentTable.isDeclared(name):
+            currentTable.assign(name, value)
+        else:
+            global_vars.assign(name, value)
+    else:
+        currentTable.assign(name, value)
 
 # Get the type of what's stored in a name_ref ID, or data node
 def getType (node):
@@ -62,6 +69,15 @@ def getType (node):
         var = node.value
         return lookupType(var) # return the type of the value associated with the variable
     return node.type
+
+# Get the ID value name of a name_ref or identifier node
+def getName (node):
+    if node.type == 'name_ref':
+        return node.children[0].value
+    if node.type == 'IDENTIFIER':
+        return node.value
+    else:
+        error('getName only takes name_ref or IDENTIFER nodes, not {}'.format(node.type))
 
 # Main interpreter function
 # Name: processNode(node)
@@ -100,9 +116,10 @@ def f_func_main(node):
 
 # Expected Structure:
 # Type: implement
-# Children: funct_list
+# Children: parameters, funct_list
 def f_implement(node):
     processNode(node.children[0])
+    processNode(node.children[1])
     return node
 
 # Expected Structure
@@ -117,26 +134,23 @@ def f_funct_list(node):
 # Type: pother_oper_def
 # Children: parameters, [const_var_struct], pactions
 def f_pother_oper_def(node):
-    if len(node.children) == 2:
-        # Does not have const_var_struct
-        # Process parameters
-        processNode(node.children[0])
-        # Process pactions
-        processNode(node.children[1])
+    if node.children[0].type == 'IDENTIFIER':
+        iden = node.children[0].value
+    processNode(node.children[1])
+    processNode(node.children[2])
+    if (node.children[2].type == 'const_var_struct'):
+        processNode(node.children[3])
+        if node.children[4].value != iden:
+            error('ENDFUN with correct function not found')
     else:
-        # Has all three children
-        # Process parameters
-        processNode(node.children[0])
-        # Process const_var_struct
-        processNode(node.children[1])
-        # Process pactions
-        processNode(node.children[0])
+        if node.children[3].value != iden:
+            error('ENDFUN with correct function not found')
     return node
 
 # Expected Structure
 # Type: parameters
 # Children: [data_declaration, {data_declaration}]
-def parameters(node):
+def f_parameters(node):
     for dec in node.children:
         processNode(dec)
     return node
@@ -179,10 +193,9 @@ def f_data_declarations(node):
 # Children: 
 def f_data_declaration(node):
     global currentTable # Table to append to
-    val = node.children[0] # name of variable
     arrayness = processNode(node.children[1]) # Size of variable (if it is an array or not) NOTE: Lookup will need to be changed to support this
     data_type = processNode(node.children[2]) # Data type of variable; currently no type checking
-    declare(val, data_type) # Append variable to proper table
+    declare(getName(node.children[0]), data_type) # Append variable to proper table
 
 # Expected Structure:
 # Type array_dec
@@ -254,13 +267,11 @@ def f_pactions(node):
 # Type: SET
 # Children: name_ref, expr
 def f_set(node):
-    # Get node type for sentence output
-    nodeType = node.type
     # Get identifier tuple
-    identifier = processNode(node.children[0])
+    identifier = getName(node.children[0])
     exprValue = processNode(node.children[1])
     # Set identifier equal to exprValue
-    main_vars.assign(identifier, exprValue)
+    assign(identifier, exprValue)
     return node
 
 # Expected Structure:
@@ -272,9 +283,9 @@ def f_input(node):
     # Get input
     input_val = input('Enter input:')
     # Add identifier to variable table
-    assign(processNode(node.children[0]), input_val)
+    assign(getName(node.children[0]), input_val)
     # output results
-    print('Variable ' + node.children[0] + ' was assigned')
+    print('Variable ' + getName(node.children[0]) + ' was assigned')
     # Return node to processNode
     return node
 
@@ -283,7 +294,7 @@ def f_input(node):
 # Children: IDENTIFIER
 def f_display(node):
     #print the value of the IDENTIFIER's variable
-    print(lookup(processNode(node.children[0])))
+    print(processNode(node.children[0]))
     return node
 
 # Expected Structure:
@@ -291,12 +302,12 @@ def f_display(node):
 # Children: name_ref => IDENTIFIER
 def f_increment(node):
     # Get IDENTIFIER variable
-    var = processNode(node.children[0])
+    var = getName(node.children[0])
     # Get value
-    val = main_vars.getValue(var)
+    val = lookup(var)
     # Increment and assign
     val = val + 1
-    main_vars.assign(var, val)
+    assign(var, val)
     return node
 
 # Expected Structure:
@@ -304,27 +315,28 @@ def f_increment(node):
 # Children: name_ref => IDENTIFIER
 def f_decrement(node):
     # Get IDENTIFIER variable
-    var = processNode(node.children[0])
+    var = getName(node.children[0])
     # Get value
-    val = main_vars.getValue(var)
-    # Decrement and assign
+    val = lookup(var)
+    # Increment and assign
+    print(val)
+    print(var)
     val = val - 1
-    main_vars.assign(var.value, val)
+    assign(var, val)
     return node
 
 # Expected Structure:
 # Type: IFELSE
 # Children: pcondition, pactions, ptest_elsif, {pactions}
 def f_ifelse(node):
-    global breakCalled
-    conditional = processNode(node.children[0])
-    if conditional == True:
+    global elseRun
+    if processNode(node.children[0]):
         processNode(node.children[1])
         return node
     else:
         processNode(node.children[2])
-    if breakCalled == True:
-        breakCalled = False
+    if elseRun == True:
+        elseRun = False
         processNode(node.children[3])
     return node
 
@@ -783,7 +795,8 @@ interpreterDict = {
     'FUNC_MAIN' : f_func_main,
     'FUNCT_LIST' : f_funct_list,
     'POTHER_OPER_DEF' : f_pother_oper_def,
-    'PARAMETERS' : f_parameters
+    'PARAMETERS' : f_parameters,
+    'SET' : f_set
 }
 
 #for functions:

@@ -442,7 +442,7 @@ def funct_list():
             scanner.next()
             node.children.append(pother_oper_def())
     else:
-        error('FUNCTION', 'pother_oper_def')
+        error('FUNCTION', 'funct_list')
     return node
 
 # CASE: pother_oper_def
@@ -450,11 +450,11 @@ def funct_list():
 def pother_oper_def():
     # Append function header to output list
     node = Node('pother_oper_def')
-    if scanner.lex[lex_en['type']] == 'IDENTIFIER':
+    if scanner.lex[lex_en['type']] == 'IDENTIFIER' or scanner.lex[lex_en['value']] == 'MAIN':
         node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
         scanner.next()
     else:
-        error('IDENTIFIER', 'pother_oper_def')
+        error('IDENTIFIER or MAIN', 'pother_oper_def')
 
     if scanner.lex[lex_en['value']] == 'DESCRIPTION':
         scanner.next()
@@ -673,11 +673,12 @@ def action_def():
     elif (scanner.lex[lex_en['value']] == 'DISPLAY'):
         node = Node(scanner.lex[lex_en['value']])
         scanner.next()
-        if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
-            node.children.append(arg_list())
+        if scanner.lex[lex_en['type']] == 'IDENTIFIER':
+            node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
+            scanner.next()
         else:
             # Append error message if case specific grammar not found
-            error('expr keyword', 'action_def')
+            error('IDENTIFIER', 'DISPLAY in action_def')
     # Following 'INCREMENT' or 'DECREMENT' path
     elif (scanner.lex[lex_en['value']] == 'INCREMENT' or
             scanner.lex[lex_en['value']] == 'DECREMENT'):
