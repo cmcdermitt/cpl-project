@@ -86,8 +86,6 @@ def processNode(node):
         node = funct(node)
     return node
 
-
-
 # Expected Structure:
 # Type program
 # Children: func_main, f_globals, implement
@@ -164,7 +162,6 @@ def f_parray_dec(node):
 # STRUCTURE
 # Type f_plist_const
 # Children: IDs
-
 def f_plist_const(node):
     dimensions = [] # All of the elements in the array
     total_num = 1 # Initial size
@@ -200,14 +197,65 @@ def f_const_var_struct(node):
     processNode(node.children[0])
     processNode(node.children[1])
 
-
 # Expected structure:
 # Type: data_type
 # Children: keyword
 def f_data_type(node):
     return node.value
 
+# Expected Structure:
+# Type: pcase_val
+# Children: expr, pactions {expr, pactions}
+# Parameters: identifier tuple with type and value, and pcase_val node
+# Returns: pactions result for the evaluated expr
+def f_pcase_val(identifier, node):
+    global breakCalled
+    # Value of identifier parameter will be our case to check against
+    caseCheck = identifier
+    # Set empty placeholder for returning if no case executes
+    pactionsResult = "Empty"
+    # iterate through node expression children only
+    # evaluate pactions call associated with index
+    for i in range(0, len(node.children), 2):
+        exprResult = processNode(node.children[i])
+        # Check identifier case against expression value
+        if exprResult == caseCheck:
+            pactionsResult = processNode(node.children[i+1])
+            node = pactionsResult
+            if breakCalled:
+                return node
+    node = pactionsResult
+    return node
+
+# Expected structure
+# Type: pcase_def
+# Children: pactions
+# Returns: default pactions result
+def f_pcase_def(node):
+    node = processNode(node)
+    return node
+
+# Expected Structure
+# Type: pactions
+# Children: action_def { action_def }
+def pactions(node):
+    for action in node.children:
+        processNode(action)
+
 # Begin action_def functions
+# Expected Structure
+# Type: SET
+# Children: name_ref, expr
+def f_set(node):
+    # Get node type for sentence output
+    nodeType = node.type
+    # Get identifier tuple
+    identifier = processNode(node.children[0])
+    exprValue = processNode(node.children[1])
+    # Set identifier equal to exprValue
+    main_vars.assign(identifier, exprValue)
+    return node
+
 # Expected Structure:
 # Type: INPUT
 # Children: IDENTIFIER
@@ -271,7 +319,7 @@ def f_ifelse(node):
     if tempNode == "Empty":
         tempNode = processNode(tempNode.children[3])
     node = tempNode
-    return tempNode
+    return node
 
 # Expected Structure:
 # Type: ptest_elsif
@@ -283,7 +331,9 @@ def f_ptest_elsif(node):
         cond = processNode(node.children[i])
         if cond == True:
             pactionsResult = processNode(node.children[i + 1])
+            node = pactionsResult
             return pactionsResult
+    node = pactionsResult
     return pactionsResult
 
 # Expected Structure:
@@ -371,17 +421,14 @@ def f_while(node):
         cond = processNode(node.children[1])
     return node
 
-
-
 # Expected Structure:
 # Type: CASE
 # Children: namer_ref, pcase_val, pcase_def
 def f_case(node):
     # Get IDENTIFIER from name_ref
     nodeId = processNode(node.children[0])
-    identifier = ("typePlaceholder", nodeId.children[0])
     tempNode = node
-    tempNode = f_pcase_val(identifier, tempNode.children[1])
+    tempNode = f_pcase_val(nodeId, tempNode.children[1])
     if tempNode == "Empty":
         tempNode = f_pcase_def(tempNode.children[2])
     node = tempNode
@@ -454,7 +501,6 @@ def f_pcase_def(node):
 #             callValue = main_vars.getValue(node.children[0])
 #             print(callValue)
 #     return node
-
 # Logic functions (descending from pcondition)
 
 # Type AND
@@ -667,9 +713,7 @@ def f_negate(node):
         arg = lookup(arg)
     return -arg
 
-
 # numeric constant functions
-
 def f_icon(node):
     return int(node.value)
 
@@ -680,9 +724,6 @@ def f_hcon(node):
 
 def f_fcon(node):
     return float(node.value)
-
-
-
 
 #dictionary associating node types with functions
 interpreterDict = {
