@@ -53,6 +53,8 @@ def parse():
     # lex_list.append(implement())
     # return lex_list
 
+def start_scanner():
+    scanner.start()
 
 #convenience function returning an error message
 #first parameter is what was expected, second is optional location

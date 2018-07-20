@@ -258,9 +258,9 @@ def f_decrement(node):
     return node
 
 # Expected Structure:
-# Type: IF
+# Type: IFELSE
 # Children: pcondition, pactions, ptest_elsif, {pactions}
-def f_if(node):
+def f_ifelse(node):
     conditional = processNode(node.children[0])
     tempNode = node
     if conditional == True:
@@ -276,7 +276,7 @@ def f_if(node):
 # Expected Structure:
 # Type: ptest_elsif
 # Children: pcondition, pactions
-def ptest_elsif(node):
+def f_ptest_elsif(node):
     # Temporary return value in case no test evaluates
     pactionsResult = "Empty"
     for i in range(0, len(node.children), 2):
@@ -377,15 +377,13 @@ def f_while(node):
 # Type: CASE
 # Children: namer_ref, pcase_val, pcase_def
 def f_case(node):
-    # Get node type for output
-    nodeType = node.type
     # Get IDENTIFIER from name_ref
     nodeId = processNode(node.children[0])
     identifier = ("typePlaceholder", nodeId.children[0])
     tempNode = node
-    tempNode = pcase_val(identifier, tempNode.children[1])
+    tempNode = f_pcase_val(identifier, tempNode.children[1])
     if tempNode == "Empty":
-        tempNode = pcase_def(identifier, tempNode.children[2])
+        tempNode = f_pcase_def(tempNode.children[2])
     node = tempNode
     return node
 
@@ -407,7 +405,7 @@ def f_mexit(node):
 # Type: name_ref
 # Children: Identifier
 # Returns: Type and value of IDENTIFIER in tuple
-def name_ref(node):
+def f_name_ref(node):
     # Get nodeType for sentence output
     return processNode(node.children[0])
 
@@ -416,8 +414,10 @@ def name_ref(node):
 # Children: expr, pactions {expr, pactions}
 # Parameters: identifier tuple with type and value, and pcase_val node
 # Returns: pactions result for the evaluated expr
-def pcase_val(identifier, node):
+def f_pcase_val(node, identifier = ()):
     global breakCalled
+    if identifier == ():
+        error('pcase_val needs an identifier', 'pcase_val')
     # Value of identifier parameter will be our case to check against
     caseCheck = identifier[1]
     # Set empty placeholder for returning if no case executes
@@ -437,7 +437,7 @@ def pcase_val(identifier, node):
 # Type: pcase_def
 # Children: pactions
 # Returns: default pactions result
-def pcase_def(node):
+def f_pcase_def(node):
     p = processNode(node)
     return p
 
@@ -681,12 +681,6 @@ def f_hcon(node):
 def f_fcon(node):
     return float(node.value)
 
-# Expected structure:
-# Type: pcase_def
-# Children: pactions
-def f_pcase_def(node):
-    processNode(node.children[0])
-
 
 
 
@@ -729,25 +723,25 @@ interpreterDict = {
     'PARRAY_DEC' : f_parray_dec,
     'PLIST_CONST' : f_plist_const,
     'POPT_ARRAY_VAL' : f_popt_array_val,
-    'DATA_TYPE' : f_data_type
+    'DATA_TYPE' : f_data_type,
+    'INCREMENT' : f_increment,
+    'DECREMENT' : f_decrement,
+    'IFELSE' : f_ifelse,
+    'FORLOOP' : f_for,
+    'WHILELOOP' : f_while,
+    'CASE' : f_case,
+    'REPEATLOOP' : f_repeat,
+    'pcase_val' : f_pcase_val,
+    'pcase_def' : f_pcase_def,
+    'name_ref' : f_name_ref,
+    'pactions' : f_pactions,
+    'ptest_elsif' : f_ptest_elsif
 }
 
-#     'INCREMENT'
-#     'DECREMENT'
-#     'IFELSE'
-#     'FORLOOP'
-#     'WHILELOOP'
-#     'CASE'
-#     'REPEATLOOP'
 #     'func_main'
 #     'implement'
 #     'funct_list'
 #     'pother_oper_def'
-#     'pactions'
-#     'ptest_elsif'
-#     'pcase_val'
-#     'pcase_def'
-#     'name_ref'
 
 #for functions:
 #     'arg_list'

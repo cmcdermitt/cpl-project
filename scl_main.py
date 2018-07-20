@@ -13,7 +13,10 @@ import sys
 import scl_interpreter
 
 def main():
-    lex_tree = scl_parser.parse()
+    # lex_tree = scl_parser.parse()
+
+    scl_parser.start_scanner()
+    lex_tree = scl_parser.pactions()
     print('\n**************PARSER OUTPUT***************\n')
     print(printTree(lex_tree))
     
