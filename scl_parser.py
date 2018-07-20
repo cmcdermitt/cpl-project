@@ -77,7 +77,7 @@ def func_main():
     elif(scanner.lex[lex_en['value']] == 'FUNCTION'):
         scanner.next()
         if(scanner.lex[lex_en['type']] == 'IDENTIFIER'):
-            node.children.append(scanner.lex[lex_en['value']])
+            node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
             scanner.next()
         else:
             # Append error message if case specific grammar not found
@@ -150,7 +150,7 @@ def data_declaration():
     # Append function header to output list
     node = Node('data_declaration')
     if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-        node.children.append(scanner.lex[lex_en['value']])
+        node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
         scanner.next()
     else:
         error('IDENTIFIER', 'data_declaration')
@@ -179,7 +179,7 @@ def plist_const():
     if scanner.lex[lex_en['value']] == 'LB':
         scanner.next()
     if(scanner.lex[lex_en['type']] == 'IDENTIFIER' or scanner.lex[lex_en['type']] == 'ICON'):
-        node.children.append(scanner.lex[lex_en['value']])
+        node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
         scanner.next()
     else:
         error('IDENTIFIER or ICON', 'plist_const')
@@ -190,7 +190,7 @@ def plist_const():
     while(scanner.lex[lex_en['value']] == 'LB'):
         scanner.next()
         if(scanner.lex[lex_en['type']] == 'IDENTIFIER' or scanner.lex[lex_en['type']] == 'ICON'):
-            node.children.append(scanner.lex[lex_en['value']])
+            node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
             scanner.next()
         else:
             # Append error message if case specific grammar not found
@@ -251,7 +251,6 @@ def arg_list():
     node = Node('arg_list')
     node.children.append(expr())
     while (scanner.lex[lex_en['value']] == 'COMMA'):
-        node.children.append(scanner.lex[lex_en['value']])
         scanner.next()
         node.children.append(expr())
     return node
@@ -274,7 +273,7 @@ def data_type():
     valid_types = ['TUNSIGNED', 'CHAR', 'INTEGER', 'MVOID', 'DOUBLE', 'LONG',
                     'SHORT', 'FLOAT', 'REAL', 'TSTRING', 'TBOOL', 'TBYTE']
     if scanner.lex[lex_en['value']] in valid_types:
-        node.children.append(scanner.lex[lex_en['value']])
+        node.value = scanner.lex[lex_en['value']]
         scanner.next()
     else:
         error('valid type', 'data_type')
@@ -484,7 +483,7 @@ def pother_oper_def():
     # Append function header to output list
     node = Node('pother_oper_def')
     if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-        node.children.append(scanner.lex[lex_en['value']])
+        node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
         scanner.next()
     else:
         error('IDENTIFIER', 'pother_oper_def')
@@ -513,7 +512,7 @@ def pother_oper_def():
     else:
         error('ENDFUN', 'pother_oper_def')
     if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-        node.children.append(scanner.lex[lex_en['value']])
+        node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
         scanner.next()
     else:
         error('IDENTIFIER', 'pother_oper_def')
@@ -867,7 +866,7 @@ def name_ref():
     # Append function header to output list
     print(scanner.lex[lex_en['value']])
     if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-        node.children.append(scanner.lex[lex_en['value']])
+        node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
         scanner.next()
         if (scanner.lex[lex_en['value']] == 'LB'):
             node.children.append(array_val)

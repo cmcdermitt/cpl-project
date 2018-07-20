@@ -208,7 +208,7 @@ def f_const_var_struct(node):
 # Type: data_type
 # Children: keyword
 def f_data_type(node):
-    return node.children[0]
+    return node.value
 
 # Expected Structure:
 # Type: INPUT
