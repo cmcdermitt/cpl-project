@@ -26,11 +26,22 @@ def lookup(var_name, arr_pos = 0):
         if currentTable.isDeclared(var_name):
             return currentTable.getValue(var_name, arr_pos)
         if global_vars.isDeclared(var_name):
-            return global_vars.isDeclared(var_name)
+            return global_vars.getValue(var_name, arr_pos)
     elif global_vars.isDeclared(var_name):
         return global_vars.getValue(var_name, arr_pos)
     else:
         error('variable {} is undeclared and cannnot be looked up'.format(var_name), 'lookup')
+
+def lookupType(var_name, arr_pos = 0):
+    if currentTable is not None:
+        if currentTable.isDeclared(var_name):
+            return currentTable.getType(var_name, arr_pos)
+        if global_vars.isDeclared(var_name):
+            return global_vars.getType(var_name, arr_pos)
+    elif global_vars.isDeclared(var_name):
+        return global_vars.getType(var_name, arr_pos)
+    else:
+        error('variable {} is undeclared and cannnot be looked up'.format(var_name), 'lookupType')
 
 #declare a variable
 def declare(name, var_type):
@@ -40,13 +51,19 @@ def declare(name, var_type):
 
 #assign a variable a value
 def assign(name, value):
-    global global_vars
-    global main_vars
-    if main_vars.isDeclared(name):
-        main_vars.assign(name, value)
-    else:
-        # if it isn't in global_vars, global_vars will throw an error
-        global_vars.assign(name, value)
+    global currentTable
+    currentTable.assign(name, value)
+
+# Get the type of what's stored in a name_ref ID, or data node
+def getType (node):
+    if node.type == 'name_ref':
+        var =  node.children[0].value #return the type of the ID stored in the name_ref
+        return lookupType(var)
+    if node.type == 'IDENTIFIER':
+        var = node.value
+        return lookupType(var) # return the type of the value associated with the variable
+    return node.type
+
         
 
 
@@ -173,8 +190,6 @@ def f_popt_array_val(node):
     temp = 0
     for expr in node.children: # evaluate all expressions
         temp = processNode(expr)
-        if isinstance(str, temp): # lookup expression if it is identifier
-            temp = lookup(temp)
         expressions.append(temp) # add it to list
     return expressions
 
@@ -190,7 +205,7 @@ def f_const_var_struct(node):
 # Type: data_type
 # Children: keyword
 def f_data_type(node):
-    return node.children[0]
+    return node.value
 
 # Begin action_def functions
 # Expected Structure:
@@ -202,7 +217,7 @@ def f_input(node):
     # Get input
     input_val = input('Enter input:')
     # Add identifier to variable table
-    assign(node.children[0], input_val)
+    assign(processNode(node.children[0]), input_val)
     # output results
     print('Variable ' + node.children[0] + ' was assigned')
     # Return node to processNode
@@ -213,17 +228,15 @@ def f_input(node):
 # Children: IDENTIFIER
 def f_display(node):
     #print the value of the IDENTIFIER's variable
-    print(lookup(node.children[0]))
+    print(lookup(processNode(node.children[0])))
     return node
 
 # Expected Structure:
 # Type: INCREMENT
 # Children: name_ref => IDENTIFIER
 def f_increment(node):
-    # Get node type
-    nodeType = node.type
     # Get IDENTIFIER variable
-    var = node.children[0]
+    var = processNode(node.children[0])
     # Get value
     val = main_vars.getValue(var)
     # Increment and assign
@@ -235,10 +248,8 @@ def f_increment(node):
 # Type: DECREMENT
 # Children: name_ref => IDENTIFIER
 def f_decrement(node):
-    # Get node type
-    nodeType = node.type
     # Get IDENTIFIER variable
-    var = node.children[0]
+    var = processNode(node.children[0])
     # Get value
     val = main_vars.getValue(var)
     # Decrement and assign
@@ -280,8 +291,6 @@ def ptest_elsif(node):
 # Children: name_ref, expr, ( TO | DOWNTO ), expr, pactions
 def f_for(node):
     global breakCalled
-    # Get node type
-    nodeType = node.type
     # Get IDENTIFIER
     nodeID = processNode(node.children[0])
     # Get corresponding Python variable
@@ -362,6 +371,8 @@ def f_while(node):
         cond = processNode(node.children[1])
     return node
 
+
+
 # Expected Structure:
 # Type: CASE
 # Children: namer_ref, pcase_val, pcase_def
@@ -398,10 +409,7 @@ def f_mexit(node):
 # Returns: Type and value of IDENTIFIER in tuple
 def name_ref(node):
     # Get nodeType for sentence output
-    nodeType = node.type
-    # Build tuple with IDENTIFIER type and value
-    identifierTuple = (node.type, node.children[0])
-    return identifierTuple
+    return processNode(node.children[0])
 
 # Expected Structure:
 # Type: pcase_val
@@ -736,9 +744,7 @@ interpreterDict = {
 #     'funct_list'
 #     'pother_oper_def'
 #     'pactions'
-#     'data_declaration'
 #     'ptest_elsif'
-#     'pusing_ref'
 #     'pcase_val'
 #     'pcase_def'
 #     'name_ref'

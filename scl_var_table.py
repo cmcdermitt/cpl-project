@@ -55,7 +55,7 @@ class VarTable:
                 return var # For non arrays
 
 
-    def getType(self, var):
+    def getType(self, var, pos = 0):
         if var not in self.variables.keys():
             print('Error in get(): variable {} has not been declared'.format(var))
         else:
