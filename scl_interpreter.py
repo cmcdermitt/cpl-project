@@ -208,6 +208,19 @@ def f_data_type(node):
     return node.value
 
 # Begin action_def functions
+# Expected Structure
+# Type: SET
+# Children: name_ref, expr
+def f_set(node):
+    # Get node type for sentence output
+    nodeType = node.type
+    # Get identifier tuple
+    identifier = processNode(node.children[0])
+    exprValue = processNode(node.children[1])
+    # Set identifier equal to exprValue
+    main_vars.assign(identifier, exprValue)
+    return node
+
 # Expected Structure:
 # Type: INPUT
 # Children: IDENTIFIER
