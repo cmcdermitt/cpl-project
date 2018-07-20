@@ -353,6 +353,20 @@ def f_while(node):
 
 
 # Expected Structure:
+# Type: CASE
+# Children: namer_ref, pcase_val, pcase_def
+def f_case(node):
+    # Get node type for output
+    nodeType = node.type
+    # Get IDENTIFIER from name_ref
+    nodeId = processNode(node.children[0])
+    identifier = ("typePlaceholder", nodeId.children[0])
+    node = pcase_val(identifier, node.children[1])
+    if node == "Empty":
+        node = pcase_def(identifier, node.children[2])
+    return node
+
+# Expected Structure:
 # Type: MBREAK
 # Children: none
 def f_mbreak(node):
@@ -365,6 +379,47 @@ def f_mbreak(node):
 # Children: none
 def f_mexit(node):
     exit()
+
+# Expected Structure:
+# Type: name_ref
+# Children: Identifier
+# Returns: Type and value of IDENTIFIER in tuple
+def name_ref(node):
+    # Get nodeType for sentence output
+    nodeType = node.type
+    # Build tuple with IDENTIFIER type and value
+    identifierTuple = (node.type, node.children[0])
+    return identifierTuple
+
+# Expected Structure:
+# Type: pcase_val
+# Children: expr, pactions {expr, pactions}
+# Parameters: identifier tuple with type and value, and pcase_val node
+# Returns: pactions result for the evaluated expr
+def pcase_val(identifier, node):
+    global breakCalled
+    # Value of identifier parameter will be our case to check against
+    caseCheck = identifier[1]
+    # Set empty placeholder for returning if no case executes
+    p = "Empty"
+    # iterate through node expression children only
+    # evaluate pactions call associated with index
+    for i in range(0, len(node.children), 2):
+        exprResult = processNode(node.children[i])
+        # Check identifier case against expression value
+        if exprResult == caseCheck:
+            p = processNode(node.children[i+1])
+            if breakCalled:
+                return p
+    return p
+
+# Expected structure
+# Type: pcase_def
+# Children: pactions
+# Returns: default pactions result
+def pcase_def(node):
+    p = processNode(node)
+    return p
 
 # Expected Structure:
 # Type: CALL
