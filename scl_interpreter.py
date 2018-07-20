@@ -3,6 +3,7 @@ import scl_var_table
 # declare globals
 global_vars = scl_var_table.VarTable()
 main_vars = scl_var_table.VarTable()
+functionNames = []
 isConst = False
 currentTable = None
 breakCalled = False
@@ -64,9 +65,6 @@ def getType (node):
         return lookupType(var) # return the type of the value associated with the variable
     return node.type
 
-        
-
-
 # Main interpreter function
 # Name: processNode(node)
 # Summary: The processNode function is invoked by the main file after the parser has
@@ -97,9 +95,39 @@ def program(node):
 # Expected Structure:
 # Type func_main
 # Children: none
-def func_main(node):
+def f_func_main(node):
     #func_main should already be verified by the parser and does not do anything
+    functionNames.append(node.children[0])
     return
+
+# Expected Structure:
+# Type: implement
+# Children: funct_list
+def f_implement(node):
+    processNode(node.children[0])
+    return node
+
+# Expected Structure
+# Type: funct_list
+# Children: pother_oper_def, {pother_oper_def}
+def f_funct_list(node):
+    for child in node.children:
+        processNode(child)
+    return node
+
+# Expected Structure:
+# Type: pother_oper_def
+# Children: parameters, [const_var_struct], pactions
+def f_pother_oper_def(node):
+    if len(node.children) > 1:
+        # Process const_var_struct child
+        processNode(node.children[0])
+        # Process pactions
+        processNode(node.children[1])
+    else:
+        # Pactions is only child
+        processNode(node.children[0])
+    return node
 
 # Expected Structure:
 # Type f_globals
@@ -143,7 +171,6 @@ def f_data_declaration(node):
     arrayness = processNode(node.children[1]) # Size of variable (if it is an array or not) NOTE: Lookup will need to be changed to support this
     data_type = processNode(node.children[2]) # Data type of variable; currently no type checking
     declare(val, data_type) # Append variable to proper table
-    
 
 # Expected Structure:
 # Type array_dec
@@ -202,38 +229,6 @@ def f_const_var_struct(node):
 # Children: keyword
 def f_data_type(node):
     return node.value
-
-# Expected Structure:
-# Type: pcase_val
-# Children: expr, pactions {expr, pactions}
-# Parameters: identifier tuple with type and value, and pcase_val node
-# Returns: pactions result for the evaluated expr
-def f_pcase_val(identifier, node):
-    global breakCalled
-    # Value of identifier parameter will be our case to check against
-    caseCheck = identifier
-    # Set empty placeholder for returning if no case executes
-    pactionsResult = "Empty"
-    # iterate through node expression children only
-    # evaluate pactions call associated with index
-    for i in range(0, len(node.children), 2):
-        exprResult = processNode(node.children[i])
-        # Check identifier case against expression value
-        if exprResult == caseCheck:
-            pactionsResult = processNode(node.children[i+1])
-            node = pactionsResult
-            if breakCalled:
-                return node
-    node = pactionsResult
-    return node
-
-# Expected structure
-# Type: pcase_def
-# Children: pactions
-# Returns: default pactions result
-def f_pcase_def(node):
-    node = processNode(node)
-    return node
 
 # Expected Structure
 # Type: pactions
@@ -309,32 +304,28 @@ def f_decrement(node):
 # Type: IFELSE
 # Children: pcondition, pactions, ptest_elsif, {pactions}
 def f_ifelse(node):
+    global breakCalled
     conditional = processNode(node.children[0])
-    tempNode = node
     if conditional == True:
-        node = processNode(tempNode.children[1])
+        processNode(node.children[1])
         return node
     else:
-        tempNode = processNode(tempNode.children[2])
-    if tempNode == "Empty":
-        tempNode = processNode(tempNode.children[3])
-    node = tempNode
+        processNode(node.children[2])
+    if breakCalled == True:
+        breakCalled = False
+        processNode(node.children[3])
     return node
 
 # Expected Structure:
 # Type: ptest_elsif
 # Children: pcondition, pactions
 def f_ptest_elsif(node):
-    # Temporary return value in case no test evaluates
-    pactionsResult = "Empty"
     for i in range(0, len(node.children), 2):
         cond = processNode(node.children[i])
         if cond == True:
-            pactionsResult = processNode(node.children[i + 1])
-            node = pactionsResult
+            processNode(node.children[i + 1])
             return pactionsResult
-    node = pactionsResult
-    return pactionsResult
+    return node
 
 # Expected Structure:
 # Type: FOR
@@ -425,13 +416,13 @@ def f_while(node):
 # Type: CASE
 # Children: namer_ref, pcase_val, pcase_def
 def f_case(node):
+    global breakCalled
     # Get IDENTIFIER from name_ref
     nodeId = processNode(node.children[0])
-    tempNode = node
-    tempNode = f_pcase_val(nodeId, tempNode.children[1])
-    if tempNode == "Empty":
-        tempNode = f_pcase_def(tempNode.children[2])
-    node = tempNode
+    f_pcase_val(nodeId, node.children[1])
+    if breakCalled == True:
+        breakCalled = False
+        f_pcase_def(node.children[2])
     return node
 
 # Expected Structure:
@@ -467,18 +458,17 @@ def f_pcase_val(node, identifier = ()):
         error('pcase_val needs an identifier', 'pcase_val')
     # Value of identifier parameter will be our case to check against
     caseCheck = identifier[1]
-    # Set empty placeholder for returning if no case executes
-    pactionResult = "Empty"
     # iterate through node expression children only
     # evaluate pactions call associated with index
     for i in range(0, len(node.children), 2):
         exprResult = processNode(node.children[i])
         # Check identifier case against expression value
         if exprResult == caseCheck:
-            pactionsResult = processNode(node.children[i+1])
+            processNode(node.children[i+1])
             if breakCalled:
-                return pactionsResult
-    return pactionsResult
+                breakCalled = False
+                return node
+    return node
 
 # Expected structure
 # Type: pcase_def
