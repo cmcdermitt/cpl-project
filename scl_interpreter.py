@@ -191,8 +191,6 @@ def f_popt_array_val(node):
     temp = 0
     for expr in node.children: # evaluate all expressions
         temp = processNode(expr)
-        if isinstance(str, temp): # lookup expression if it is identifier
-            temp = lookup(temp)
         expressions.append(temp) # add it to list
     return expressions
 
@@ -219,7 +217,7 @@ def f_input(node):
     # Get input
     input_val = input('Enter input:')
     # Add identifier to variable table
-    assign(node.children[0], input_val)
+    assign(processNode(node.children[0]), input_val)
     # output results
     print('Variable ' + node.children[0] + ' was assigned')
     # Return node to processNode
@@ -230,17 +228,15 @@ def f_input(node):
 # Children: IDENTIFIER
 def f_display(node):
     #print the value of the IDENTIFIER's variable
-    print(lookup(node.children[0]))
+    print(lookup(processNode(node.children[0])))
     return node
 
 # Expected Structure:
 # Type: INCREMENT
 # Children: name_ref => IDENTIFIER
 def f_increment(node):
-    # Get node type
-    nodeType = node.type
     # Get IDENTIFIER variable
-    var = node.children[0]
+    var = processNode(node.children[0])
     # Get value
     val = main_vars.getValue(var)
     # Increment and assign
@@ -252,10 +248,8 @@ def f_increment(node):
 # Type: DECREMENT
 # Children: name_ref => IDENTIFIER
 def f_decrement(node):
-    # Get node type
-    nodeType = node.type
     # Get IDENTIFIER variable
-    var = node.children[0]
+    var = processNode(node.children[0])
     # Get value
     val = main_vars.getValue(var)
     # Decrement and assign
@@ -268,8 +262,6 @@ def f_decrement(node):
 # Children: name_ref, expr, ( TO | DOWNTO ), expr, pactions
 def f_for(node):
     global breakCalled
-    # Get node type
-    nodeType = node.type
     # Get IDENTIFIER
     nodeID = processNode(node.children[0])
     # Get corresponding Python variable
@@ -386,10 +378,7 @@ def f_mexit(node):
 # Returns: Type and value of IDENTIFIER in tuple
 def name_ref(node):
     # Get nodeType for sentence output
-    nodeType = node.type
-    # Build tuple with IDENTIFIER type and value
-    identifierTuple = (node.type, node.children[0])
-    return identifierTuple
+    return processNode(node.children[0])
 
 # Expected Structure:
 # Type: pcase_val
