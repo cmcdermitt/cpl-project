@@ -168,7 +168,6 @@ def f_plist_const(node):
 # STRUCTURE
 # Type popt_array_val
 # Children: Expressions
-
 def f_popt_array_val(node):
     expressions = []
     temp = 0
@@ -193,6 +192,7 @@ def f_const_var_struct(node):
 def f_data_type(node):
     return node.children[0]
 
+# Begin action_def functions
 # Expected Structure:
 # Type: INPUT
 # Children: IDENTIFIER
@@ -231,7 +231,7 @@ def f_increment(node):
     main_vars.assign(var, val)
     return node
 
-# Expecred Structure:
+# Expected Structure:
 # Type: DECREMENT
 # Children: name_ref => IDENTIFIER
 def f_decrement(node):
@@ -245,6 +245,35 @@ def f_decrement(node):
     val = val - 1
     main_vars.assign(var.value, val)
     return node
+
+# Expected Structure:
+# Type: IF
+# Children: pcondition, pactions, ptest_elsif, {pactions}
+def f_if(node):
+    conditional = processNode(node.children[0])
+    tempNode = node
+    if conditional == True:
+        node = processNode(tempNode.children[1])
+        return node
+    else:
+        tempNode = processNode(tempNode.children[2])
+    if tempNode == "Empty":
+        tempNode = processNode(tempNode.children[3])
+    node = tempNode
+    return tempNode
+
+# Expected Structure:
+# Type: ptest_elsif
+# Children: pcondition, pactions
+def ptest_elsif(node):
+    # Temporary return value in case no test evaluates
+    pactionsResult = "Empty"
+    for i in range(0, len(node.children), 2):
+        cond = processNode(node.children[i])
+        if cond == True:
+            pactionsResult = processNode(node.children[i + 1])
+            return pactionsResult
+    return pactionsResult
 
 # Expected Structure:
 # Type: FOR
@@ -342,9 +371,11 @@ def f_case(node):
     # Get IDENTIFIER from name_ref
     nodeId = processNode(node.children[0])
     identifier = ("typePlaceholder", nodeId.children[0])
-    node = pcase_val(identifier, node.children[1])
-    if node == "Empty":
-        node = pcase_def(identifier, node.children[2])
+    tempNode = node
+    tempNode = pcase_val(identifier, tempNode.children[1])
+    if tempNode == "Empty":
+        tempNode = pcase_def(identifier, tempNode.children[2])
+    node = tempNode
     return node
 
 # Expected Structure:
@@ -382,17 +413,17 @@ def pcase_val(identifier, node):
     # Value of identifier parameter will be our case to check against
     caseCheck = identifier[1]
     # Set empty placeholder for returning if no case executes
-    p = "Empty"
+    pactionResult = "Empty"
     # iterate through node expression children only
     # evaluate pactions call associated with index
     for i in range(0, len(node.children), 2):
         exprResult = processNode(node.children[i])
         # Check identifier case against expression value
         if exprResult == caseCheck:
-            p = processNode(node.children[i+1])
+            pactionsResult = processNode(node.children[i+1])
             if breakCalled:
-                return p
-    return p
+                return pactionsResult
+    return pactionsResult
 
 # Expected structure
 # Type: pcase_def
