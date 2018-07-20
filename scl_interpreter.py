@@ -1,5 +1,4 @@
 import scl_var_table
-
 # declare globals
 global_vars = scl_var_table.VarTable()
 main_vars = scl_var_table.VarTable()
@@ -7,7 +6,6 @@ functionNames = []
 isConst = False
 currentTable = None
 breakCalled = False
-
 
 def error(msg, location = ''):
     if location == '':
@@ -119,14 +117,28 @@ def f_funct_list(node):
 # Type: pother_oper_def
 # Children: parameters, [const_var_struct], pactions
 def f_pother_oper_def(node):
-    if len(node.children) > 1:
-        # Process const_var_struct child
+    if len(node.children) == 2:
+        # Does not have const_var_struct
+        # Process parameters
         processNode(node.children[0])
         # Process pactions
         processNode(node.children[1])
     else:
-        # Pactions is only child
+        # Has all three children
+        # Process parameters
         processNode(node.children[0])
+        # Process const_var_struct
+        processNode(node.children[1])
+        # Process pactions
+        processNode(node.children[0])
+    return node
+
+# Expected Structure
+# Type: parameters
+# Children: [data_declaration, {data_declaration}]
+def parameters(node):
+    for dec in node.children:
+        processNode(dec)
     return node
 
 # Expected Structure:
