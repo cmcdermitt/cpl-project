@@ -26,11 +26,22 @@ def lookup(var_name, arr_pos = 0):
         if currentTable.isDeclared(var_name):
             return currentTable.getValue(var_name, arr_pos)
         if global_vars.isDeclared(var_name):
-            return global_vars.isDeclared(var_name)
+            return global_vars.getValue(var_name, arr_pos)
     elif global_vars.isDeclared(var_name):
         return global_vars.getValue(var_name, arr_pos)
     else:
         error('variable {} is undeclared and cannnot be looked up'.format(var_name), 'lookup')
+
+def lookupType(var_name, arr_pos = 0):
+    if currentTable is not None:
+        if currentTable.isDeclared(var_name):
+            return currentTable.getType(var_name, arr_pos)
+        if global_vars.isDeclared(var_name):
+            return global_vars.getType(var_name, arr_pos)
+    elif global_vars.isDeclared(var_name):
+        return global_vars.getType(var_name, arr_pos)
+    else:
+        error('variable {} is undeclared and cannnot be looked up'.format(var_name), 'lookupType')
 
 #declare a variable
 def declare(name, var_type):
@@ -40,13 +51,19 @@ def declare(name, var_type):
 
 #assign a variable a value
 def assign(name, value):
-    global global_vars
-    global main_vars
-    if main_vars.isDeclared(name):
-        main_vars.assign(name, value)
-    else:
-        # if it isn't in global_vars, global_vars will throw an error
-        global_vars.assign(name, value)
+    global currentTable
+    currentTable.assign(name, value)
+
+# Get the type of what's stored in a name_ref ID, or data node
+def getType (node):
+    if node.type == 'name_ref':
+        var =  node.children[0].value #return the type of the ID stored in the name_ref
+        return lookupType(var)
+    if node.type == 'IDENTIFIER':
+        var = node.value
+        return lookupType(var) # return the type of the value associated with the variable
+    return node.type
+
         
 
 
@@ -332,6 +349,8 @@ def f_while(node):
             return node
         cond = processNode(node.children[1])
     return node
+
+
 
 # Expected Structure:
 # Type: CASE
@@ -705,9 +724,7 @@ interpreterDict = {
 #     'funct_list'
 #     'pother_oper_def'
 #     'pactions'
-#     'data_declaration'
 #     'ptest_elsif'
-#     'pusing_ref'
 #     'pcase_val'
 #     'pcase_def'
 #     'name_ref'
