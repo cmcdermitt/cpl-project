@@ -23,10 +23,10 @@ plist_const ::= LB (ICON | IDENTIFIER) RB { LB (ICON | IDENTIFIER) RB }
 popt_array_val ::= [(VALUE | EQUOP) array_val]
 array_val ::= LB arg_list RB 
 arg_list ::= expr { COMMA expr }
-implement ::= IMPLEMENTATIONS [MAIN DESCRIPTION parameters] funct_list
+implement ::= IMPLEMENTATIONS funct_list
 funct_list ::= FUNCTION pother_oper_def { FUNCTION pother_oper_def }
 
-pother_oper_def ::= IDENTIFIER DESCRIPTION parameters IS [const_var_struct] BEGIN pactions ENDFUN IDENTIFIER
+pother_oper_def ::= (MAIN | IDENTIFIER) DESCRIPTION parameters IS [const_var_struct] BEGIN pactions ENDFUN IDENTIFIER
 
 parameters ::= [PARAMETERS data_declaration {COMMA data_declaration}]
 
