@@ -86,8 +86,6 @@ def processNode(node):
         node = funct(node)
     return node
 
-
-
 # Expected Structure:
 # Type program
 # Children: func_main, f_globals, implement
@@ -164,7 +162,6 @@ def f_parray_dec(node):
 # STRUCTURE
 # Type f_plist_const
 # Children: IDs
-
 def f_plist_const(node):
     dimensions = [] # All of the elements in the array
     total_num = 1 # Initial size
@@ -237,6 +234,13 @@ def f_pcase_val(identifier, node):
 def f_pcase_def(node):
     node = processNode(node)
     return node
+
+# Expected Structure
+# Type: pactions
+# Children: action_def { action_def }
+def pactions(node):
+    for action in node.children:
+        processNode(action)
 
 # Begin action_def functions
 # Expected Structure
@@ -320,7 +324,7 @@ def f_if(node):
 # Expected Structure:
 # Type: ptest_elsif
 # Children: pcondition, pactions
-def ptest_elsif(node):
+def f_ptest_elsif(node):
     # Temporary return value in case no test evaluates
     pactionsResult = "Empty"
     for i in range(0, len(node.children), 2):
@@ -467,7 +471,6 @@ def name_ref(node):
 #             callValue = main_vars.getValue(node.children[0])
 #             print(callValue)
 #     return node
-
 # Logic functions (descending from pcondition)
 
 # Type AND
@@ -680,9 +683,7 @@ def f_negate(node):
         arg = lookup(arg)
     return -arg
 
-
 # numeric constant functions
-
 def f_icon(node):
     return int(node.value)
 
