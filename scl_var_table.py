@@ -67,5 +67,5 @@ class VarTable:
             out = out + 'Name: {} {}\n'.format(name, self.variables[name])
         return out
 
-
-
+    def dump(self):
+        print(self.variables)

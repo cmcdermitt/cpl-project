@@ -77,13 +77,13 @@ def getName (node):
     if node.type == 'IDENTIFIER':
         return node.value
     else:
-        error('getName only takes name_ref or IDENTIFER nodes, not {}'.format(node.type))
+        error('getName only takes name_ref or IDENTIF on the input data.')
+#          The purpose of the interER nodes, not {}'.format(node.type))
 
 # Main interpreter function
 # Name: processNode(node)
 # Summary: The processNode function is invoked by the main file after the parser has
-#          generated the tree based on the input data.
-#          The purpose of the interpret function is recognize keywords and parsed functions
+#          generated the tree basedpret function is recognize keywords and parsed functions
 #          and call corresponding functions based on the value.
 #          Each function will receive a subtree containing the nodes from that keyword down,
 #          and will set the new starting node after it has finished processing any related nodes
@@ -294,7 +294,11 @@ def f_input(node):
 # Children: IDENTIFIER
 def f_display(node):
     #print the value of the IDENTIFIER's variable
-    print(processNode(node.children[0]))
+    # Change actual output after debuging
+    pNode = processNode(node.children[0])
+    print(pNode)
+    value = lookup(pNode.value)
+    print('Actual value ' +  str(value))
     return node
 
 # Expected Structure:
@@ -426,14 +430,14 @@ def f_repeat(node):
 def f_while(node):
     global breakCalled
     # Get pcondition
-    cond = processNode(node.children[1])
+    cond = processNode(node.children[0])
     # Start while loop
     while cond:
-        p = processNode(node.children[0])
+        p = processNode(node.children[1])
         if breakCalled == True:
             breakCalled = False
             return node
-        cond = processNode(node.children[1])
+        cond = processNode(node.children[0])
     return node
 
 # Expected Structure:
@@ -578,54 +582,55 @@ def f_equals(node):
         arg2 = lookup(arg2)
     return arg1 == arg2
 
+
+# Use when checking for less than, greater than, less than or equal , or greater than or qual
+def processCompArgs(node):
+    arg1 = getType(node.children[0])
+    arg2 = getType(node.children[1])
+    if(arg1 == 'INTEGER' or arg1 == 'FLOAT'):
+        arg1 = processNode(node.children[0])
+        arg1 = lookup(arg1.value)
+    elif(arg1 == 'ICON' or arg1 == 'FCON'):
+        arg2 = processNode(node.children[0])
+    else:
+        error('arg1 is invalid type')
+
+    if(arg2 == 'INTEGER' or arg2 == 'FLOAT'):
+        arg2 = processNode(node.children[1])
+        arg2 = lookup(arg2.value)
+    elif(arg2 == 'ICON' or arg2 == 'FCON'):
+        arg2 = processNode(node.children[1])
+    else:
+        error('arg2 is invalid type')
+    return [arg1, arg2]
+
 # Expected Structure:
 # Type greater_than
 # Children: expr, expr
 def f_greater_than(node):
-    arg1 = processNode(node.children[0])
-    if isinstance(arg1, str):
-        arg1 = lookup(arg1)
-    arg2 = processNode(node.children[1])
-    if isinstance(arg2, str):
-        arg2 = lookup(arg2)     
-    return arg1 > arg2
+    var = processCompArgs(node)
+    return var[0] > var[1]
 
 # Expected Structure:
 # Type less_than
 # Children: expr, expr
 def f_less_than(node):
-    arg1 = processNode(node.children[0])
-    if isinstance(arg1, str):
-        arg1 = lookup(arg1)
-    arg2 = processNode(node.children[1])
-    if isinstance(arg2, str):
-        arg2 = lookup(arg2)
-    return arg1 < arg2
+    var = processCompArgs(node)
+    return var[0] < var[1]
 
 # Expected Structure:
 # Type greater_or_equal
 # Children: expr, expr
 def f_greater_or_equal(node):
-    arg1 = processNode(node.children[0])
-    if isinstance(arg1, str):
-        arg1 = lookup(arg1)
-    arg2 = processNode(node.children[1])
-    if isinstance(arg2, str):
-        arg2 = lookup(arg2)
-    arg1 >= arg2
-
+    var = processCompArgs(node)
+    return var[0] >= var[1]
 # Expected Structure:
 # Type less_or_equal
 # Children: expr, expr
 
 def f_less_or_equal(node):
-    arg1 = processNode(node.children[0])
-    if isinstance(arg1, str):
-        arg1 = lookup(arg1)
-    arg2 = processNode(node.children[1])
-    if isinstance(arg2, str):
-        arg2 = lookup(arg2)
-    return arg1 <= arg2 
+    var = processCompArgs(node)
+    return var[0] <= var[1] 
 
 # Math functions (descending from expr)
 
@@ -783,7 +788,7 @@ interpreterDict = {
     'DECREMENT' : f_decrement,
     'IFELSE' : f_ifelse,
     'FORLOOP' : f_for,
-    'WHILELOOP' : f_while,
+    'WHILE' : f_while,
     'CASE' : f_case,
     'REPEATLOOP' : f_repeat,
     'PCASE_VAL' : f_pcase_val,
