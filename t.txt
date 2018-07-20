@@ -1,0 +1,130 @@
+test.txt
+SET
+id
+id
+a
+b
+INPUT
+a
+INPUT
+a
+SET
+A
+x
+INPUT
+helloworld
+Program, None
+  func_main, None
+    id
+  f_globals, None
+    const_dec, None
+    var_dec, None
+      data_declarations, None
+        data_declaration, None
+          a
+          parray_dec, None
+          data_type, None
+            INTEGER
+        data_declaration, None
+          d
+          parray_dec, None
+          data_type, None
+            INTEGER
+        data_declaration, None
+          e
+          parray_dec, None
+            plist_const, None
+              id
+            popt_array_val, None
+          data_type, None
+            INTEGER
+  implement, None
+    parameters, None
+      data_declaration, None
+        a
+        parray_dec, None
+        data_type, None
+          INTEGER
+      data_declaration, None
+        b
+        parray_dec, None
+        data_type, None
+          INTEGER
+    funct_list, None
+      pother_oper_def, None
+        m
+        parameters, None
+          data_declaration, None
+            a
+            parray_dec, None
+            data_type, None
+              INTEGER
+        const_var_struct, None
+          const_dec, None
+            data_declarations, None
+              data_declaration, None
+                a
+                parray_dec, None
+                data_type, None
+                  INTEGER
+          var_dec, None
+            data_declarations, None
+              data_declaration, None
+                a
+                parray_dec, None
+                data_type, None
+                  INTEGER
+        pactions, None
+          SET, None
+            name_ref, None
+              id
+            ICON, 2
+          INPUT, None
+            name_ref, None
+              id
+          DISPLAY, None
+            arg_list, None
+              BAND, None
+                ICON, 2
+                ICON, 2
+          DECREMENT, None
+            name_ref, None
+              a
+          CALL, None
+            name_ref, None
+              b
+            pusing_ref, None
+              arg_list, None
+                ICON, 2
+          IF, None
+            KEYWORD, MTRUE
+            pactions, None
+              INPUT, None
+                name_ref, None
+                  a
+            ptest_elsif, None
+              LESS THAN, None
+                PLUS, None
+                  ICON, 2
+                  ICON, 2
+                ICON, 2
+              pactions, None
+                INPUT, None
+                  name_ref, None
+                    a
+            pactions, None
+              SET, None
+                name_ref, None
+                  A
+                ICON, 3
+              FOR, None
+                name_ref, None
+                  x
+                STRING, "A NUMBER"
+                ICON, 42
+                pactions, None
+                  INPUT, None
+                    name_ref, None
+                      helloworld
+        id
+
