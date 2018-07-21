@@ -98,12 +98,11 @@ def getName (node):
     else:
         error('getName only takes name_ref or IDENTIF on the input data.')
 
-def isNumber(node):
-    nodeVal = processNode(node)
-    return type(nodeVal) == int or type(nodeVal) == float
+def isNumber(value):
+    return type(value) == int or type(value) == float
 
-def isInteger(node):
-    return type(processNode(node))
+def isInteger(value):
+    return type(value) == int
 
 
 # Expected Structure:
