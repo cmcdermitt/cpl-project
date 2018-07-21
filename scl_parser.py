@@ -332,7 +332,7 @@ def element():
     valid_types = ['STRING', 'LETTER', 'ICON', 'HCON', 'FCON', 'IDENTIFIER']
     valid_values = ['MTRUE', 'MFALSE']
     if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-        node = Node(name_ref())
+        node = name_ref()
     elif scanner.lex[lex_en['type']] in valid_types: #needs additional code for identifier if using arrays
         node = Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']])
         scanner.next()

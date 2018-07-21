@@ -56,6 +56,7 @@ def printTree(tree, tab = 0, out_string = ''):
     elif (tree.value is not None):
         out_string = out_string + returnTabs(tab) + tree.type + ', ' + tree.value + '\n' # Print out the first item in the list; this is the parent node
     else:
+        print(tree.type)
         out_string = out_string + returnTabs(tab) + tree.type + ', None\n' # Print out the first item in the list; this is the parent node
     if(len(tree.children) == 0):
         return out_string
