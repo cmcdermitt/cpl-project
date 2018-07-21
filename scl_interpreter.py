@@ -476,11 +476,13 @@ def f_while(node):
 
 # Expected Structure:
 # Type: CASE
-# Children: namer_ref, pcase_val, pcase_def
+# Children: name_ref, pcase_val, pcase_def
 def f_case(node):
     global breakCalled
     # Get IDENTIFIER from name_ref
     nodeId = processNode(node.children[0])
+    if not isInteger(nodeId):
+        error('Type error: case ID must be an integer')
     print('Statement recognized: CASE ' + str(nodeId) + ' ')
     successfulCase = f_pcase_val(nodeId, node.children[1])
     if breakCalled == True:
@@ -522,6 +524,9 @@ def f_pcase_val(node, identifier = ()):
         error('pcase_val needs an identifier', 'pcase_val')
     # Value of identifier parameter will be our case to check against
     caseCheck = lookup(node.value)
+    if isInteger(caseCheck) and isInteger(identifier[0]):
+        error('All cases must be integers')
+
     caseRan = False
     # iterate through node expression children only
     # evaluate pactions call associated with index
