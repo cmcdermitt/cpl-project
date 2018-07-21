@@ -25,11 +25,8 @@ array_val ::= LB arg_list RB
 arg_list ::= expr { COMMA expr }
 implement ::= IMPLEMENTATIONS funct_list
 funct_list ::= FUNCTION pother_oper_def { FUNCTION pother_oper_def }
-
 pother_oper_def ::= (MAIN | IDENTIFIER) DESCRIPTION parameters IS [const_var_struct] BEGIN pactions ENDFUN IDENTIFIER
-
 parameters ::= [PARAMETERS data_declaration {COMMA data_declaration}]
-
 pcondition ::= pcond1 [(OR | AND) pcond1]
 pcond1 ::= [NOT] pcond2
 pcond2 ::= LP pcondition RP
@@ -41,9 +38,6 @@ eq_v ::= EQUALS
     | LESS THAN
     | GREATER OR EQUAL
     | LESS OR EQUAL
-
-
-
 expr ::= term [ (PLUS | MINUS | BAND | BOR | BXOR) term ]
 term ::= punary [ (STAR | DIVOP | MOD | LSHIFT | RSHIFT) punary]
 punary ::= [NEGATE] element
@@ -56,7 +50,6 @@ element ::= IDENTIFIER [(array_val | parguments)]
     | MTRUE
     | MFALSE
     | LP expr RP
-
 pactions ::= action_def { action_def }
 action_def ::=  SET name_ref  EQUOP expr
     | INPUT IDENTIFIER
@@ -73,14 +66,12 @@ action_def ::=  SET name_ref  EQUOP expr
     | MEXIT
 ptest_elsif ::= { ELSEIF pcondition THEN pactions }
 pusing_ref ::= [( USING arg_list | LP arg_list RP)]
-
 pcase_val ::= MWHEN expr COLON pactions {MWHEN expr COLON pactions}
 pcase_def ::= [DEFAULT COLON pactions]
-
 name_ref ::= IDENTIFIER [array_val]
 
-Lexical rules (are using a regular expression notation)
 
+Lexical rules (are using a regular expression notation)
 white_space       [ \t]
 sign	          [+-]?
 digit             [0-9]

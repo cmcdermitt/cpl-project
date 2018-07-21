@@ -8,6 +8,24 @@ currentTable = None
 breakCalled = False
 elseRun = False
 
+# Main interpreter function
+# Name: processNode(node)
+# Summary: The processNode function is invoked by the main file after the parser has
+#          generated the tree basedpret function is recognize keywords and parsed functions
+#          and call corresponding functions based on the value.
+#          Each function will receive a subtree containing the nodes from that keyword down,
+#          and will set the new starting node after it has finished processing any related nodes
+# Return: No output currently
+def processNode(node):
+    print('processing {} node {}'.format(node.type, node.value))
+    nodeType = node.type.upper()
+    if node.type.upper() == 'KEYWORD':
+        nodeType = node.value.upper() #for MTRUE and MFALSE
+    if nodeType in interpreterDict:
+        funct = interpreterDict[nodeType]
+        node = funct(node)
+    return node
+
 def error(msg, location = ''):
     if location == '':
         print ('Interpreter error: {}'.format(msg))
@@ -41,7 +59,7 @@ def lookupType(var_name, arr_pos = 0):
     elif global_vars.isDeclared(var_name):
         return global_vars.getType(var_name, arr_pos)
     else:
-        error('variable {} is undeclared and cannnot be looked up'.format(var_name), 'lookupType')
+        error('variable {} is undeclared and cannot be looked up'.format(var_name), 'lookupType')
 
 #declare a variable
 def declare(name, var_type):
@@ -79,24 +97,6 @@ def getName (node):
     else:
         error('getName only takes name_ref or IDENTIF on the input data.')
 #          The purpose of the interER nodes, not {}'.format(node.type))
-
-# Main interpreter function
-# Name: processNode(node)
-# Summary: The processNode function is invoked by the main file after the parser has
-#          generated the tree basedpret function is recognize keywords and parsed functions
-#          and call corresponding functions based on the value.
-#          Each function will receive a subtree containing the nodes from that keyword down,
-#          and will set the new starting node after it has finished processing any related nodes
-# Return: No output currently
-def processNode(node):
-    print('processing {} node {}'.format(node.type, node.value))
-    nodeType = node.type.upper()
-    if node.type.upper() == 'KEYWORD':
-        nodeType = node.value.upper() #for MTRUE and MFALSE
-    if nodeType in interpreterDict:
-        funct = interpreterDict[nodeType]
-        node = funct(node)
-    return node
 
 # Expected Structure:
 # Type program
@@ -413,8 +413,6 @@ def f_for(node):
 # Children pactions, pcondition
 def f_repeat(node):
     global breakCalled
-    # Get node type
-    nodeType = node.type
     # Emulate a do-while by executing pactions once,
     # and repeating in while loop until conditional is false
     #
@@ -479,7 +477,6 @@ def f_mexit(node):
 # Children: Identifier
 # Returns: Type and value of IDENTIFIER in tuple
 def f_name_ref(node):
-    # Get nodeType for sentence output
     return processNode(node.children[0])
 
 # Expected Structure:
