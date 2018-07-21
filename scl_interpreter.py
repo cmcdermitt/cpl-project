@@ -319,7 +319,7 @@ def f_display(node):
     pNode = processNode(node.children[0])
     print(pNode)
     value = lookup(pNode.value)
-    print('Statement recognized: DISPLAY ' + value)
+    print('Statement recognized: DISPLAY ' + str(value))
     return node
 
 # Expected Structure:
@@ -488,11 +488,12 @@ def f_case(node):
     # Get IDENTIFIER from name_ref
     nodeId = processNode(node.children[0])
     print('Statement recognized: CASE ' + str(nodeId) + ' ')
-    f_pcase_val(nodeId, node.children[1])
+    successfulCase = f_pcase_val(nodeId, node.children[1])
     if breakCalled == True:
         breakCalled = False
+    if(not successfulCase and len(node.children) == 3):
         f_pcase_def(node.children[2])
-    sys.stdout.write('ENDCASE')
+    sys.stdout.write('MENDCASE')
     return node
 
 # Expected Structure:
@@ -526,27 +527,30 @@ def f_pcase_val(node, identifier = ()):
     if identifier == ():
         error('pcase_val needs an identifier', 'pcase_val')
     # Value of identifier parameter will be our case to check against
-    caseCheck = identifier[1]
+    caseCheck = lookup(node.value)
+    caseRan = False
     # iterate through node expression children only
     # evaluate pactions call associated with index
-    for i in range(0, len(node.children), 2):
-        exprResult = processNode(node.children[i])
-        print('MWHEN ' + str(exprResult) + ' COLON ' + str(node.children[i+1]))
+    for i in range(0, len(identifier.children), 2):
+        exprResult = processNode(identifier.children[i])
+        print('MWHEN ' + str(exprResult) + ' COLON ' + str(identifier.children[i+1]))
         # Check identifier case against expression value
         if exprResult == caseCheck:
-            processNode(node.children[i+1])
+            caseRan = True
+            processNode(identifier.children[i+1])
             if breakCalled:
                 breakCalled = False
-                return node
-    return node
+                return caseRan
+    return caseRan
 
 # Expected structure
 # Type: pcase_def
 # Children: pactions
 # Returns: default pactions result
 def f_pcase_def(node):
-    p = processNode(node)
-    return p
+    if len(node.children) == 1:
+        p = processNode(node.children[0])
+    return node
 
 # Expected Structure:
 # Type: CALL
