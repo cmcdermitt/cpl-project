@@ -46,6 +46,8 @@ def lookup(var_name, arr_pos = 0):
             return currentTable.getValue(var_name, arr_pos)
         if global_vars.isDeclared(var_name):
             return global_vars.getValue(var_name, arr_pos)
+        else:
+            error('variable {} is undeclared and cannnot be looked up'.format(var_name), 'lookup')
     elif global_vars.isDeclared(var_name):
         return global_vars.getValue(var_name, arr_pos)
     else:
@@ -57,6 +59,8 @@ def lookupType(var_name, arr_pos = 0):
             return currentTable.getType(var_name, arr_pos)
         if global_vars.isDeclared(var_name):
             return global_vars.getType(var_name, arr_pos)
+        else:
+            error('variable {} is undeclared and cannnot be looked up'.format(var_name), 'lookup type')
     elif global_vars.isDeclared(var_name):
         return global_vars.getType(var_name, arr_pos)
     else:
