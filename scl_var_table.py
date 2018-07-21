@@ -57,7 +57,7 @@ class VarTable:
             var = self.variables[var].value
             if isinstance(var, list): # value will be a list if a variable is declared as an array
                 if isinstance(pos, list): # checking that optional param pos was passed in as list
-                    if len(pos) == len(var[0]): # Make sure that the number of values is appropriate I.E. a 2 dimensional array needs to be accessed with [x, y]
+                    if len(pos) == len(var): # Make sure that the number of values is appropriate I.E. a 2 dimensional array needs to be accessed with [x, y]
                         currList = var
                         for x in pos:
                             if x > 0 and x < len(pos):
