@@ -437,13 +437,14 @@ def f_repeat(node):
     # and repeating in while loop until conditional is false
     #
     # Perform initial pactions statement
+    print('Statement recognized: REPEAT ')
     p = processNode(node.children[0])
     # Get pcondition
     cond = processNode(node.children[1])
-    print('Statement recognized: REPEAT ')
+    
     # Start while loop
     while cond:
-        p = processNode(node.children[1])
+        p = processNode(node.children[0])
         if breakCalled == True:
             breakCalled = False
             return node
@@ -458,7 +459,7 @@ def f_while(node):
     global breakCalled
     # Get pcondition
     cond = processNode(node.children[0])
-    print('Statement recognized: WHILE ' + cond + 'DO')
+    print('Statement recognized: WHILE CONDITION DO')
     # Start while loop
     while cond:
         p = processNode(node.children[1])
