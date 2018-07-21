@@ -17,7 +17,6 @@ data_type ::= TUNSIGNED
     | REAL
     | TSTRING
     | TBOOL
-    | TBYTE
 parray_dec ::= [ARRAY plist_const popt_array_val]
 plist_const ::= LB (ICON | IDENTIFIER) RB { LB (ICON | IDENTIFIER) RB }
 popt_array_val ::= [(VALUE | EQUOP) array_val]

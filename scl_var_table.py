@@ -33,7 +33,17 @@ class VarTable:
             print("Error in assign(): Undeclared variable {} cannot be assigned a value".format(var))
             exit()
         else:
-            self.variables[var].value = value
+            if type(value) == int and (self.variables[var].type == 'INTEGER' or self.variables[var].type == 'LONG' or self.variables[var].type == 'SHORT'):
+                self.variables[var].value = value
+            elif type(value) == str and (self.variables[var].type == 'TSTRING' or self.variables[var].type == 'CHAR'):
+                self.variables[var].value = value
+            elif type(value) == float and (self.variables[var].type == 'REAL' or self.variables[var].type == 'DOUBLE'):
+                self.variables[var].value = value
+            elif type(value) == bool and self.variables[var].type == 'TBOOL':
+                self.variables[var].value = value
+            else:
+                print('Error in assign(): {} variable {} cannot be assigned a {}'.format(self.variables[var].type, self.variables[var].value, type(value)))
+            
 
     def getValue(self, var, pos = 0):
         if var not in self.variables.keys():

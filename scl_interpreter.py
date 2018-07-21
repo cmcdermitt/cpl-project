@@ -96,7 +96,7 @@ def getName (node):
     if node.type == 'IDENTIFIER':
         return node.value
     else:
-        error('getName only takes name_ref or IDENTIF on the input data.')
+        error('getName only takes name_ref or IDENTIFIER on the input data.')
 
 def isNumber(value):
     return type(value) == int or type(value) == float
@@ -532,7 +532,7 @@ def f_pcase_val(node, identifier = ()):
     # evaluate pactions call associated with index
     for i in range(0, len(identifier.children), 2):
         exprResult = processNode(identifier.children[i])
-        print('MWHEN ' + str(exprResult) + ' COLON ' + str(identifier.children[i+1]))
+        print('MWHEN ' + str(exprResult) + ' COLON ')
         # Check identifier case against expression value
         if exprResult == caseCheck:
             caseRan = True
@@ -830,7 +830,7 @@ interpreterDict = {
     'SET' : f_set,
     'FCON' : f_fcon,
     'TSTRING' : f_tstring,
-    'IDENTIFER' : f_identifier 
+    'IDENTIFIER' : f_identifier 
 }
 
 #for functions:
