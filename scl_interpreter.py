@@ -318,6 +318,7 @@ def f_set(node):
     identifier = getName(node.children[0])
     identifierData = processNode(node.children[0])
     exprValue = processNode(node.children[1])
+    if isinstance(exprValue, list):
         exprValue = exprValue[1]
     # Set identifier equal to exprValue
     if not isinstance(identifierData, list):
