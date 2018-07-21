@@ -285,7 +285,7 @@ def f_set(node):
     exprValue = processNode(node.children[1])
     # Set identifier equal to exprValue
     assign(identifier, exprValue)
-    print('Statment recognized: SET ' + identifier + ' EQUOP ' + exprValue)
+    print('Statement recognized: SET ' + identifier + ' EQUOP ' + str(exprValue))
     return node
 
 # Expected Structure:
@@ -369,10 +369,10 @@ def f_ifelse(node):
 # Children: pcondition, pactions
 def f_ptest_elsif(node):
     cond = False
-    sys.stdout.write('ELSE IF ')
+    print('ELSE IF ')
     for i in range(0, len(node.children), 2):
         cond = processNode(node.children[i])
-        sys.stdout.write(cond + ' ')
+        print(str(cond) + ' ')
         if cond == True:
             processNode(node.children[i + 1])
     return cond

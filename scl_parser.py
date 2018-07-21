@@ -416,7 +416,7 @@ def implement():
     else:
         error('IMPLEMENTATIONS', 'implement')
         
-    node.children.append(parameters())
+    #node.children.append(parameters())
     node.children.append(funct_list())
     return node
 
