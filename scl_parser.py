@@ -165,7 +165,7 @@ def data_declaration():
     return node
 
 # CASE: parray_dec
-# GRAMMAR: parray_dec ::= ARRAY plist_const [popt_array_val]
+# GRAMMAR: parray_dec ::= ARRAY plist_const popt_array_val
 def parray_dec():
     node = Node('parray_dec')
     if(scanner.lex[lex_en['value']] == 'ARRAY'):
@@ -204,29 +204,14 @@ def plist_const():
     return node
 
 # CASE: popt_array_val
-# GRAMMAR: popt_array_val ::= (VALUE | EQUOP) array_val
+# GRAMMAR: popt_array_val ::= [(VALUE | EQUOP) array_val]
 def popt_array_val():
     # Append function header to output list
     node = Node('popt_array_val')
     if scanner.lex[lex_en['value']] == 'VALUE' or scanner.lex[lex_en['value']] == 'EQUOP':
-        node.children.append(scanner.lex[lex_en['value']])
         scanner.next()
         node.children.append(array_val())
     return node
-
-# CASE: value_eq
-# GRAMMAR: value_eq ::= VALUE
-#						| EQUOP
-def value_eq():
-    # Append function header to output list
-    lex_list = ['value_eq']
-    if scanner.lex[lex_en['value']] == 'EQUOP' or scanner.lex[lex_en['value']] == 'VALUE':
-        lex_list.append(tuple(scanner.lex))
-        scanner.next()
-    else:
-        # Append error message if case specific grammar not found
-        lex_list.append(error('EQUOP or VALUE', 'value_eq'))
-    return lex_list
 
 # CASE: array_val
 # GRAMMAR: LB arg_list RB
@@ -234,13 +219,11 @@ def array_val():
     # Append function header to output list
     node = Node('array_val')
     if scanner.lex[lex_en['value']] == 'LB':
-        node.children.append(scanner.lex[lex_en['value']])
         scanner.next()
     else:
         error('LB', 'array_val')
-    lex_list.append(arg_list())
+    node.children.append(arg_list())
     if(scanner.lex[lex_en['value']] == 'RB'):
-        node.children.append(scanner.lex[lex_en['value']])
         scanner.next()
     else:
         error('RB', 'array_val')
@@ -348,23 +331,14 @@ def element():
     # Append function header to output list
     valid_types = ['STRING', 'LETTER', 'ICON', 'HCON', 'FCON', 'IDENTIFIER']
     valid_values = ['MTRUE', 'MFALSE']
-    if scanner.lex[lex_en['type']] in valid_types: #needs additional code for identifier if using arrays
+    if scanner.lex[lex_en['type']] == 'IDENTIFIER':
+        node = Node(name_ref())
+    elif scanner.lex[lex_en['type']] in valid_types: #needs additional code for identifier if using arrays
         node = Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']])
         scanner.next()
     elif scanner.lex[lex_en['value']] in valid_values:
         node = Node('BOOL', scanner.lex[lex_en['value']])
         scanner.next()
-
-        # for arrays
-        # if scanner.lex[lex_en['value']] == 'LB':
-        # 	lex_list.append(popt_ref())
-    elif scanner.lex[lex_en['value']] == 'LP':
-        scanner.next()
-        node = expr()
-        if scanner.lex[lex_en['value']] == 'RP':
-            scanner.next()
-        else:
-            error('RP', 'element')
     else:
         # Append error message if case specific grammar not found
         error('IDENTIFIER or LP or TYPE or MTRUE or MFALSE', 'element')
@@ -375,16 +349,16 @@ def element():
 #						| array_val
 #						| parguments
 # NOTE: Blank line interpreted as optional input valuues
-def popt_ref():
-    # Append function header to output list
-    lex_list = ['popt_ref']
-    if scanner.lex[lex_en['value']] == 'LB':
-        lex_list.append(array_val())
-    elif scanner.lex[lex_en['value']] == 'LP':
-        lex_list.append(parguments())
-    else:
-        return lex_list
-    return lex_list
+# def popt_ref():
+#     # Append function header to output list
+#     lex_list = ['popt_ref']
+#     if scanner.lex[lex_en['value']] == 'LB':
+#         lex_list.append(array_val())
+#     elif scanner.lex[lex_en['value']] == 'LP':
+#         lex_list.append(parguments())
+#     else:
+#         return lex_list
+#     return lex_list
 
 # CASE: parguments
 # GRAMMAR: LP arg_list RP
@@ -829,7 +803,7 @@ def action_def():
     return node
 
 #CASE name_ref
-#GRAMMAR name_ref ::= IDENTIFIER array_val
+#GRAMMAR name_ref ::= IDENTIFIER [array_val]
 def name_ref():
     node = Node('name_ref')
     # Append function header to output list
@@ -838,7 +812,7 @@ def name_ref():
         node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
         scanner.next()
         if (scanner.lex[lex_en['value']] == 'LB'):
-            node.children.append(array_val)
+            node.children.append(array_val())
     else:
         error('IDENTIFIER', 'name_ref')
     return node

@@ -41,7 +41,7 @@ eq_v ::= EQUALS
 expr ::= term [ (PLUS | MINUS | BAND | BOR | BXOR) term ]
 term ::= punary [ (STAR | DIVOP | MOD | LSHIFT | RSHIFT) punary]
 punary ::= [NEGATE] element
-element ::= IDENTIFIER [(array_val | parguments)]
+element ::= name_ref
     | STRING
     | LETTER
     | ICON
