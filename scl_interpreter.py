@@ -97,12 +97,19 @@ def getName (node):
         return node.value
     else:
         error('getName only takes name_ref or IDENTIF on the input data.')
-#          The purpose of the interER nodes, not {}'.format(node.type))
+
+def isNumber(node):
+    nodeVal = processNode(node)
+    return type(nodeVal) == int or type(nodeVal) == float
+
+def isInteger(node):
+    return type(processNode(node))
+
 
 # Expected Structure:
 # Type program
 # Children: func_main, f_globals, implement
-def program(node):
+def f_program(node):
     processNode(node.children[0])
     processNode(node.children[1])
     processNode(node.children[2])
@@ -160,7 +167,7 @@ def f_pother_oper_def(node):
 # Children: [data_declaration, {data_declaration}]
 def f_parameters(node):
     for dec in node.children:
-        prFocessNode(dec)
+        processNode(dec)
     return node
 
 # Expected Structure:
@@ -557,44 +564,38 @@ def f_pcase_def(node):
 # Logic functions (descending from pcondition)
 
 # Type AND
-# Children: pcond1 and pcond 1 or pcond 1 
+# Children: pcond1 and pcond 1
 def f_and(node):
     #get children: process if nodes, lookup if strings, then do operation on results
     arg1 = processNode(node.children[0])
-    if isinstance(arg1, str):
-        arg1 = lookup(arg1)
-    if len(node.children) > 1:
-        arg2 = processNode(node.children[1])
-        if isinstance(arg2, str):
-            arg2 = lookup(arg2)
-        sys.stdout.write(arg1 + ' AND ' + arg2 + ' ')
-        return arg1 and arg2
+    arg2 = processNode(node.children[1])
+    if type(arg1) == bool and type(arg2) == bool:
+        print (' {} AND {} '.format(arg1, arg2))
+        return arg1 and arg2        
+    else:
+        error('Type error: {} and {} are not compatible for AND'.format(type(arg1), type(arg2)))
 
 # Expected Structure:
 # Type OR
-# Children: pcond1 and pcond 1 or pcond 1
+# Children: pcond1 and pcond 1
 def f_or(node):
     arg1 = processNode(node.children[0])
-    if isinstance(arg1, str):
-        arg1 = lookup(arg1)
-    if len(node.children) > 1:
-        arg2 = processNode(node.children[1])
-        if isinstance(arg2, str):
-            arg2 = lookup(arg2)
-        sys.stdout.write(arg1 + ' OR ' + arg2)
-        return arg1 or arg2
+    arg2 = processNode(node.children[1])
+    if type(arg1) == bool and type(arg2) == bool:
+        print (' {} OR {} '.format(arg1, arg2))
+        return arg1 and arg2
     else:
-        sys.stdout.write(arg1 + ' ')
-        return arg1
+        error('Type error: {} and {} are not compatible for OR'.format(type(arg1), type(arg2)))
 
 #Expected Structure
 #TYPE NOT
 #Children: Expr
 def f_not(node):
     arg1 = processNode(node.children[0])
-    if isinstance(arg1, str):
-        arg1 = lookup(arg1)
-    return arg1
+    if isinstance(arg1, bool):
+        return arg1
+    else:
+        error('Type error: {} not valid for NOT'.format(type(arg1)))
 
 # Expected Structure:
 # Type MTRUE
@@ -612,181 +613,141 @@ def f_mfalse(node):
 # Type Equal
 # Children: expr, expr
 def f_equals(node):
-    var = processNormArgs(node)
-    return var[0] == var[1]
-
-
-# Use when checking for less than, greater than, less than or equal , or greater than or qual
-def processCompArgs(node):
-    arg1 = getType(node.children[0])
-    arg2 = getType(node.children[1])
-    if(arg1 == 'INTEGER' or arg1 == 'REAL'):
-        arg1 = processNode(node.children[0])
-        arg1 = lookup(arg1.value)
-    elif(arg1 == 'ICON' or arg1 == 'FCON'):
-        arg1 = processNode(node.children[0])
-    else:
-        arg1 = processNode(node.children[0])
-
-    if(arg2 == 'INTEGER' or arg2 == 'REAL'):
-        arg2 = processNode(node.children[1])
-        arg2 = lookup(arg2.value)
-    elif(arg2 == 'ICON' or arg2 == 'FCON'):
-        arg2 = processNode(node.children[1])
-    else:
-        error('arg2 is invalid type')
-    if(type(arg1) != type(arg2)):
-        error('types not the same')
-    return [arg1, arg2]
-
-def processNormArgs(node):
-    arg1 = getType(node.children[0])
-    arg2 = getType(node.children[1])
-    if(arg1 == 'INTEGER' or arg1 == 'FLOAT' or arg1 == 'TSTRING' or arg1 == 'CHAR' or arg1 == 'TBOOL'):
-        arg1 = processNode(node.children[0])
-        arg1 = lookup(arg1.value)
-    elif(arg1 == 'ICON'  or arg1 == 'FCON' or arg1 == 'STRING' or arg1 == 'LETTER' or arg1 == 'BOOL'):
-        arg1 = processNode(node.children[0])
-    else:
-        arg1 = processNode(node.children[0])
-
-    if(arg2 == 'INTEGER' or arg2 == 'FLOAT' or arg2 == 'TSTRING'  or arg2 == 'CHAR' or arg2 == 'TBOOL'):
-        arg2 = processNode(node.children[1])
-        arg2 = lookup(arg2.value)
-    elif(arg2 == 'ICON' or arg2 == 'FCON' or arg2 == 'STRING' or arg2 == 'LETTER' or arg2 == 'BOOL'):
-        arg2 = processNode(node.children[1])
-    else:
-        arg2 = processNode(node.children[1])
-    return [arg1, arg2]
+    #get the values of both children, then compare them
+    return processNode(node.children[0]) == processNode(node.children[1])
 
 # Expected Structure:
 # Type greater_than
 # Children: expr, expr
 def f_greater_than(node):
-    var1 = processNode(node.children[0])
-    var2 = processNode(node.children[1])
-    if type(var1) != type(var2):
-        error('bad types')
-    return var1 > var2
+    arg1 = processNode(node.children[0])
+    arg2 = processNode(node.children[1])
+    if type(arg1) != type(arg2) or not isNumber(arg1) or not isNumber(arg2):
+        error('Type error: {} and {} are not compatible for GREATER THAN'.format(type(arg1), type(arg2)))
+    return arg1 > arg2
 
 # Expected Structure:
 # Type less_than
 # Children: expr, expr
 def f_less_than(node):
-    var = processCompArgs(node)
-    return var[0] < var[1]
+    arg1 = processNode(node.children[0])
+    arg2 = processNode(node.children[1])
+    if type(arg1) != type(arg2) or not isNumber(arg1) or not isNumber(arg2):
+        error('Type error: {} and {} are not compatible for LESS THAN'.format(type(arg1), type(arg2)))
+    return arg1 < arg2
 
 # Expected Structure:
 # Type greater_or_equal
 # Children: expr, expr
 def f_greater_or_equal(node):
-    var = processCompArgs(node)
-    return var[0] >= var[1]
+    arg1 = processNode(node.children[0])
+    arg2 = processNode(node.children[1])
+    if type(arg1) != type(arg2) or not isNumber(arg1) or not isNumber(arg2):
+        error('Type error: {} and {} are not compatible for GREATER OR EQUAL'.format(type(arg1), type(arg2)))
+    return arg1 >= arg2
+
 # Expected Structure:
 # Type less_or_equal
 # Children: expr, expr
 
 def f_less_or_equal(node):
-    var = processCompArgs(node)
-    return var[0] <= var[1] 
+    arg1 = processNode(node.children[0])
+    arg2 = processNode(node.children[1])
+    if type(arg1) != type(arg2) or not isNumber(arg1) or not isNumber(arg2):
+        error('Type error: {} and {} are not compatible for LESS OR EQUAL'.format(type(arg1), type(arg2)))
+    return arg1 <= arg2
 
 # Math functions (descending from expr)
 
 def f_plus(node):
-    var = processCompArgs(node)
-    return var[0] + var[1] 
+    arg1 = processNode(node.children[0])
+    arg2 = processNode(node.children[1])
+    if (isNumber(arg1) or type(arg1) == str) and type(arg1) == type(arg2):
+        return arg1 + arg2
+    else:
+        error('Type error: {} and {} are not compatible for PLUS'.format(type(arg1), type(arg2)))
 
 
 def f_minus(node):
     arg1 = processNode(node.children[0])
-    if isinstance(arg1, str):
-        arg1 = lookup(arg1)
     arg2 = processNode(node.children[1])
-    if isinstance(arg2, str):
-        arg2 = lookup(arg2)
-    return arg1 - arg2
+    if isNumber(arg1) and type(arg1) == type(arg2):
+        return arg1 - arg2
+    else:
+        error('Type error: {} and {} are not compatible for MINUS'.format(type(arg1), type(arg2)))
 
 def f_band(node):
     arg1 = processNode(node.children[0])
-    if isinstance(arg1, str):
-        arg1 = lookup(arg1)
     arg2 = processNode(node.children[1])
-    if isinstance(arg2, str):
-        arg2 = lookup(arg2)
-    return arg1 & arg2
+    if isInteger(arg1) and isInteger(arg2):
+        return arg1 & arg2
+    else:
+        error('Type error: operands for BAND must be integers, not  {} and {}'.format(type(arg1), type(arg2)))
 
 def f_bor(node):
     arg1 = processNode(node.children[0])
-    if isinstance(arg1, str):
-        arg1 = lookup(arg1)
     arg2 = processNode(node.children[1])
-    if isinstance(arg2, str):
-        arg2 = lookup(arg2)
-    return arg1 | arg2 
+    if isInteger(arg1) and isInteger(arg2):
+        return arg1 | arg2
+    else:
+        error('Type error: operands for BOR must be integers, not  {} and {}'.format(type(arg1), type(arg2)))
 
 def f_bxor(node):
     arg1 = processNode(node.children[0])
-    if isinstance(arg1, str):
-        arg1 = lookup(arg1)
     arg2 = processNode(node.children[1])
-    if isinstance(arg2, str):
-        arg2 = lookup(arg2)
-    return arg1 ^ arg2
+    if isInteger(arg1) and isInteger(arg2):
+        return arg1 ^ arg2
+    else:
+        error('Type error: operands for BXOR must be integers, not  {} and {}'.format(type(arg1), type(arg2)))
 
 def f_star(node):
     arg1 = processNode(node.children[0])
-    if isinstance(arg1, str):
-        arg1 = lookup(arg1)
     arg2 = processNode(node.children[1])
-    if isinstance(arg2, str):
-        arg2 = lookup(arg2)
-    return arg1 * arg2
+    if isNumber(arg1) and type(arg1) == type(arg2):
+        return arg1 * arg2
+    else:
+        error('Type error: {} and {} are not compatible for STAR'.format(type(arg1), type(arg2)))
 
 def f_divop(node):
     arg1 = processNode(node.children[0])
-    if isinstance(arg1, str):
-        arg1 = lookup(arg1)
     arg2 = processNode(node.children[1])
-    if isinstance(arg2, str):
-        arg2 = lookup(arg2)
-
-    if isinstance(arg1, int) and isinstance(arg2, int):
-        return arg1 // arg2 #floor division
+    if isInteger(arg1) and isInteger(arg2):
+        return arg1 // arg2
+    elif isNumber(arg1) and type(arg1) == type(arg2):
+        return arg1 / arg2
     else:
-        return arg1 / arg2 #normal division
+        error('Type error: {} and {} are not compatible for DIVOP'.format(type(arg1), type(arg2)))
 
 def f_mod(node):
     arg1 = processNode(node.children[0])
-    if isinstance(arg1, str):
-        arg1 = lookup(arg1)
     arg2 = processNode(node.children[1])
-    if isinstance(arg2, str):
-        arg2 = lookup(arg2)
-    return arg1 % arg2 
+    if isInteger(arg1) and isInteger(arg2):
+        return arg1 % arg2
+    else:
+        error('Type error: Arguments for MOD must be integers, not {} and {}'.format(type(arg1), type(arg2)))
 
 def f_lshift(node):
     arg1 = processNode(node.children[0])
-    if isinstance(arg1, str):
-        arg1 = lookup(arg1)
     arg2 = processNode(node.children[1])
-    if isinstance(arg2, str):
-        arg2 = lookup(arg2)
-    return arg1 << arg2
+    if isInteger(arg1) and isInteger(arg2):
+        return arg1 << arg2
+    else:
+        error('Type error: Arguments for LSHIFT must be integers, not {} and {}'.format(type(arg1), type(arg2)))
 
 def f_rshift(node):
     arg1 = processNode(node.children[0])
-    if isinstance(arg1, str):
-        arg1 = lookup(arg1)
     arg2 = processNode(node.children[1])
-    if isinstance(arg2, str):
-        arg2 = lookup(arg2)
-    return arg1 >> arg2 
+    if isInteger(arg1) and isInteger(arg2):
+        return arg1 >> arg2
+    else:
+        error('Type error: Arguments for MOD must be integers, not {} and {}'.format(type(arg1), type(arg2)))
 
 def f_negate(node):
     arg = processNode(node.children[0])
-    if isinstance(arg, str):
-        arg = lookup(arg)
-    return -arg
+    if isNumber(arg):
+        return -arg
+    else:
+        error('Type error: Argument for NEGATE must be a number, not {}'.format(type(arg)))
 
 # numeric constant functions
 def f_icon(node):
@@ -837,7 +798,7 @@ interpreterDict = {
     'MEXIT' : f_mexit,
     'F_GLOBALS' : f_f_globals,
     'CONST_VAR_STRUCT' : f_const_var_struct,
-    'PROGRAM' : program,
+    'PROGRAM' : f_program,
     'CONST_DEC' : f_const_dec,
     'VAR_DEC' : f_var_dec,
     'DATA_DECLARATIONS' : f_data_declarations,
