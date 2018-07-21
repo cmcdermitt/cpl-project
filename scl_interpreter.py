@@ -223,15 +223,34 @@ def f_data_declaration(node):
 # Type array_dec
 # Children: plist_const, popt_array_val  
 def f_parray_dec(node):
-    #size = processNode(node.children[0]) # Get size of array from plist_const
-    # contents = processNode(node.children[1]) # Get contents of array from popt_array_val
-    # if len(contents) <= len(size): # Fill array
-    #     for count in range(0, len(contents)):
-    #         size[count] = contents[count]
-    # else:
-    #     error('parameters is too big for plist')
-    # return size
-    return
+    array = []
+    if(len(node.children) > 0):
+        arg1 = processNode(node.children[0])
+        arg2 = processNode(node.children[1])
+        length = len(arg1[1])
+        r = range(0,length - 1)
+        for x in r:
+            addListAtBottom(array,arg1[1][x])
+        addListAtBottom(array, arg1[1][length - 1], None)
+
+    return array
+
+def addListAtBottom(array, num, val = -1):
+    if len(array) != 0:
+        for arr in array: 
+            if isinstance(arr, list):
+                addListAtBottom(arr, num, val)
+    else:
+        for x in range(0,num):
+            if val == -1:
+                array.append([])
+            else:
+                array.append(None)
+            
+
+
+        
+
 
 # STRUCTURE
 # Type f_plist_const
@@ -241,9 +260,7 @@ def f_plist_const(node):
     total_num = 1 # Initial size
     dimension_lim = []
     for x in range(len(node.children)):
-        c_id = node.children[x]
-        if isinstance(c_id, str):
-            c_id = lookup(c_id)
+        c_id = processNode(node.children[x])
         dimension_lim.append(c_id)
         total_num = c_id * total_num # Find the total number of locations in the array by multiplying all the dimensions
     for a in range (0,total_num):
