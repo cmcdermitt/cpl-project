@@ -152,7 +152,7 @@ def f_pother_oper_def(node):
 # Children: [data_declaration, {data_declaration}]
 def f_parameters(node):
     for dec in node.children:
-        processNode(dec)
+        prFocessNode(dec)
     return node
 
 # Expected Structure:
@@ -163,7 +163,7 @@ def f_f_globals(node):
     global global_vars
     currentTable = global_vars # switch to global scope
     processNode(node.children[0])
-    currentTable = main_vars #switch to main function scope
+    #currentTable = main_vars #switch to main function scope uncomment when adding multiple functions
 
 # Expected structure:
 # Type: const_dec
@@ -360,45 +360,52 @@ def f_ptest_elsif(node):
 # Children: name_ref, expr, ( TO | DOWNTO ), expr, pactions
 def f_for(node):
     global breakCalled
+    global currentTable
     # Get IDENTIFIER
     nodeID = processNode(node.children[0])
+    nodeID = nodeID.value
+    #nodeID = processNode(node.children[0])
+    
     # Get corresponding Python variable
-    var = lookup(nodeID)
+    #var = lookup(nodeID)
     # Get first expr of for loop
     expr1 = processNode(node.children[1])
     # Perform lookup if type string to get value
     if isinstance(expr1, str):
         expr1 = lookup(expr1)
     # Determine if direction is TO or DOWNTO
-    dir = node.children[2].value
+    dir = processNode(node.children[2]).type
     # Get second expr of for loop
     expr2 = processNode(node.children[3])
     # Perform lookup if type string to get value
     if isinstance(expr2, str):
         expr2 = lookup(expr2)
     # Assign initial value to IDENTIFIER
-    main_vars.assign(nodeID, expr1)
+    currentTable.assign(nodeID, expr1)
     # Perform for loop up or down
+    var = lookup(nodeID)
+
     if dir == 'TO':
         while var < expr2:
             # Process pactions each time
-            p = processNode(node.children[id])
+            var += 1
             if breakCalled == True:
                 breakCalled = False
                 return node
             # Increment and assign
-            var += 1
-            main_vars.assign(nodeID, var)
+
+            currentTable.assign(nodeID, var)
     else:
         while var > expr2:
-            # Perform pactions each time
-            p = processNode(node.children[id])
+            # Perform pactions each timevar += 1
+            var += 1
+            var = lookup(processNode(node.children[0]).value)
             if breakCalled == True:
                 breakCalled = False
                 return node
             # Decrement and assign
             var -= 1
-            main_vars.assign(nodeID, var)
+            currentTable.assign(nodeID, var)
     return node
 
 # Expected Structure:
@@ -807,7 +814,7 @@ interpreterDict = {
     'INCREMENT' : f_increment,
     'DECREMENT' : f_decrement,
     'IFELSE' : f_ifelse,
-    'FORLOOP' : f_for,
+    'FOR' : f_for,
     'WHILE' : f_while,
     'CASE' : f_case,
     'REPEATLOOP' : f_repeat,
