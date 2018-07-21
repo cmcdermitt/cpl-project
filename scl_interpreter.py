@@ -361,16 +361,16 @@ def f_ifelse(node):
     global elseRun
     print('Statement recognized: IF ')
     if processNode(node.children[0]):
-        sys.stdout.write('THEN  ')
+        print('THEN  ', end = '')
         processNode(node.children[1])
         return node
     else:
         elseRun = not processNode(node.children[2]) and len(node.children) == 4 # Check if else stmt exists
     if elseRun == True:
         elseRun = False
-        sys.stdout.write('ELSE ')
+        print('ELSE ', end = '')
         processNode(node.children[3])
-    sys.stdout.write('ENDIF')
+    print('ENDIF', end = '')
     return node
 
 # Expected Structure:
