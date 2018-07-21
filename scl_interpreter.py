@@ -417,16 +417,16 @@ def f_repeat(node):
     # and repeating in while loop until conditional is false
     #
     # Perform initial pactions statement
-    p = processNode(node.children[0])
+    p = processNode(node.children[1])
     # Get pcondition
-    cond = processNode(node.children[1])
+    cond = processNode(node.children[0])
     # Start while loop
     while cond:
-        p = processNode(node.children[0])
+        p = processNode(node.children[1])
         if breakCalled == True:
             breakCalled = False
             return node
-        cond = processNode(node.children[1])
+        cond = processNode(node.children[0])
     return node
 
 # Expected Structure:
@@ -590,9 +590,9 @@ def processCompArgs(node):
         arg1 = processNode(node.children[0])
         arg1 = lookup(arg1.value)
     elif(arg1 == 'ICON' or arg1 == 'FCON'):
-        arg2 = processNode(node.children[0])
+        arg1 = processNode(node.children[0])
     else:
-        error('arg1 is invalid type')
+        arg1 = processNode(node.children[0])
 
     if(arg2 == 'INTEGER' or arg2 == 'REAL'):
         arg2 = processNode(node.children[1])
@@ -608,29 +608,32 @@ def processCompArgs(node):
 def processNormArgs(node):
     arg1 = getType(node.children[0])
     arg2 = getType(node.children[1])
-    if(arg1 == 'INTEGER' or arg1 == 'FLOAT' or 'TSTRING' or 'CHAR' or 'TBOOL'):
+    if(arg1 == 'INTEGER' or arg1 == 'FLOAT' or arg1 == 'TSTRING' or arg1 == 'CHAR' or arg1 == 'TBOOL'):
         arg1 = processNode(node.children[0])
         arg1 = lookup(arg1.value)
-    elif(arg1 == 'ICON' or arg1 == 'FCON' or 'STRING' or 'LETTER' or 'BOOL'):
-        arg2 = processNode(node.children[0])
+    elif(arg1 == 'ICON'  or arg1 == 'FCON' or arg1 == 'STRING' or arg1 == 'LETTER' or arg1 == 'BOOL'):
+        arg1 = processNode(node.children[0])
     else:
-        error('arg1 is invalid type')
+        arg1 = processNode(node.children[0])
 
-    if(arg2 == 'INTEGER' or arg2 == 'FLOAT' or 'TSTRING' or 'CHAR' or 'TBOOL'):
+    if(arg2 == 'INTEGER' or arg2 == 'FLOAT' or arg2 == 'TSTRING'  or arg2 == 'CHAR' or arg2 == 'TBOOL'):
         arg2 = processNode(node.children[1])
         arg2 = lookup(arg2.value)
-    elif(arg2 == 'ICON' or arg2 == 'FCON' or 'STRING' or 'LETTER' or 'BOOL'):
+    elif(arg2 == 'ICON' or arg2 == 'FCON' or arg2 == 'STRING' or arg2 == 'LETTER' or arg2 == 'BOOL'):
         arg2 = processNode(node.children[1])
     else:
-        error('arg2 is invalid type')
+        arg2 = processNode(node.children[1])
     return [arg1, arg2]
 
 # Expected Structure:
 # Type greater_than
 # Children: expr, expr
 def f_greater_than(node):
-    var = processCompArgs(node)
-    return var[0] > var[1]
+    var1 = processNode(node.children[0])
+    var2 = processNode(node.children[1])
+    if type(var1) != type(var2):
+        error('bad types')
+    return var1 > var2
 
 # Expected Structure:
 # Type less_than
@@ -656,11 +659,9 @@ def f_less_or_equal(node):
 # Math functions (descending from expr)
 
 def f_plus(node):
-    arg1 = processNode(node.children[0])
-    if isinstance(arg1, str):
-        arg1 = lookup(arg1)
-    arg2 = processNode(node.children[1])
-    return arg1 + arg2 
+    var = processCompArgs(node)
+    return var[0] + var[1] 
+
 
 def f_minus(node):
     arg1 = processNode(node.children[0])
@@ -768,6 +769,9 @@ def f_hcon(node):
 def f_fcon(node):
     return float(node.value)
 
+def f_identifier(node):
+    return lookup(node.value)
+
 #dictionary associating node types with functions
 interpreterDict = {
     'INPUT': f_input,
@@ -814,7 +818,7 @@ interpreterDict = {
     'FOR' : f_for,
     'WHILE' : f_while,
     'CASE' : f_case,
-    'REPEATLOOP' : f_repeat,
+    'REPEAT' : f_repeat,
     'PCASE_VAL' : f_pcase_val,
     'PCASE_DEF' : f_pcase_def,
     'NAME_REF' : f_name_ref,
@@ -827,7 +831,8 @@ interpreterDict = {
     'PARAMETERS' : f_parameters,
     'SET' : f_set,
     'FCON' : f_fcon,
-    'TSTRING' : f_tstring
+    'TSTRING' : f_tstring,
+    'IDENTIFER' : f_identifier 
 }
 
 #for functions:
