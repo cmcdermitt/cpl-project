@@ -34,7 +34,7 @@ def error(msg, location = ''):
         print('Interpreter error: {} in {}'.format(msg, location))
     exit()
 
-def lookup(var_name, arr_pos = 0):
+def lookup(var_name, arr_pos = []):
     global global_vars
     global currentTable
     

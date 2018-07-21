@@ -43,29 +43,40 @@ class VarTable:
                 self.variables[var].value = value
             else:
                 print('Error in assign(): {} variable {} cannot be assigned a {}'.format(self.variables[var].type, self.variables[var].value, type(value)))
+                exit()
             
 
-    def getValue(self, var, pos = 0):
+    def getValue(self, var, pos = []):
         if var not in self.variables.keys():
-            print('Error in get(): variable {} has not been declared'.format(var))
+            print('Error in getValue(): variable {} has not been declared'.format(var))
+            exit()
         elif (self.variables[var].value == None):
             print('Error in get(): variable {} has not been assigned a value'.format(var))
+            exit()
         else: 
             var = self.variables[var].value
             if isinstance(var, list): # value will be a list if a variable is declared as an array
                 if isinstance(pos, list): # checking that optional param pos was passed in as list
-                    if len(pos) == var[0]: # Make sure that the number of [] is appropriate I.E. a 2 dimensional array needs to be accessed with [][]
-                        index = 1
-                        for x in range(0, pos):
-                            if pos[x] < var[1][x]: # Make sure that each index does not go over bounds
-                                index = index * pos[x + 1]  # Calculate index as if it is in grid starting with index 1
-                        index = index - 1 # Subtract 1 to get 0 based position
-                        return var[2][index]
+                    if len(pos) == len(var[0]): # Make sure that the number of values is appropriate I.E. a 2 dimensional array needs to be accessed with [x, y]
+                        currList = var
+                        for x in pos:
+                            if x > 0 and x < len(pos):
+                                currList = currList[x] #set the current list to the list stored at each position
+                            else:
+                                print('Error in getValue(): array index {} in {} out of bounds.'.format(x, var.value))
+                                exit()
+                        return currList
+                    else:
+                        print('Error in getValue(): array {} has the wrong number of indices'.format(var.value))
+                        exit()
+                else:
+                    print('Error in getValue(): array {} has no indices'.format(var.value))
+                    exit()
             else:
                 return var # For non arrays
 
 
-    def getType(self, var, pos = 0):
+    def getType(self, var, pos = []):
         if var not in self.variables.keys():
             print('Error in get(): variable {} has not been declared'.format(var))
         else:
