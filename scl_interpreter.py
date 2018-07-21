@@ -67,10 +67,10 @@ def lookupType(var_name, arr_pos = 0):
         error('variable {} is undeclared and cannot be looked up'.format(var_name), 'lookupType')
 
 #declare a variable
-def declare(name, var_type):
+def declare(name, var_type, val = None):
     global currentTable
     global isConst
-    currentTable.declare(name, var_type, isConst)
+    currentTable.declare(name, var_type, isConst, val) 
 
 #assign a variable a value
 def assign(name, value):
@@ -214,9 +214,12 @@ def f_data_declarations(node):
 # Children: 
 def f_data_declaration(node):
     global currentTable # Table to append to
-    arrayness = processNode(node.children[1]) # Size of variable (if it is an array or not) NOTE: Lookup will need to be changed to support this
+    array = processNode(node.children[1]) # Size of variable (if it is an array or not) NOTE: Lookup will need to be changed to support this
     data_type = processNode(node.children[2]) # Data type of variable; currently no type checking
-    declare(getName(node.children[0]), data_type) # Append variable to proper table
+    if len(array) == 0:
+        declare(getName(node.children[0]), data_type) # Append variable to proper table
+    else:
+        declare(getName(node.children[0]), data_type, array) # Append variable to proper table
     print('Statement recognized: DEFINE ' + node.children[0].value + " OF " + str(data_type))
 
 # Expected Structure:
