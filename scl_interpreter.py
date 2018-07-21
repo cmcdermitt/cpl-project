@@ -1,5 +1,8 @@
 import scl_var_table
 import sys
+import state_machine
+from parser_tree import Node
+
 # declare globals
 global_vars = scl_var_table.VarTable()
 main_vars = scl_var_table.VarTable()
@@ -326,8 +329,16 @@ def f_input(node):
     global main_vars
     # Get input
     input_val = input('Enter input:')
+    #Run state_machine.processLine to get the first token in the line
+    input_val = state_machine.processLine(input_val)[0] #ignore any tokens past the first
+    if input_val[1] == 'IDENTIFIER':
+        input_val[1] = 'TSTRING' #since the scanner treats arbitrary unquoted text as identifiers, convert it to string
+    #put the token in a node so we can use the functions we already have to get its value
+    tempNode = Node(input_val[1], input_val[0])
+    
+
     # Add identifier to variable table
-    assign(getName(node.children[0]), input_val)
+    assign(getName(node.children[0]), processNode(tempNode))
     # output results
     print('Statement recognized: INPUT ' + str(node.children[0].value))
     # Return node to processNode
@@ -850,6 +861,9 @@ interpreterDict = {
     'SET' : f_set,
     'FCON' : f_fcon,
     'TSTRING' : f_tstring,
+    'LETTER' : f_tstring,
+    'STRING' : f_tstring,
+    'CHAR' : f_tstring,
     'IDENTIFIER' : f_identifier 
 }
 
