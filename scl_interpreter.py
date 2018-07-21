@@ -76,15 +76,15 @@ def declare(name, var_type, val = None):
     currentTable.declare(name, var_type, isConst, val) 
 
 #assign a variable a value
-def assign(name, value):
+def assign(name, value, indices = []):
     global currentTable
     if currentTable is not None:
         if currentTable.isDeclared(name):
-            currentTable.assign(name, value)
+            currentTable.assign(name, value, indices)
         else:
-            global_vars.assign(name, value)
+            global_vars.assign(name, value, indices)
     else:
-        currentTable.assign(name, value)
+        currentTable.assign(name, value, indices)
 
 # Get the type of what's stored in a name_ref ID, or data node
 def getType (node):
@@ -316,9 +316,13 @@ def f_pactions(node):
 def f_set(node):
     # Get identifier tuple
     identifier = getName(node.children[0])
+    identifierData = processNode(node.children[0])
     exprValue = processNode(node.children[1])
     # Set identifier equal to exprValue
-    assign(identifier, exprValue)
+    if identifierData == None:
+        assign(identifier, exprValue)
+    else:
+        assign(identifier, exprValue, identifierData[2])
     print('Statement recognized: SET ' + identifier + ' EQUOP ' + str(exprValue))
     return node
 
@@ -352,8 +356,12 @@ def f_display(node):
     #print the value of the IDENTIFIER's variable
     # Change actual output after debuging
     pNode = processNode(node.children[0])
-    print(pNode)
-    print('Statement recognized: DISPLAY ' + str(pNode))
+    if isinstance(pNode, list):
+        print(pNode[1])
+        print('Statement recognized: DISPLAY ' + str(pNode[1]))
+    else:
+        print(pNode)
+        print('Statement recognized: DISPLAY ' + str(pNode))
     return node
 
 # Expected Structure:
@@ -544,6 +552,16 @@ def f_mexit(node):
 # Returns: Type and value of IDENTIFIER in tuple
 def f_name_ref(node):
     return processNode(node.children[0])
+
+def f_array_val(node):
+    indices = processNode(node.children[0])
+    return indices
+
+def f_arg_list(node):
+    indices = []
+    for child in node.children:
+        indices.append(processNode(child))
+    return indices
 
 # Expected Structure:
 # Type: pcase_val
@@ -800,6 +818,12 @@ def f_fcon(node):
     return float(node.value)
 
 def f_identifier(node):
+    indices = []
+    if len(node.children) > 0:
+        indices = processNode(node.children[0])
+    if len(indices) > 0:
+        arr = lookup(node.value, indices)
+        return [node.value, arr, indices]
     return lookup(node.value)
 
 #dictionary associating node types with functions
@@ -865,7 +889,9 @@ interpreterDict = {
     'LETTER' : f_tstring,
     'STRING' : f_tstring,
     'CHAR' : f_tstring,
-    'IDENTIFIER' : f_identifier 
+    'IDENTIFIER' : f_identifier ,
+    'ARRAY_VAL' : f_array_val,
+    'ARG_LIST' : f_arg_list
 }
 
 #for functions:

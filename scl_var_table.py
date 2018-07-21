@@ -28,7 +28,7 @@ class VarTable:
         else:
             self.variables[var] = Variable(var_type, value, is_const)
 
-    def assign(self, var, value):
+    def assign(self, var, value, indices = []):
         if var not in self.variables.keys():
             print("Error in assign(): Undeclared variable {} cannot be assigned a value".format(var))
             exit()
@@ -50,25 +50,25 @@ class VarTable:
         if var not in self.variables.keys():
             print('Error in getValue(): variable {} has not been declared'.format(var))
             exit()
-        elif (self.variables[var].value == None):
-            print('Error in get(): variable {} has not been assigned a value'.format(var))
-            exit()
+        #elif (self.variables[var].value == None):
+        #    print('Error in get(): variable {} has not been assigned a value'.format(var))
+        #    exit()
         else: 
             var = self.variables[var].value
             if isinstance(var, list): # value will be a list if a variable is declared as an array
                 if isinstance(pos, list): # checking that optional param pos was passed in as list
-                    if len(pos) == len(var): # Make sure that the number of values is appropriate I.E. a 2 dimensional array needs to be accessed with [x, y]
-                        currList = var
-                        for x in pos:
-                            if x > 0 and x < len(pos):
-                                currList = currList[x] #set the current list to the list stored at each position
-                            else:
-                                print('Error in getValue(): array index {} in {} out of bounds.'.format(x, var.value))
-                                exit()
+                    #if len(pos) == len(var): # Make sure that the number of values is appropriate I.E. a 2 dimensional array needs to be accessed with [x, y]
+                    currList = var
+                    for x in pos:
+                        if x > 0 and x < len(var):
+                            currList = currList[x] #set the current list to the list stored at each position
+                        else:
+                            print('Error in getValue(): array index {} in {} out of bounds.'.format(x, var.value))
+                            exit()
                         return currList
-                    else:
-                        print('Error in getValue(): array {} has the wrong number of indices'.format(var.value))
-                        exit()
+                    #else:
+                    #    print('Error in getValue(): array {} has the wrong number of indices'.format(var.value))
+                    #    exit()
                 else:
                     print('Error in getValue(): array {} has no indices'.format(var.value))
                     exit()
