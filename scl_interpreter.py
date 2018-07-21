@@ -574,20 +574,15 @@ def f_mfalse(node):
 # Type Equal
 # Children: expr, expr
 def f_equals(node):
-    arg1 = processNode(node.children[0])
-    if isinstance(arg1, str):
-        arg1 = lookup(arg1)
-    arg2 = processNode(node.children[1])
-    if isinstance(arg2, str):
-        arg2 = lookup(arg2)
-    return arg1 == arg2
+    var = processNormArgs(node)
+    return var[0] == var[1]
 
 
 # Use when checking for less than, greater than, less than or equal , or greater than or qual
 def processCompArgs(node):
     arg1 = getType(node.children[0])
     arg2 = getType(node.children[1])
-    if(arg1 == 'INTEGER' or arg1 == 'FLOAT'):
+    if(arg1 == 'INTEGER' or arg1 == 'REAL'):
         arg1 = processNode(node.children[0])
         arg1 = lookup(arg1.value)
     elif(arg1 == 'ICON' or arg1 == 'FCON'):
@@ -595,10 +590,32 @@ def processCompArgs(node):
     else:
         error('arg1 is invalid type')
 
-    if(arg2 == 'INTEGER' or arg2 == 'FLOAT'):
+    if(arg2 == 'INTEGER' or arg2 == 'REAL'):
         arg2 = processNode(node.children[1])
         arg2 = lookup(arg2.value)
     elif(arg2 == 'ICON' or arg2 == 'FCON'):
+        arg2 = processNode(node.children[1])
+    else:
+        error('arg2 is invalid type')
+    if(type(arg1) != type(arg2)):
+        error('types not the same')
+    return [arg1, arg2]
+
+def processNormArgs(node):
+    arg1 = getType(node.children[0])
+    arg2 = getType(node.children[1])
+    if(arg1 == 'INTEGER' or arg1 == 'FLOAT' or 'TSTRING' or 'CHAR' or 'TBOOL'):
+        arg1 = processNode(node.children[0])
+        arg1 = lookup(arg1.value)
+    elif(arg1 == 'ICON' or arg1 == 'FCON' or 'STRING' or 'LETTER' or 'BOOL'):
+        arg2 = processNode(node.children[0])
+    else:
+        error('arg1 is invalid type')
+
+    if(arg2 == 'INTEGER' or arg2 == 'FLOAT' or 'TSTRING' or 'CHAR' or 'TBOOL'):
+        arg2 = processNode(node.children[1])
+        arg2 = lookup(arg2.value)
+    elif(arg2 == 'ICON' or arg2 == 'FCON' or 'STRING' or 'LETTER' or 'BOOL'):
         arg2 = processNode(node.children[1])
     else:
         error('arg2 is invalid type')
@@ -736,6 +753,9 @@ def f_negate(node):
 def f_icon(node):
     return int(node.value)
 
+def f_tstring(node):
+    return str(node.value)
+
 def f_hcon(node):
     string = node.value
     string = string[:1] + 'x' + string[1:len(string) - 1] #adds x to 0x prefix and strips h suffix
@@ -801,7 +821,9 @@ interpreterDict = {
     'FUNCT_LIST' : f_funct_list,
     'POTHER_OPER_DEF' : f_pother_oper_def,
     'PARAMETERS' : f_parameters,
-    'SET' : f_set
+    'SET' : f_set,
+    'FCON' : f_fcon,
+    'TSTRING' : f_tstring
 }
 
 #for functions:
