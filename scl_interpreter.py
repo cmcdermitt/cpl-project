@@ -318,8 +318,9 @@ def f_set(node):
     identifier = getName(node.children[0])
     identifierData = processNode(node.children[0])
     exprValue = processNode(node.children[1])
+        exprValue = exprValue[1]
     # Set identifier equal to exprValue
-    if identifierData == None:
+    if not isinstance(identifierData, list):
         assign(identifier, exprValue)
     else:
         assign(identifier, exprValue, identifierData[2])
@@ -341,9 +342,12 @@ def f_input(node):
     #put the token in a node so we can use the functions we already have to get its value
     tempNode = Node(input_val[1], input_val[0])
     
-
+    identifierData = processNode(node.children[0])
+    if not isinstance(identifierData, list):
+        assign(getName(node.children[0]), processNode(tempNode))
     # Add identifier to variable table
-    assign(getName(node.children[0]), processNode(tempNode))
+    else:
+        assign(getName(node.children[0]), processNode(tempNode), identifierData[2])
     # output results
     print('Statement recognized: INPUT ' + str(node.children[0].value))
     # Return node to processNode
@@ -368,30 +372,32 @@ def f_display(node):
 # Type: INCREMENT
 # Children: name_ref => IDENTIFIER
 def f_increment(node):
-    # Get IDENTIFIER variable
-    var = getName(node.children[0])
-    # Get value
-    val = lookup(var)
-    # Increment and assign
-    val = val + 1
-    assign(var, val)
-    print('Statement recognized: INCREMENT ' + var)
+    # Get identifier tuple
+    identifier = getName(node.children[0])
+    identifierData = processNode(node.children[0])
+    
+    # Set identifier equal to exprValue
+    if not isinstance(identifierData, list):
+        assign(identifier, identifierData + 1)
+    else:
+        assign(identifier, identifierData[1] + 1, identifierData[2])
+    print('Statement recognized: INCREMENT ' + identifier)
     return node
 
 # Expected Structure:
 # Type: DECREMENT
 # Children: name_ref => IDENTIFIER
 def f_decrement(node):
-    # Get IDENTIFIER variable
-    var = getName(node.children[0])
-    # Get value
-    val = lookup(var)
-    # Increment and assign
-    print(val)
-    print(var)
-    val = val - 1
-    assign(var, val)
-    print('Statement recognized: DECREMENT ' + var)
+    # Get identifier tuple
+    identifier = getName(node.children[0])
+    identifierData = processNode(node.children[0])
+    
+    # Set identifier equal to exprValue
+    if not isinstance(identifierData, list):
+        assign(identifier, identifierData + 1)
+    else:
+        assign(identifier, identifierData[1] - 1, identifierData[2])
+    print('Statement recognized: DECREMENT ' + identifier)
     return node
 
 # Expected Structure:
@@ -432,16 +438,27 @@ def f_ptest_elsif(node):
 def f_for(node):
     global breakCalled
     global currentTable
+    index = -1
     expr1 = processNode(node.children[1])
+    if isinstance(expr1, list):
+        expr1 = expr1[1]
     # Determine if direction is TO or DOWNTO
     dir = processNode(node.children[2]).type
     # Get second expr of for loop
     expr2 = processNode(node.children[3])
+    if isinstance(expr2, list):
+        expr2 = expr2[1]
     # Assign initial value to IDENTIFIER
-    print('Statement recognized: FOR ' + getName(node.children[0]) + ' EQUOP ' + str(expr1) + str(dir) + str(expr2) + 'DO ')
-    currentTable.assign(getName(node.children[0]), expr1)
-    # Perform for loop up or down
+    #print('Statement recognized: FOR ' + getName(node.children[0]) + ' EQUOP ' + str(expr1) + str(dir) + str(expr2) + 'DO ')
     var = processNode(node.children[0])
+    if not isinstance(var, list):
+        currentTable.assign(getName(node.children[0]), expr1)
+    else:
+        currentTable.assign(var[0], expr1, var[2])
+        index = var[2]
+        var = expr1
+    # Perform for loop up or down
+     
     if not (isInteger(var) and isInteger(expr1) and isInteger(expr2)):
         error('Bad types in for loop')
 
@@ -450,8 +467,16 @@ def f_for(node):
             error('var should be less than expr')
         while var < expr2:
             # Process pactions each time
-            var += 1
-            currentTable.assign(getName(node.children[0]), var)
+            if index == -1:
+                var = processNode(node.children[0])
+                var = var + 1
+                currentTable.assign(getName(node.children[0]), var)
+            else:
+                var = processNode(node.children[0])
+                temp = var
+                var = var[1]
+                var = var + 1
+                currentTable.assign(temp[0], var, temp[2])
             processNode(node.children[4])
             if breakCalled == True:
                 breakCalled = False
@@ -462,7 +487,16 @@ def f_for(node):
             if var < expr2: 
                 error('var should be greater than expr')
             var -= 1
-            currentTable.assign(getName(node.children[0]), var)
+            if index == -1:
+                var = processNode(node.children[0])
+                var = var - 1
+                currentTable.assign(getName(node.children[0]), var)
+            else:
+                var = processNode(node.children[0])
+                temp = var
+                var = var[1]
+                var = var - 1
+                currentTable.assign(temp[0], var, temp[2])
             processNode(node.children[4])
             if breakCalled == True:
                 breakCalled = False
