@@ -79,18 +79,17 @@ class VarTable:
             #return var
             if isinstance(var, list): # value will be a list if a variable is declared as an array
                 if isinstance(pos, list): # checking that optional param pos was passed in as list
-                    if len(pos) == len(var): # Make sure that the number of values is appropriate I.E. a 2 dimensional array needs to be accessed with [x, y]
-                        currList = var
-                        for x in pos:
-                            if x >= 0 and x < len(pos):
-                                currList = currList[x] #set the current list to the list stored at each position
-                            else:
-                                print('Error in getValue(): array index {} in {} out of bounds.'.format(x, var))
-                                exit()
-                        return currList
-                    else:
-                        print('Error in getValue(): array {} has the wrong number of indices'.format(var))
+                    currList = var
+                    for x in pos:
+                        if x >= 0 and x < len(pos):
+                            currList = currList[x] #set the current list to the list stored at each position
+                        
+                    if isinstance(currList, list):
+                        print('Error not enough indices')
+                        print("current list")
                         exit()
+
+                    return currList
                 else:
                     print('Error in getValue(): array {} has no indices'.format(var.value))
                     exit()
