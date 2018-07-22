@@ -4,11 +4,10 @@ import state_machine
 from parser_tree import Node
 
 # declare globals
-global_vars = scl_var_table.VarTable()
-main_vars = scl_var_table.VarTable()
-functionNames = []
+
+functionNames = {}
+variableStack = [scl_var_table.VarTable()]
 isConst = False
-currentTable = None
 breakCalled = False
 elseRun = False
 
@@ -38,53 +37,55 @@ def error(msg, location = ''):
     exit()
 
 def lookup(var_name, arr_pos = []):
-    global global_vars
-    global currentTable
-    
+    global variableStack
     if var_name[0] == '\"':
         return var_name
 
-    if currentTable is not None:
-        if currentTable.isDeclared(var_name):
-            return currentTable.getValue(var_name, arr_pos)
-        if global_vars.isDeclared(var_name):
-            return global_vars.getValue(var_name, arr_pos)
+    if variableStack[-1] is not None:
+        if variableStack[-1].isDeclared(var_name):
+            return variableStack[-1].getValue(var_name, arr_pos)
+        if variableStack[0].isDeclared(var_name):
+            return variableStack[0].getValue(var_name, arr_pos)
         else:
             error('variable {} is undeclared and cannnot be looked up'.format(var_name), 'lookup')
-    elif global_vars.isDeclared(var_name):
-        return global_vars.getValue(var_name, arr_pos)
+    elif variableStack[0].isDeclared(var_name):
+        return variableStack[0].getValue(var_name, arr_pos)
     else:
         error('variable {} is undeclared and cannnot be looked up'.format(var_name), 'lookup')
 
 def lookupType(var_name, arr_pos = 0):
-    if currentTable is not None:
-        if currentTable.isDeclared(var_name):
-            return currentTable.getType(var_name, arr_pos)
-        if global_vars.isDeclared(var_name):
-            return global_vars.getType(var_name, arr_pos)
+    global variableStack
+    variableStack[-1] = variableStack[-1]
+    if variableStack[-1] is not None:
+        if variableStack[-1].isDeclared(var_name):
+            return variableStack[-1].getType(var_name, arr_pos)
+        if variableStack[0].isDeclared(var_name):
+            return variableStack[0].getType(var_name, arr_pos)
         else:
             error('variable {} is undeclared and cannnot be looked up'.format(var_name), 'lookup type')
-    elif global_vars.isDeclared(var_name):
-        return global_vars.getType(var_name, arr_pos)
+    elif variableStack[0].isDeclared(var_name):
+        return variableStack[0].getType(var_name, arr_pos)
     else:
         error('variable {} is undeclared and cannot be looked up'.format(var_name), 'lookupType')
 
 #declare a variable
 def declare(name, var_type, val = None):
-    global currentTable
+    global variableStack
+    variableStack[-1] = variableStack[-1]
     global isConst
-    currentTable.declare(name, var_type, isConst, val) 
+    variableStack[-1].declare(name, var_type, isConst, val) 
 
 #assign a variable a value
 def assign(name, value, indices = []):
-    global currentTable
-    if currentTable is not None:
-        if currentTable.isDeclared(name):
-            currentTable.assign(name, value, indices)
+    global variableStack
+    variableStack[-1] = variableStack[-1]
+    if variableStack[-1] is not None:
+        if variableStack[-1].isDeclared(name):
+            variableStack[-1].assign(name, value, indices)
         else:
-            global_vars.assign(name, value, indices)
+            variableStack[0].assign(name, value, indices)
     else:
-        currentTable.assign(name, value, indices)
+        variableStack[-1].assign(name, value, indices)
 
 # Get the type of what's stored in a name_ref ID, or data node
 def getType (node):
@@ -126,7 +127,7 @@ def f_program(node):
 def f_func_main(node):
     #func_main should already be verified by the parser and does not do anything
     funcName = node.children[0]
-    functionNames.append(funcName)
+    #functionNames.append(funcName)
     print('Statement recognized: FUNCTION ' + str(funcName.value) + ' RETURN MVOID')
     return
 
@@ -143,9 +144,12 @@ def f_implement(node):
 # Type: funct_list
 # Children: pother_oper_def, {pother_oper_def}
 def f_funct_list(node):
+    global functionNames
     for child in node.children:
-        print('Statement recognized: FUNCTION ')
-        processNode(child)
+        functionNames[child.children[0].value] = child
+    if 'MAIN' in functionNames:
+        main = functionNames['MAIN']
+        processNode(main)
     return node
 
 # Expected Structure:
@@ -180,12 +184,9 @@ def f_parameters(node):
 # Type f_globals
 # Children: const_dec, var_dec
 def f_f_globals(node):
-    global currentTable
-    global global_vars
     print('Statement recognized: GLOBAL DECLARATIONS')
-    currentTable = global_vars # switch to global scope
     processNode(node.children[0])
-    #currentTable = main_vars #switch to main function scope uncomment when adding multiple functions
+    #variableStack[-1] = main_vars #switch to main function scope uncomment when adding multiple functions
 
 # Expected structure:
 # Type: const_dec
@@ -216,7 +217,7 @@ def f_data_declarations(node):
 # Type: data_declaration
 # Children: identifier, parray_dec, data_type
 def f_data_declaration(node):
-    global currentTable # Table to append to
+    global variableStack
     array = processNode(node.children[1]) # list
     data_type = processNode(node.children[2]) # Data type of variable
     if array:
@@ -297,7 +298,6 @@ def f_set(node):
 # Type: INPUT
 # Children: IDENTIFIER
 def f_input(node):
-    global global_vars
     global main_vars
     # Get input
     input_val = input('Enter input:')
@@ -394,7 +394,8 @@ def f_ptest_elsif(node):
 # Children: name_ref, expr, ( TO | DOWNTO ), expr, pactions
 def f_for(node):
     global breakCalled
-    global currentTable
+    global variableStack
+    variableStack[-1] = variableStack[-1]
     expr1 = processNode(node.children[1])
     # Determine if direction is TO or DOWNTO
     dir = processNode(node.children[2]).type
@@ -404,7 +405,7 @@ def f_for(node):
     indices = getIndices(node.children[0])
     # Assign initial value to IDENTIFIER
     print('Statement recognized: FOR ' + getName(node.children[0]) + ' EQUOP ' + str(expr1) + str(dir) + str(expr2) + 'DO ')
-    currentTable.assign(getName(node.children[0]), expr1, indices)
+    variableStack[-1].assign(getName(node.children[0]), expr1, indices)
     # Perform for loop up or down
     var = processNode(node.children[0])
     if not (isInteger(var) and isInteger(expr1) and isInteger(expr2)):
@@ -417,7 +418,7 @@ def f_for(node):
             # Process pactions each time
             var = processNode(node.children[0])
             var += 1
-            currentTable.assign(getName(node.children[0]), var, indices)
+            variableStack[-1].assign(getName(node.children[0]), var, indices)
             
             processNode(node.children[4])
             if breakCalled == True:
@@ -430,7 +431,7 @@ def f_for(node):
                 error('var should be greater than expr')
             var = processNode(node.children[0])
             var -= 1
-            currentTable.assign(getName(node.children[0]), var, indices)
+            variableStack[-1].assign(getName(node.children[0]), var, indices)
         
             processNode(node.children[4])
             if breakCalled == True:
