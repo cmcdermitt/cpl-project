@@ -32,6 +32,9 @@ class VarTable:
         array = self.variables[var].value
         for x in range(0,len(indices) -1):
             array = array[x]
+        if isinstance(array[indices[len(indices) - 1]], list):
+            print("Error in array assignment; not enohugh indices")
+            exit()
         array[indices[len(indices) - 1]] = value 
 
 
@@ -64,7 +67,6 @@ class VarTable:
                 print('Error in assign(): {} variable {} cannot be assigned a {}'.format(self.variables[var].type, self.variables[var].value, type(value)))
                 exit()
             
-
     def getValue(self, var, pos = []):
         if var not in self.variables.keys():
             print('Error in getValue(): variable {} has not been declared'.format(var))
@@ -74,7 +76,7 @@ class VarTable:
             exit()
         else: 
             var = self.variables[var].value
-            return var
+            #return var
             if isinstance(var, list): # value will be a list if a variable is declared as an array
                 if isinstance(pos, list): # checking that optional param pos was passed in as list
                     if len(pos) == len(var): # Make sure that the number of values is appropriate I.E. a 2 dimensional array needs to be accessed with [x, y]
@@ -83,11 +85,11 @@ class VarTable:
                             if x >= 0 and x < len(pos):
                                 currList = currList[x] #set the current list to the list stored at each position
                             else:
-                                print('Error in getValue(): array index {} in {} out of bounds.'.format(x, var.value))
+                                print('Error in getValue(): array index {} in {} out of bounds.'.format(x, var))
                                 exit()
                         return currList
                     else:
-                        print('Error in getValue(): array {} has the wrong number of indices'.format(var.value))
+                        print('Error in getValue(): array {} has the wrong number of indices'.format(var))
                         exit()
                 else:
                     print('Error in getValue(): array {} has no indices'.format(var.value))
