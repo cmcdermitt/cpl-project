@@ -214,15 +214,15 @@ def f_data_declarations(node):
 
 # Expected Structure:
 # Type: data_declaration
-# Children: 
+# Children: identifier, parray_dec, data_type
 def f_data_declaration(node):
     global currentTable # Table to append to
-    array = processNode(node.children[1]) # Size of variable (if it is an array or not) NOTE: Lookup will need to be changed to support this
-    data_type = processNode(node.children[2]) # Data type of variable; currently no type checking
-    if len(array) == 0:
-        declare(getName(node.children[0]), data_type) # Append variable to proper table
-    else:
+    array = processNode(node.children[1]) # list
+    data_type = processNode(node.children[2]) # Data type of variable
+    if array:
         declare(getName(node.children[0]), data_type, array) # Append variable to proper table
+    else:
+        declare(getName(node.children[0]), data_type) # Append variable to proper table
     print('Statement recognized: DEFINE ' + node.children[0].value + " OF " + str(data_type))
 
 # Expected Structure:
@@ -241,28 +241,12 @@ def makeMultiList (arg1, pos = 0):
         return [None for i in range (0, arg1[pos])] #fill with none
             
 
-
-
-        
-
-
 # STRUCTURE
 # Type f_plist_const
 # Children: IDs
 def f_plist_const(node):
-    dimensions = [] # All of the elements in the array
-    total_num = 1 # Initial size
-    dimension_lim = []
-    for x in range(len(node.children)):
-        c_id = processNode(node.children[x])
-        dimension_lim.append(c_id)
-        total_num = c_id * total_num # Find the total number of locations in the array by multiplying all the dimensions
-    for a in range (0,total_num):
-        dimensions.append(0) # Fill dimensions with the number of items (when accessed, the dimension numbers will be multiplied together to reach the index)
-    if len(dimensions) == 0:
-        dimensions = 0
-        return dimensions
-    return [len(node.children),dimension_lim,dimensions] # The length of the children is used to see how many dimensions there are. I.E. array int[5][6]; array[24] would be wrong
+    outList = [processNode(child) for child in node.children]
+    return outList
 
 # STRUCTURE
 # Type popt_array_val
@@ -539,12 +523,11 @@ def f_name_ref(node):
     if len(node.children) == 1:
         return processNode(node.children[0])
     else:
-        val =  processNode(node.children[0])
-        temp = val
+
+        # val =  processNode(node.children[0])
+        name = node.children[0].value
         indices =  processNode(node.children[1])
-        for x in indices:
-            temp = temp[x]
-        return temp
+        return lookup(name, indices)
 
 def getIndices(name_ref):
     if len(name_ref.children) > 1:

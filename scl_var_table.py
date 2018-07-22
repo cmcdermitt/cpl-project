@@ -33,7 +33,7 @@ class VarTable:
         for x in range(0,len(indices) -1):
             array = array[x]
         if isinstance(array[indices[len(indices) - 1]], list):
-            print("Error in array assignment; not enohugh indices")
+            print("Error in array assignment; not enough indices")
             exit()
         array[indices[len(indices) - 1]] = value 
 
@@ -44,22 +44,22 @@ class VarTable:
             exit()
         else:
             if type(value) == int and (self.variables[var].type == 'INTEGER' or self.variables[var].type == 'LONG' or self.variables[var].type == 'SHORT'):
-                if len(indices) == 0:
+                if not indices:
                     self.variables[var].value = value
                 else:
                     self.arrayA(var, value, indices)
             elif type(value) == str and (self.variables[var].type == 'TSTRING' or self.variables[var].type == 'CHAR'):
-                if len(indices) == 0:
+                if not indices:
                     self.variables[var].value = value
                 else:
                     self.arrayA(var, value, indices)
             elif type(value) == float and (self.variables[var].type == 'REAL' or self.variables[var].type == 'DOUBLE'):
-                if len(indices) == 0:
+                if not indices == 0:
                     self.variables[var].value = value
                 else:
                     self.arrayA(var, value, indices)
             elif type(value) == bool and self.variables[var].type == 'TBOOL':
-                if len(indices) == 0:
+                if not indices == 0:
                     self.variables[var].value = value
                 else:
                     self.arrayA(var, value, indices)
@@ -72,7 +72,7 @@ class VarTable:
             print('Error in getValue(): variable {} has not been declared'.format(var))
             exit()
         elif (self.variables[var].value == None):
-            print('Error in get(): variable {} has not been assigned a value'.format(var))
+            print('Error in getValue(): variable {} has not been assigned a value'.format(var))
             exit()
         else: 
             var = self.variables[var].value
@@ -85,13 +85,12 @@ class VarTable:
                             currList = currList[x] #set the current list to the list stored at each position
                         
                     if isinstance(currList, list):
-                        print('Error not enough indices')
-                        print("current list")
+                        print('Error in getValue(): not enough indices for {}'.format(var))
                         exit()
 
                     return currList
                 else:
-                    print('Error in getValue(): array {} has no indices'.format(var.value))
+                    print('Error in getValue(): array {} has no indices'.format(var))
                     exit()
             else:
                 return var # For non arrays
