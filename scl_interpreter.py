@@ -227,31 +227,18 @@ def f_data_declaration(node):
 
 # Expected Structure:
 # Type array_dec
-# Children: plist_const, popt_array_val  
+# Children: plist_const 
 def f_parray_dec(node):
     array = []
     if(len(node.children) > 0):
-        arg1 = processNode(node.children[0])
-        arg2 = processNode(node.children[1])
-        length = len(arg1[1])
-        r = range(0,length - 1)
-        for x in r:
-            addListAtBottom(array,arg1[1][x])
-        addListAtBottom(array, arg1[1][length - 1], None)
-
+        array = makeMultiList(processNode(node.children[0]))
     return array
 
-def addListAtBottom(array, num, val = -1):
-    if len(array) != 0:
-        for arr in array: 
-            if isinstance(arr, list):
-                addListAtBottom(arr, num, val)
+def makeMultiList (arg1, pos = 0):
+    if (pos < len(arg1) - 1):
+        return [makeMultiList(arg1, pos + 1) for i in range(0, arg1[pos])] #call again if there are more dimensions
     else:
-        for x in range(0,num):
-            if val == -1:
-                array.append([])
-            else:
-                array.append(None)
+        return [None for i in range (0, arg1[pos])] #fill with none
             
 
 

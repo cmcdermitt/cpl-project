@@ -1,5 +1,6 @@
-func_main ::= FUNCTION IDENTIFIER RETURN MVOID
-                  | MAIN
+func_main ::= FUNCTION IDENTIFIER oper_type
+            | MAIN
+oper_type ::= RETURN [ARRAY array_dim_list] TYPE data_type
 globals ::= [GLOBAL DECLARATIONS const_var_struct]
 const_var_struct ::= const_dec var_dec
 const_dec ::= [CONSTANTS data_declarations]
@@ -17,12 +18,10 @@ data_type ::= TUNSIGNED
     | REAL
     | TSTRING
     | TBOOL
-parray_dec ::= [ARRAY plist_const popt_array_val]
+parray_dec ::= [ARRAY plist_const]
 plist_const ::= LB (ICON | IDENTIFIER) RB { LB (ICON | IDENTIFIER) RB }
-popt_array_val ::= [(VALUE | EQUOP) array_val]
 array_val ::= LB arg_list RB 
 arg_list ::= expr { COMMA expr }
-implement ::= IMPLEMENTATIONS funct_list
 implement ::= IMPLEMENTATIONS funct_list
 funct_list ::= FUNCTION pother_oper_def { FUNCTION pother_oper_def }
 pother_oper_def ::= (MAIN | IDENTIFIER) DESCRIPTION parameters IS [const_var_struct] BEGIN pactions ENDFUN IDENTIFIER
@@ -41,7 +40,7 @@ eq_v ::= EQUALS
 expr ::= term [ (PLUS | MINUS | BAND | BOR | BXOR) term ]
 term ::= punary [ (STAR | DIVOP | MOD | LSHIFT | RSHIFT) punary]
 punary ::= [NEGATE] element
-element ::= name_ref
+element ::= IDENTIFER popt_ref
     | STRING
     | LETTER
     | ICON
@@ -52,8 +51,8 @@ element ::= name_ref
     | LP expr RP
 pactions ::= action_def { action_def }
 action_def ::=  SET name_ref  EQUOP expr
-    | INPUT IDENTIFIER
-    | DISPLAY arg_list
+    | INPUT name_ref
+    | DISPLAY name_ref
     | INCREMENT name_ref
     | DECREMENT name_ref
     | CALL name_ref pusing_ref
@@ -68,6 +67,7 @@ ptest_elsif ::= { ELSEIF pcondition THEN pactions }
 pusing_ref ::= [( USING arg_list | LP arg_list RP)]
 pcase_val ::= MWHEN expr COLON pactions {MWHEN expr COLON pactions}
 pcase_def ::= [DEFAULT COLON pactions]
+popt_ref ::= [(array_val | LP arg_list RP)]
 name_ref ::= IDENTIFIER [array_val]
 
 
