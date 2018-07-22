@@ -76,15 +76,15 @@ def declare(name, var_type, val = None):
     currentTable.declare(name, var_type, isConst, val) 
 
 #assign a variable a value
-def assign(name, value):
+def assign(name, value, indices = []):
     global currentTable
     if currentTable is not None:
         if currentTable.isDeclared(name):
-            currentTable.assign(name, value)
+            currentTable.assign(name, value, indices)
         else:
-            global_vars.assign(name, value)
+            global_vars.assign(name, value, indices)
     else:
-        currentTable.assign(name, value)
+        currentTable.assign(name, value, indices)
 
 # Get the type of what's stored in a name_ref ID, or data node
 def getType (node):
@@ -231,7 +231,18 @@ def f_data_declaration(node):
 def f_parray_dec(node):
     array = []
     if(len(node.children) > 0):
+<<<<<<< HEAD
         array = makeMultiList(processNode(node.children[0]))
+=======
+        arg1 = processNode(node.children[0])
+        #arg2 = processNode(node.children[1])
+        length = len(arg1[1])
+        r = range(0,length - 1)
+        for x in r:
+            addListAtBottom(array,arg1[1][x])
+        addListAtBottom(array, arg1[1][length - 1], None)
+
+>>>>>>> 28ea62132e499736223539a14b27ac4e485a3b01
     return array
 
 def makeMultiList (arg1, pos = 0):
@@ -240,6 +251,7 @@ def makeMultiList (arg1, pos = 0):
     else:
         return [None for i in range (0, arg1[pos])] #fill with none
             
+
 
 
         
@@ -303,8 +315,8 @@ def f_set(node):
     # Get identifier tuple
     identifier = getName(node.children[0])
     exprValue = processNode(node.children[1])
-    # Set identifier equal to exprValue
-    assign(identifier, exprValue)
+    indices = getIndices(node.children[0])
+    assign(identifier, exprValue, indices)
     print('Statement recognized: SET ' + identifier + ' EQUOP ' + str(exprValue))
     return node
 
@@ -322,10 +334,8 @@ def f_input(node):
         input_val[1] = 'TSTRING' #since the scanner treats arbitrary unquoted text as identifiers, convert it to string
     #put the token in a node so we can use the functions we already have to get its value
     tempNode = Node(input_val[1], input_val[0])
-    
-
     # Add identifier to variable table
-    assign(getName(node.children[0]), processNode(tempNode))
+    assign(getName(node.children[0]), processNode(tempNode), getIndices(node.children[0]))
     # output results
     print('Statement recognized: INPUT ' + str(node.children[0].value))
     # Return node to processNode
@@ -348,11 +358,13 @@ def f_display(node):
 def f_increment(node):
     # Get IDENTIFIER variable
     var = getName(node.children[0])
-    # Get value
-    val = lookup(var)
+    # Get indices
+    indices = getIndices(node.children[0])
+     # Get value
+    val = processNode(node.children[0])
     # Increment and assign
     val = val + 1
-    assign(var, val)
+    assign(var, val, indices)
     print('Statement recognized: INCREMENT ' + var)
     return node
 
@@ -363,12 +375,12 @@ def f_decrement(node):
     # Get IDENTIFIER variable
     var = getName(node.children[0])
     # Get value
-    val = lookup(var)
+    val = processNode(node.children[0])
+    # Get indices
+    indices = getIndices(node.children[0])
     # Increment and assign
-    print(val)
-    print(var)
     val = val - 1
-    assign(var, val)
+    assign(var, val, indices)
     print('Statement recognized: DECREMENT ' + var)
     return node
 
@@ -415,9 +427,11 @@ def f_for(node):
     dir = processNode(node.children[2]).type
     # Get second expr of for loop
     expr2 = processNode(node.children[3])
+    # Get indices for potential array
+    indices = getIndices(node.children[0])
     # Assign initial value to IDENTIFIER
     print('Statement recognized: FOR ' + getName(node.children[0]) + ' EQUOP ' + str(expr1) + str(dir) + str(expr2) + 'DO ')
-    currentTable.assign(getName(node.children[0]), expr1)
+    currentTable.assign(getName(node.children[0]), expr1, indices)
     # Perform for loop up or down
     var = processNode(node.children[0])
     if not (isInteger(var) and isInteger(expr1) and isInteger(expr2)):
@@ -428,8 +442,10 @@ def f_for(node):
             error('var should be less than expr')
         while var < expr2:
             # Process pactions each time
+            var = processNode(node.children[0])
             var += 1
-            currentTable.assign(getName(node.children[0]), var)
+            currentTable.assign(getName(node.children[0]), var, indices)
+            
             processNode(node.children[4])
             if breakCalled == True:
                 breakCalled = False
@@ -439,8 +455,10 @@ def f_for(node):
         while var > expr2:
             if var < expr2: 
                 error('var should be greater than expr')
+            var = processNode(node.children[0])
             var -= 1
-            currentTable.assign(getName(node.children[0]), var)
+            currentTable.assign(getName(node.children[0]), var, indices)
+        
             processNode(node.children[4])
             if breakCalled == True:
                 breakCalled = False
@@ -529,7 +547,21 @@ def f_mexit(node):
 # Children: Identifier
 # Returns: Type and value of IDENTIFIER in tuple
 def f_name_ref(node):
-    return processNode(node.children[0])
+    if len(node.children) == 1:
+        return processNode(node.children[0])
+    else:
+        val =  processNode(node.children[0])
+        temp = val
+        indices =  processNode(node.children[1])
+        for x in indices:
+            temp = temp[x]
+        return temp
+
+def getIndices(name_ref):
+    if len(name_ref.children) > 1:
+        return processNode(name_ref.children[1])
+    else:
+        return []
 
 # Expected Structure:
 # Type: pcase_val
@@ -788,6 +820,15 @@ def f_fcon(node):
 def f_identifier(node):
     return lookup(node.value)
 
+def f_array_val(node):
+    indices = processNode(node.children[0])
+    return indices
+
+def f_arg_list(node):
+    indices = []
+    for child in node.children:
+        indices.append(processNode(child))
+    return indices
 #dictionary associating node types with functions
 interpreterDict = {
     'INPUT': f_input,
@@ -851,7 +892,9 @@ interpreterDict = {
     'LETTER' : f_tstring,
     'STRING' : f_tstring,
     'CHAR' : f_tstring,
-    'IDENTIFIER' : f_identifier 
+    'IDENTIFIER' : f_identifier,
+    'ARRAY_VAL' : f_array_val,
+    'ARG_LIST' : f_arg_list
 }
 
 #for functions:

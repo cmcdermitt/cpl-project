@@ -28,24 +28,45 @@ class VarTable:
         else:
             self.variables[var] = Variable(var_type, value, is_const)
 
-    def assign(self, var, value):
+    def arrayA(self, var, value, indices):
+        array = self.variables[var].value
+        for x in range(0,len(indices) -1):
+            array = array[x]
+        if isinstance(array[indices[len(indices) - 1]], list):
+            print("Error in array assignment; not enohugh indices")
+            exit()
+        array[indices[len(indices) - 1]] = value 
+
+
+    def assign(self, var, value, indices = []):
         if var not in self.variables.keys():
             print("Error in assign(): Undeclared variable {} cannot be assigned a value".format(var))
             exit()
         else:
             if type(value) == int and (self.variables[var].type == 'INTEGER' or self.variables[var].type == 'LONG' or self.variables[var].type == 'SHORT'):
-                self.variables[var].value = value
+                if len(indices) == 0:
+                    self.variables[var].value = value
+                else:
+                    self.arrayA(var, value, indices)
             elif type(value) == str and (self.variables[var].type == 'TSTRING' or self.variables[var].type == 'CHAR'):
-                self.variables[var].value = value
+                if len(indices) == 0:
+                    self.variables[var].value = value
+                else:
+                    self.arrayA(var, value, indices)
             elif type(value) == float and (self.variables[var].type == 'REAL' or self.variables[var].type == 'DOUBLE'):
-                self.variables[var].value = value
+                if len(indices) == 0:
+                    self.variables[var].value = value
+                else:
+                    self.arrayA(var, value, indices)
             elif type(value) == bool and self.variables[var].type == 'TBOOL':
-                self.variables[var].value = value
+                if len(indices) == 0:
+                    self.variables[var].value = value
+                else:
+                    self.arrayA(var, value, indices)
             else:
                 print('Error in assign(): {} variable {} cannot be assigned a {}'.format(self.variables[var].type, self.variables[var].value, type(value)))
                 exit()
             
-
     def getValue(self, var, pos = []):
         if var not in self.variables.keys():
             print('Error in getValue(): variable {} has not been declared'.format(var))
@@ -55,19 +76,20 @@ class VarTable:
             exit()
         else: 
             var = self.variables[var].value
+            #return var
             if isinstance(var, list): # value will be a list if a variable is declared as an array
                 if isinstance(pos, list): # checking that optional param pos was passed in as list
-                    if len(pos) == len(var[0]): # Make sure that the number of values is appropriate I.E. a 2 dimensional array needs to be accessed with [x, y]
+                    if len(pos) == len(var): # Make sure that the number of values is appropriate I.E. a 2 dimensional array needs to be accessed with [x, y]
                         currList = var
                         for x in pos:
-                            if x > 0 and x < len(pos):
+                            if x >= 0 and x < len(pos):
                                 currList = currList[x] #set the current list to the list stored at each position
                             else:
-                                print('Error in getValue(): array index {} in {} out of bounds.'.format(x, var.value))
+                                print('Error in getValue(): array index {} in {} out of bounds.'.format(x, var))
                                 exit()
                         return currList
                     else:
-                        print('Error in getValue(): array {} has the wrong number of indices'.format(var.value))
+                        print('Error in getValue(): array {} has the wrong number of indices'.format(var))
                         exit()
                 else:
                     print('Error in getValue(): array {} has no indices'.format(var.value))

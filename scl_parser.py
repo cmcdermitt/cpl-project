@@ -171,7 +171,7 @@ def parray_dec():
     if(scanner.lex[lex_en['value']] == 'ARRAY'):
         scanner.next()
         node.children.append(plist_const())
-        node.children.append(popt_array_val())
+        #node.children.append(popt_array_val())
     return node
 
 # CASE: plist_const
@@ -648,8 +648,8 @@ def action_def():
         node = Node(scanner.lex[lex_en['value']])
         scanner.next()
         if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-            node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
-            scanner.next()
+            #node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
+            node.children.append(name_ref())
         else:
             # Append error message if case specific grammar not found
             error('IDENTIFIER', 'DISPLAY in action_def')
