@@ -68,7 +68,7 @@ def error(expected, location = ''):
     exit()
 
 # First case: Called by parse()
-# GRAMMAR: func_main ::= FUNCTION IDENTIFIER RETURN MVOID
+# GRAMMAR: func_main ::= FUNCTION IDENTIFIER oper_type
 #                   | MAIN
 def func_main():
     # Append function header to output list
@@ -84,19 +84,30 @@ def func_main():
         else:
             # Append error message if case specific grammar not found
             error('IDENTIFIER', 'func_main')
-        if(scanner.lex[lex_en['value']] == 'RETURN'):
-            scanner.next()
-        else:
-            # Append error message if case specific grammar not found
-            error('RETURN', 'func_main')
-        if(scanner.lex[lex_en['value']] == 'MVOID'):
-            scanner.next()
-        else:
-            error('MVOID', 'func_main')
+        node.children.append(oper_type())
     else:
         # Append error message if case specific grammar not found
         error('MAIN or FUNCTION', 'func_main')
     return node
+
+# CASE: oper_type
+# GRAMMAR: oper_type ::= RETURN [ARRAY array_dim_list] TYPE data_type
+def oper_type():
+    node = Node('oper_type')
+    if scanner.lex[lex_en['value']] == 'RETURN':
+        scanner.next()
+        if scanner.lex[lex_en['value']] == 'ARRAY':
+            scanner.next()
+            node.children.append(plist_const())
+        if scanner.lex[lex_en['value']] == 'TYPE':
+            scanner.next()
+            node.children.append(data_type())
+        else:
+            error('TYPE', 'oper_type')
+    else:
+        error('RETURN', 'oper_type')
+
+
 
 # CASE: globals
 # GRAMMAR: globals ::= [GLOBAL DECLARATIONS const_var_struct]
@@ -318,7 +329,9 @@ def punary():
     return node
 
 # CASE: element
-# GRAMMAR: element ::= IDENTIFIER [(array_val | parguments)]
+# GRAMMAR: element ::= IDENTIFIER
+#     | name_ref
+#     | func_ref
 #     | STRING
 #     | LETTER
 #     | ICON
@@ -332,7 +345,13 @@ def element():
     valid_types = ['STRING', 'LETTER', 'ICON', 'HCON', 'FCON', 'IDENTIFIER']
     valid_values = ['MTRUE', 'MFALSE']
     if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-        node = name_ref()
+        node = Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']])
+        scanner.next()
+        if scanner.lex[lex_en['value']] =='LB':
+            node.children.append(name_ref())
+        elif scanner.lex[lex_en['value']] == 'LP':
+            node.children.append(func_ref())
+        return node
     elif scanner.lex[lex_en['type']] in valid_types: #needs additional code for identifier if using arrays
         node = Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']])
         scanner.next()
@@ -663,22 +682,18 @@ def action_def():
         else:
             # Append error message if case specific grammar not found
             error('IDENTIFIER', 'action_def')
-    ## Following 'RETURN' path
-    #elif scanner.lex[lex_en['value']] == 'RETURN':
-     #   scanner.next()
-      #  if scanner.lex[lex_en['type']] in valid_types or scanner.lex[lex_en['value']] in valid_values:
-       #     lex_list.append(expr())
-        #else:
-            # Append error message if case specific grammar not found
-            error('expr keyword', 'action_def')
+    # Following 'RETURN' path
+    elif scanner.lex[lex_en['value']] == 'RETURN':
+        node = Node(scanner.lex[lex_en['value']])
+        scanner.next()
+        node.children.append(expr())
     # Following 'CALL' path
     elif scanner.lex[lex_en['value']] == 'CALL':
         node = Node(scanner.lex[lex_en['value']])
         scanner.next()
         if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-            node.children.append(name_ref())
+            node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
         else:
-            # Append error message if case specific grammar not found
             error('IDENTIFIER', 'action_def')
         node.children.append(pusing_ref())
     # Following 'IF' path
