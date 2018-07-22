@@ -454,7 +454,7 @@ def pother_oper_def():
         scanner.next()
     else:
         error('ENDFUN', 'pother_oper_def')
-    if scanner.lex[lex_en['type']] == 'IDENTIFIER':
+    if scanner.lex[lex_en['type']] == 'IDENTIFIER' or scanner.lex[lex_en['value']] == 'MAIN':
         node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
         scanner.next()
     else:

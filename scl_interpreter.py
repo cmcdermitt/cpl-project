@@ -152,7 +152,7 @@ def f_funct_list(node):
 # Type: pother_oper_def
 # Children: parameters, [const_var_struct], pactions
 def f_pother_oper_def(node):
-    if node.children[0].type == 'IDENTIFIER':
+    if node.children[0].type == 'IDENTIFIER' or node.children[0].value == 'MAIN':
         iden = node.children[0].value
         print('BEGIN')
         sys.stdout.write(iden + 'DESCRIPTION IS ')
