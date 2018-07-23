@@ -279,12 +279,20 @@ def f_data_declarations(node):
 # Type: data_declaration
 # Children: identifier, parray_dec, data_type
 def f_data_declaration(node):
+    global isConst
+    if isConst == True:
+        constant = 'constant '
+    else:
+        constant = ''
     array = processNode(node.children[1]) # list
     data_type = processNode(node.children[2]) # Data type of variable
     if array:
         declare(getName(node.children[0]), data_type, array) # Append variable to proper table
+        print(constant + 'variable ' + getName(node.children[0]) + ' declared ' + ' array of type ' + data_type)
     else:
-        declare(getName(node.children[0]), data_type) # Append variable to proper table
+        declare(getName(node.children[0]), data_type)  # Append variable to proper table
+        print(constant + 'variable ' + getName(node.children[0]) + ' declared '  + ' of type ' + data_type)
+        
     #print('Statement recognized: DEFINE ' + node.children[0].value + " OF " + str(data_type))
 
 # Expected Structure:
