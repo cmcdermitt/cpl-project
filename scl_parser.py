@@ -23,6 +23,8 @@ from parser_tree import Node
 
 lex_en = {'type' : 1, 'value' : 0, 'line_num' : 2}
 scanner = Scanner(sys.argv[1])
+currentStatement = ''
+outputList = []
 
 
 # Starting point for parser
@@ -56,6 +58,13 @@ def parse():
 def start_scanner():
     scanner.start()
 
+def appendCurrentStatement(scanner, word):
+    global currentStatement
+    currentStatement = currentStatement + ' ' + word
+    if scanner.current_attribute == len(scanner.symbol_table[scanner.current_row]):
+        outputList.append(currentStatement)
+        currentStatement = ''
+
 #convenience function returning an error message
 #first parameter is what was expected, second is optional location
 def error(expected, location = ''):
@@ -74,12 +83,18 @@ def func_main():
     # Append function header to output list
     node = Node('func_main')
     if(scanner.lex[lex_en['value']] == 'MAIN'):
+        newWord = scanner.lex[lex_en['value']]
+        appendCurrentStatement(scanner, newWord)
         scanner.next()
         return node
     elif(scanner.lex[lex_en['value']] == 'FUNCTION'):
+        newWord = scanner.lex[lex_en['value']]
+        appendCurrentStatement(scanner, newWord)
         scanner.next()
         if(scanner.lex[lex_en['type']] == 'IDENTIFIER'):
             node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
+            newWord = scanner.lex[lex_en['value']]
+            appendCurrentStatement(scanner, newWord)
             scanner.next()
         else:
             # Append error message if case specific grammar not found
@@ -95,11 +110,17 @@ def func_main():
 def oper_type():
     node = Node('oper_type')
     if scanner.lex[lex_en['value']] == 'RETURN':
+        newWord = scanner.lex[lex_en['value']]
+        appendCurrentStatement(scanner, newWord)
         scanner.next()
         if scanner.lex[lex_en['value']] == 'ARRAY':
+            newWord = scanner.lex[lex_en['value']]
+            appendCurrentStatement(scanner, newWord)
             scanner.next()
             node.children.append(plist_const())
         if scanner.lex[lex_en['value']] == 'TYPE':
+            newWord = scanner.lex[lex_en['value']]
+            appendCurrentStatement(scanner, newWord)
             scanner.next()
             node.children.append(data_type())
         else:
@@ -270,6 +291,8 @@ def data_type():
                     'SHORT', 'FLOAT', 'REAL', 'TSTRING', 'TBOOL', 'TBYTE']
     if scanner.lex[lex_en['value']] in valid_types:
         node.value = scanner.lex[lex_en['value']]
+        newWord = scanner.lex[lex_en['value']]
+        appendCurrentStatement(scanner, newWord)
         scanner.next()
     else:
         error('valid type', 'data_type')
