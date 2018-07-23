@@ -503,7 +503,7 @@ def pother_oper_def():
         current_statement = current_statement + 'BEGIN '
         current_statement = current_statement + 'ENDFUN '
         scanner.next()
-    node.type = current_statement
+        node.statement = current_statement
     else:
         error('BEGIN', 'pother_oper_def')
     node.children.append(pactions())
@@ -845,7 +845,9 @@ def action_def():
         else:
             # Append error message if case specific grammar not found
             error('IDENTIFIER', 'action_def')
+        node.type = current_statement
         node.children.append(pcase_val())
+        
         node.children.append(pcase_def())
         if scanner.lex[lex_en['value']] == 'MENDCASE':
             scanner.next()
@@ -924,12 +926,16 @@ def pusing_ref():
 #GRAMMAR ptest_elsif ::= { ELSEIF pcondition THEN pactions }
 
 def ptest_elsif():
+    global current_statement
     node = Node('ptest_elsif')
     while scanner.lex[lex_en['value']] == 'ELSEIF':
+        current_statement = current_statement + 'ELSEIF '
         scanner.next()
         node.children.append(pcondition())
         if scanner.lex[lex_en['value']] == 'THEN':
+            current_statement = current_statement + 'THEN '
             scanner.next()
+            node.statement = current_statement
             node.children.append(pactions())
         else:
             error('THEN', 'ptest_elsif')
@@ -938,14 +944,18 @@ def ptest_elsif():
 #CASE: pcase_val
 #GRAMMAR: pcase_val ::= MWHEN expr COLON pactions {MWHEN expr COLON pactions}
 def pcase_val():
+    global current_statement
     node = Node('pcase_val')
-
+    node.statement = []
     if scanner.lex[lex_en['value']] == 'MWHEN':
         while scanner.lex[lex_en['value']] == 'MWHEN':
+            current_statement = current_statement + 'MWHEN '
             scanner.next()
             node.children.append(expr())
             if scanner.lex[lex_en['value']] == 'COLON':
+                current_statement = current_statement + 'COLON '
                 scanner.next()
+                node.statement.append(current_statement)
             else:
                 error('COLON', 'pcase_val')
             node.children.append(pactions())
@@ -956,11 +966,15 @@ def pcase_val():
 #CASE: pcase_def
 #GRAMMAR: pcase_def ::= [DEFAULT COLON pactions]
 def pcase_def():
+    global current_statement
     node = Node('pcase_def')
     if scanner.lex[lex_en['value']] == 'DEFAULT':
+        current_statement = current_statement + 'DEFAULT '
         scanner.next()
         if scanner.lex[lex_en['value']] == 'COLON': # Check if next lexeme is COLON
+            current_statement += 'COLON '
             scanner.next()
+            node.statement = current_statement
             node.children.append(pactions())
         else:
             error('COLON', 'pcase_def')

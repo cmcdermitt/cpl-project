@@ -28,7 +28,11 @@ def processNode(node):
     if nodeType in interpreterDict:
         funct = interpreterDict[nodeType]
         if node.statement:
-            print('Statement recognized: ' + node.statement)
+            if isinstance(node.statement, list):
+                for statement in node.statement:
+                     print('Statement recognized: ' + statement)
+            else:
+                print('Statement recognized: ' + node.statement)
         node = funct(node)    
     return node
 
