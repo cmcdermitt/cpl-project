@@ -40,7 +40,8 @@ eq_v ::= EQUALS
 expr ::= term [ (PLUS | MINUS | BAND | BOR | BXOR) term ]
 term ::= punary [ (STAR | DIVOP | MOD | LSHIFT | RSHIFT) punary]
 punary ::= [NEGATE] element
-element ::= IDENTIFER popt_ref
+element ::= name_ref
+    | func_ref
     | STRING
     | LETTER
     | ICON
@@ -49,6 +50,7 @@ element ::= IDENTIFER popt_ref
     | MTRUE
     | MFALSE
     | LP expr RP
+func_ref ::= IDENTIFIER LP arg_list RP
 pactions ::= action_def { action_def }
 action_def ::=  SET name_ref  EQUOP expr
     | INPUT name_ref
@@ -68,7 +70,6 @@ ptest_elsif ::= { ELSEIF pcondition THEN pactions }
 pusing_ref ::= [( USING arg_list | LP arg_list RP)]
 pcase_val ::= MWHEN expr COLON pactions {MWHEN expr COLON pactions}
 pcase_def ::= [DEFAULT COLON pactions]
-popt_ref ::= [(array_val | LP arg_list RP)]
 name_ref ::= IDENTIFIER [array_val]
 
 
