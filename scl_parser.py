@@ -428,8 +428,10 @@ def element():
 # GRAMMAR: implement ::= IMPLEMENTATIONS [MAIN DESCRIPTION parameters] funct_list
 
 def implement():
+    global current_statement 
     node = Node('implement')
     if scanner.lex[lex_en['value']] == 'IMPLEMENTATIONS':
+        current_statement = current_statement + scanner.lex[lex_en['value']]  + ' '
         scanner.next()
     else:
         error('IMPLEMENTATIONS', 'implement')
@@ -441,11 +443,14 @@ def implement():
 # CASE: parameters
 # GRAMMAR: parameters ::= [PARAMETERS data_declaration {COMMA data_declaration}]
 def parameters():
+    global current_statement
     node = Node('parameters')
     if scanner.lex[lex_en['value']] == 'PARAMETERS':
+        current_statement = current_statement + 'PARAMETERS '
         scanner.next()
         node.children.append(data_declaration())
         while scanner.lex[lex_en['value']] == 'COMMA':
+            current_statement = current_statement + 'COMMA '
             scanner.next()
             node.children.append(data_declaration())
     return node
@@ -466,15 +471,18 @@ def funct_list():
 # CASE: pother_oper_def
 # GRAMMAR: pother_oper_def ::= IDENTIFIER DESCRIPTION parameters IS const_var_struct BEGIN pactions ENDFUN IDENTIFIER
 def pother_oper_def():
+    global current_statement
     # Append function header to output list
     node = Node('pother_oper_def')
     if scanner.lex[lex_en['type']] == 'IDENTIFIER' or scanner.lex[lex_en['value']] == 'MAIN':
         node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
+        current_statement = current_statement + str(scanner.lex[lex_en['value']]) + ' '
         scanner.next()
     else:
         error('IDENTIFIER or MAIN', 'pother_oper_def')
 
     if scanner.lex[lex_en['value']] == 'DESCRIPTION':
+        current_statement = current_statement + 'DESCRIPTION '
         scanner.next()
     else:
         error('DESCRIPTION', 'pother_oper_def')
@@ -483,6 +491,7 @@ def pother_oper_def():
     node.children.append(parameters())
 
     if scanner.lex[lex_en['value']] == 'IS':
+        current_statement = current_statement + 'IS '
         scanner.next()
     else:
         error('IS', 'pother_oper_def')
@@ -491,7 +500,10 @@ def pother_oper_def():
         node.children.append(const_var_struct())
 
     if scanner.lex[lex_en['value']] == 'BEGIN':
+        current_statement = current_statement + 'BEGIN '
+        current_statement = current_statement + 'ENDFUN '
         scanner.next()
+    node.type = current_statement
     else:
         error('BEGIN', 'pother_oper_def')
     node.children.append(pactions())
