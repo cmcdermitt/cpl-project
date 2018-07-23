@@ -212,27 +212,6 @@ def f_funct_list(node):
         functionNames[child.children[0].value] = child
     return node
 
-<<<<<<< HEAD
-# Expected Structure:
-# Type: pother_oper_def
-# Children: parameters, [const_var_struct], pactions
-def f_pother_oper_def(node):
-    if node.children[0].type == 'IDENTIFIER' or node.children[0].value == 'MAIN':
-        iden = node.children[0].value
-        print ('Statement recognized: FUNCTION ' + iden + ' DESCRIPTION IS ')
-        print('Statement recognized: BEGIN')
-    processNode(node.children[1])
-    processNode(node.children[2])
-    if (node.children[2].type == 'const_var_struct'):
-        processNode(node.children[3])
-        if node.children[4].value != iden:
-            error('ENDFUN with correct function not found')
-    else:
-        if node.children[3].value != iden:
-            error('ENDFUN with correct function not found')
-    print('Statement recognized: ENDFUN ' + iden)
-    return node
-=======
 # # Expected Structure:
 # # Type: pother_oper_def
 # # Children: parameters, [const_var_struct], pactions
@@ -253,7 +232,6 @@ def f_pother_oper_def(node):
 #             error('ENDFUN with correct function not found')
 #     print('Statement recognized: ENDFUN ' + iden)
 #     return node
->>>>>>> fdf22c65b98f5c0bf9995e4c21b8c9e86f92466c
 
 # Expected Structure
 # Type: parameters
@@ -575,13 +553,15 @@ def f_while(node):
     cond = processNode(node.children[0])
     #print('Statement recognized: WHILE CONDITION DO')
     # Start while loop
+    p = None
     while cond:
         p = processNode(node.children[1])
         if breakCalled == True:
             breakCalled = False
             return node
         cond = processNode(node.children[0])
-    print('Results: Repeated ' + str(p.value) + ' in while loop until ' + str(cond) + ' evaluated to True.')
+    if p != None:
+        print('Results: Repeated ' + str(p.value) + ' in while loop until ' + str(cond) + ' evaluated to True.')
     #sys.stdout.write('ENDWHILE')
     return node
 
