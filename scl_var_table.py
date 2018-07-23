@@ -23,6 +23,7 @@ class VarTable:
         else:
             return False
 
+    # Hi
     def declare(self, var, var_type, is_const = False, value = None):
         if var in self.variables.keys():
             print("Error in declare(): variable {} has already been declared".format(var))
