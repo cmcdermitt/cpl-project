@@ -835,6 +835,17 @@ def name_ref():
         error('IDENTIFIER', 'name_ref')
     return node
 
+def func_ref():
+    node = Node('FUNCT_REF')
+    if scanner.lex[lex_en['type']] == 'IDENTIFIER':
+        node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
+        scanner.next()
+        if (scanner.lex[lex_en['value']] == 'LP'):
+            node.children.append(arg_list())
+    else:
+        error('IDENTIFIER', 'func_ref')
+    return node
+
 #CASE pusing_ref
 #GRAMMAR pusing_ref ::= [( USING arg_list | LP arg_list RP)]
 def pusing_ref():
