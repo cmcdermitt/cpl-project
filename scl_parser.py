@@ -504,6 +504,7 @@ def pother_oper_def():
         current_statement = current_statement + 'ENDFUN '
         scanner.next()
         node.statement = current_statement
+        current_statement = ''
     else:
         error('BEGIN', 'pother_oper_def')
     node.children.append(pactions())
