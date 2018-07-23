@@ -72,17 +72,23 @@ class VarTable:
                 else:
                     self.arrayA(var, value, indices)
             elif type(value) == float and (self.variables[var].type == 'REAL' or self.variables[var].type == 'DOUBLE'):
-                if not indices == 0:
+                if not indices:
                     self.variables[var].value = value
                 else:
                     self.arrayA(var, value, indices)
             elif type(value) == bool and self.variables[var].type == 'TBOOL':
-                if not indices == 0:
+                if not indices:
                     self.variables[var].value = value
                 else:
                     self.arrayA(var, value, indices)
+            elif isinstance(value, list):
+                if self.getArraySize(value) == self.getSize(var):
+                    self.assignWholeArray(var, value)
+                else:
+                    print('Error: array size mismatch for {}'.format(var))
+                    exit()
             else:
-                print('Error in assign(): {} variable {} cannot be assigned a {}'.format(self.variables[var].type, self.variables[var].value, type(value)))
+                print('Error in assign(): {} variable {} cannot be assigned a {}'.format(self.variables[var].type, var, type(value)))
                 exit()
             
     def getValue(self, var, pos = []):
@@ -136,6 +142,12 @@ class VarTable:
                 varActual = varActual[0]
             return indices
             
+    def getArraySize(self, arr):
+        indices = []
+        while isinstance(arr, list):
+            arr.append(len(arr))
+            arr = arr[0]
+        return indices
 
 
     def getType(self, var, pos = []):

@@ -346,12 +346,13 @@ def element():
     valid_types = ['STRING', 'LETTER', 'ICON', 'HCON', 'FCON', 'IDENTIFIER']
     valid_values = ['MTRUE', 'MFALSE']
     if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-        node = Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']])
-        scanner.next()
-        if scanner.lex[lex_en['value']] =='LB':
-            node.children.append(name_ref())
-        elif scanner.lex[lex_en['value']] == 'LP':
-            node.children.append(func_ref())
+        if scanner.peek()[lex_en['value']] =='LB':
+            node = name_ref()
+        elif scanner.peek()[lex_en['value']] == 'LP':
+            node = func_ref()
+        else:
+            node = Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']])
+            scanner.next()
         return node
     elif scanner.lex[lex_en['type']] in valid_types: #needs additional code for identifier if using arrays
         node = Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']])
@@ -841,7 +842,13 @@ def func_ref():
         node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
         scanner.next()
         if (scanner.lex[lex_en['value']] == 'LP'):
+            scanner.next()
             node.children.append(arg_list())
+            if scanner.lex[lex_en['value']] == 'RP':
+                scanner.next()
+                return node
+            else:
+                error('RP', 'func_ref')
     else:
         error('IDENTIFIER', 'func_ref')
     return node
