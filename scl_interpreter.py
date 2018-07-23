@@ -103,6 +103,52 @@ def isNumber(value):
 def isInteger(value):
     return type(value) == int
 
+# Replacement for pother_oper_def
+# Takes a function and runs it with parameters
+def startFunction(func, actual_params):
+    global returnValue
+    if func.children[0].type == 'IDENTIFIER' or func.children[0].value == 'MAIN':
+        iden = func.children[0].value
+        print('BEGIN')
+        sys.stdout.write(iden + 'DESCRIPTION IS ')
+    oper_type = processNode(func.children[1])
+    formal_params = processNode(func.children[2])
+    assignParams(formal_params, actual_params)
+    # Assign params here -> 
+    if (func.children[3].type == 'const_var_struct'): # If the function has variables
+        variableStack.append(scl_var_table.VarTable()) # Add new variable stack
+        processNode(func.children[3])
+        processNode(func.children[4])
+        variableStack.pop() # Pop off stack when the pactions are done
+        if func.children[5].value != iden:
+            error('ENDFUN with correct function not found')
+    else:
+        processNode(func.children[3]) # If there are no variables declared just process pactions
+        if func.children[4].value != iden:
+            error('ENDFUN with correct function not found')
+    print('Statement recognized: ENDFUN ' + iden)
+    temp = returnValue
+    returnValue = None
+    return temp
+
+def assignParams(formal_params, actual_params):
+    global variableStack
+    for count, param in  enumerate(formal_params):
+        indices = variableStack[-1].getSize(param)
+        if indices == None:
+            assign(param, actual_params[count],[])
+        else:
+            temp_params = actual_params
+            for index in indices:
+                if isinstance(temp_params, list):
+                    if len(temp_params) == index:
+                        temp_params = temp_params[0]
+                    else:
+                        error('List does not have correct length')
+                else:
+                    error('List does not have enough dimensions')
+            variableStack[-1].assignWholeArray(param, actual_params[count])
+
 
 # Expected Structure:
 # Type program
@@ -573,6 +619,18 @@ def f_pcase_def(node):
         p = processNode(node.children[0])
     return node
 
+def f_call(node):
+    func = getName(node.children[0])
+    if func in functionNames:
+        func = functionNames[func]
+    else:
+        error('Function not in function names')
+    params = processNode(node.children[1])
+    return startFunction(func, params)
+
+def f_pusing_ref(node):
+    return processNode(node.children[0])
+
 def f_return(node):
     global returnValue
     returnValue = processNode(node.children[0])
@@ -794,61 +852,6 @@ def f_arg_list(node):
         indices.append(processNode(child))
     return indices
 
-def f_call(node):
-    func = getName(node.children[0])
-    if func in functionNames:
-        func = functionNames[func]
-    else:
-        error('Function not in function names')
-    params = processNode(node.children[1])
-    return startFunction(func, params)
-
-# Replacement for pother_oper_def
-# Takes a function and runs it with parameters
-def startFunction(func, actual_params):
-    global returnValue
-    if func.children[0].type == 'IDENTIFIER' or func.children[0].value == 'MAIN':
-        iden = func.children[0].value
-        print('BEGIN')
-        sys.stdout.write(iden + 'DESCRIPTION IS ')
-    oper_type = processNode(func.children[1])
-    formal_params = processNode(func.children[2])
-    assignParams(formal_params, actual_params)
-    # Assign params here -> 
-    if (func.children[3].type == 'const_var_struct'): # If the function has variables
-        variableStack.append(scl_var_table.VarTable()) # Add new variable stack
-        processNode(func.children[3])
-        processNode(func.children[4])
-        variableStack.pop() # Pop off stack when the pactions are done
-        if func.children[5].value != iden:
-            error('ENDFUN with correct function not found')
-    else:
-        processNode(func.children[3]) # If there are no variables declared just process pactions
-        if func.children[4].value != iden:
-            error('ENDFUN with correct function not found')
-    print('Statement recognized: ENDFUN ' + iden)
-    temp = returnValue
-    returnValue = None
-    return temp
-
-def assignParams(formal_params, actual_params):
-    global variableStack
-    for count, param in  enumerate(formal_params):
-        indices = variableStack[-1].getSize(param)
-        if indices == None:
-            assign(param, actual_params[count],[])
-        else:
-            temp_params = actual_params
-            for index in indices:
-                if isinstance(temp_params, list):
-                    if len(temp_params) == index:
-                        temp_params = temp_params[0]
-                    else:
-                        error('List does not have correct length')
-                else:
-                    error('List does not have enough dimensions')
-            variableStack[-1].assignWholeArray(param, actual_params[count])
-
 
     
 #dictionary associating node types with functions
@@ -917,7 +920,8 @@ interpreterDict = {
     'ARRAY_VAL' : f_array_val,
     'ARG_LIST' : f_arg_list,
     'RETURN' : f_return,
-    'CALL' : f_call
+    'CALL' : f_call,
+    'PUSING_REF' : f_pusing_ref
 }
 
 #for functions:
