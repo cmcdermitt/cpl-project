@@ -75,20 +75,26 @@ def error(expected, location = ''):
 #                   | MAIN
 def func_main():
     # Append function header to output list
+    global current_statement
     node = Node('func_main')
     if(scanner.lex[lex_en['value']] == 'MAIN'):
         scanner.next()
+        current_statement = 'MAIN'
+        node.statement = current_statement
+        current_statement = ''
         return node
-        node.statement = ('MAIN')
     elif(scanner.lex[lex_en['value']] == 'FUNCTION'):
         scanner.next()
         if(scanner.lex[lex_en['type']] == 'IDENTIFIER'):
             node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
+            current_statement += 'FUNCTION ' + scanner.lex[lex_en['value']] + ' '
             scanner.next()
         else:
             # Append error message if case specific grammar not found
             error('IDENTIFIER', 'func_main')
         node.children.append(oper_type())
+        node.statement = current_statement
+        current_statement = ''
     else:
         # Append error message if case specific grammar not found
         error('MAIN or FUNCTION', 'func_main')
@@ -97,13 +103,17 @@ def func_main():
 # CASE: oper_type
 # GRAMMAR: oper_type ::= RETURN [ARRAY array_dim_list] TYPE data_type
 def oper_type():
+    global current_statement
     node = Node('oper_type')
     if scanner.lex[lex_en['value']] == 'RETURN':
+        current_statement += 'RETURN '
         scanner.next()
         if scanner.lex[lex_en['value']] == 'ARRAY':
             scanner.next()
+            current_statement += 'ARRAY '
             node.children.append(plist_const())
         if scanner.lex[lex_en['value']] == 'TYPE':
+            current_statement += 'TYPE '
             scanner.next()
             node.children.append(data_type())
         else:

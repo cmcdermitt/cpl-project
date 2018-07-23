@@ -187,7 +187,7 @@ def f_program(node):
 def f_func_main(node):
     #func_main should already be verified by the parser and does not do anything
     funcName = node.children[0]
-    print('Statement recognized: FUNCTION ' + str(funcName.value) + ' RETURN MVOID')
+    print('Statement recognized: ' + node.statement)
     return
 
 # Expected Structure:
