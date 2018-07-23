@@ -423,42 +423,6 @@ def element():
         error('IDENTIFIER or LP or TYPE or MTRUE or MFALSE', 'element')
     return node
 
-# CASE: popt_ref
-# GRAMMAR: popt_reg ::=
-#						| array_val
-#						| parguments
-# NOTE: Blank line interpreted as optional input valuues
-# def popt_ref():
-#     # Append function header to output list
-#     lex_list = ['popt_ref']
-#     if scanner.lex[lex_en['value']] == 'LB':
-#         lex_list.append(array_val())
-#     elif scanner.lex[lex_en['value']] == 'LP':
-#         lex_list.append(parguments())
-#     else:
-#         return lex_list
-#     return lex_list
-
-# CASE: parguments
-# GRAMMAR: LP arg_list RP
-# def parguments():
-#     global current_statement
-#     # Append function header to output list
-#     lex_list = ['parguments']
-#     if scanner.lex[lex_en['value']] == 'LP':
-#         lex_list.append(tuple(scanner.lex))
-#         scanner.next()
-#     else:
-#         # Append error message if case specific grammar not found
-#         lex_list.append(error('LP', 'parguments'))
-#     lex_list.append(arg_list())
-#     if scanner.lex[lex_en['value']] == 'RP':
-#         lex_list.append(tuple(scanner.lex))
-#         scanner.next()
-#     else:
-#         # Append error message if case specific grammar not found
-#         lex_list.append(error('RP', 'parguments'))
-#     return lex_list
 
 # CASE: implement
 # GRAMMAR: implement ::= IMPLEMENTATIONS [MAIN DESCRIPTION parameters] funct_list
