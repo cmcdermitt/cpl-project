@@ -146,25 +146,26 @@ def f_funct_list(node):
         functionNames[child.children[0].value] = child
     return node
 
-# Expected Structure:
-# Type: pother_oper_def
-# Children: parameters, [const_var_struct], pactions
-def f_pother_oper_def(node):
-    if node.children[0].type == 'IDENTIFIER' or node.children[0].value == 'MAIN':
-        iden = node.children[0].value
-        print('BEGIN')
-        sys.stdout.write(iden + 'DESCRIPTION IS ')
-    processNode(node.children[1])
-    processNode(node.children[2])
-    if (node.children[2].type == 'const_var_struct'):
-        processNode(node.children[3])
-        if node.children[4].value != iden:
-            error('ENDFUN with correct function not found')
-    else:
-        if node.children[3].value != iden:
-            error('ENDFUN with correct function not found')
-    print('Statement recognized: ENDFUN ' + iden)
-    return node
+# # Expected Structure:
+# # Type: pother_oper_def
+# # Children: parameters, [const_var_struct], pactions
+# def f_pother_oper_def(node):
+#     global returnValue
+#     if node.children[0].type == 'IDENTIFIER' or node.children[0].value == 'MAIN':
+#         iden = node.children[0].value
+#         print('BEGIN')
+#         sys.stdout.write(iden + 'DESCRIPTION IS ')
+#     processNode(node.children[1])
+#     processNode(node.children[2])
+#     if (node.children[2].type == 'const_var_struct'):
+#         processNode(node.children[3])
+#         if node.children[4].value != iden:
+#             error('ENDFUN with correct function not found')
+#     else:
+#         if node.children[3].value != iden:
+#             error('ENDFUN with correct function not found')
+#     print('Statement recognized: ENDFUN ' + iden)
+#     return node
 
 # Expected Structure
 # Type: parameters
@@ -274,7 +275,7 @@ def f_data_type(node):
 # Children: action_def { action_def }
 def f_pactions(node):
     for action in node.children:
-        if returnValue != None:
+        if returnValue == None:
             processNode(action)
         else:
             return returnValue
@@ -803,6 +804,7 @@ def f_call(node):
 # Replacement for pother_oper_def
 # Takes a function and runs it with parameters
 def startFunction(func, actual_params):
+    global returnValue
     if func.children[0].type == 'IDENTIFIER' or func.children[0].value == 'MAIN':
         iden = func.children[0].value
         print('BEGIN')
@@ -822,7 +824,9 @@ def startFunction(func, actual_params):
         if func.children[3].value != iden:
             error('ENDFUN with correct function not found')
     print('Statement recognized: ENDFUN ' + iden)
-    return func
+    temp = returnValue
+    returnValue = None
+    return temp
 
 def assignParams(formal_params, actual_params):
     global variableStack
@@ -900,7 +904,6 @@ interpreterDict = {
     'IMPLEMENT' : f_implement,
     'FUNC_MAIN' : f_func_main,
     'FUNCT_LIST' : f_funct_list,
-    'POTHER_OPER_DEF' : f_pother_oper_def,
     'PARAMETERS' : f_parameters,
     'SET' : f_set,
     'FCON' : f_fcon,
