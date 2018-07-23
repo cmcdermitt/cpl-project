@@ -695,6 +695,7 @@ def action_def():
         scanner.next()
         if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
+            scanner.next()
         else:
             error('IDENTIFIER', 'action_def')
         node.children.append(pusing_ref())
