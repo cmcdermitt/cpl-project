@@ -13,7 +13,7 @@ DEFINE prompt OF TSTRING
 IMPLEMENTATIONS
 FUNCTION MAIN DESCRIPTION RETURN TYPE MVOID IS
 BEGIN 
-SET prompt EQUOP "Type a number"
+SET prompt EQUOP "Type a number bigger than 32"
 SET num1 EQUOP 5
 INPUT num2
 DISPLAY num1
@@ -23,6 +23,16 @@ WHILE num2 LESS THAN 5 STAR 6 PLUS 2 DO
 DISPLAY prompt
 INPUT num2
 ENDWHILE
+
+SET prompt EQUOP "Type a number bigger than 32"
+
+REPEAT 
+DISPLAY prompt
+INPUT num2
+UNTIL num2 LESS THAN 5 STAR 6 PLUS 2
+ENDREPEAT
+
+
 
 SET prompt EQUOP "Is num1 or num2 bigger?"
 DISPLAY prompt

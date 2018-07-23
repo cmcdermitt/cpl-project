@@ -558,7 +558,7 @@ def f_repeat(node):
     # Perform initial pactions statement
     #print('Statement recognized: REPEAT ')
     p = processNode(node.children[0])
-    sys.stdout.write(str(p.value))
+    #sys.stdout.write(str(p.value))
     # Get pcondition
     cond = processNode(node.children[1])
     
@@ -569,7 +569,7 @@ def f_repeat(node):
             breakCalled = False
             return node
         cond = processNode(node.children[1])
-    print('Results: Repeated ' + p.value + ' until ' + str(cond) + ' evaluated to True.')
+    print('Results: Repeated until ' + str(cond) + ' evaluated to True.')
     #sys.stdout.write('UNTIL ' + str(cond) + 'ENDREPEAT')
     return node
 
