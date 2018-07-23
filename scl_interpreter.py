@@ -212,6 +212,26 @@ def f_funct_list(node):
         functionNames[child.children[0].value] = child
     return node
 
+# Expected Structure:
+# Type: pother_oper_def
+# Children: parameters, [const_var_struct], pactions
+def f_pother_oper_def(node):
+    if node.children[0].type == 'IDENTIFIER' or node.children[0].value == 'MAIN':
+        iden = node.children[0].value
+        print ('Statement recognized: FUNCTION ' + iden + ' DESCRIPTION IS ')
+        print('Statement recognized: BEGIN')
+    processNode(node.children[1])
+    processNode(node.children[2])
+    if (node.children[2].type == 'const_var_struct'):
+        processNode(node.children[3])
+        if node.children[4].value != iden:
+            error('ENDFUN with correct function not found')
+    else:
+        if node.children[3].value != iden:
+            error('ENDFUN with correct function not found')
+    print('Statement recognized: ENDFUN ' + iden)
+    return node
+
 # # Expected Structure:
 # # Type: pother_oper_def
 # # Children: parameters, [const_var_struct], pactions
@@ -588,7 +608,10 @@ def f_case(node):
     if breakCalled == True:
         breakCalled = False
     if(not successfulCase and len(node.children) == 3):
-        f_pcase_def(node.children[2])
+        default = f_pcase_def(node.children[2])
+        print('Results: The default case ' + default + ' for ' + nodeId + ' was reached and executed')
+    else:
+        print('Results: Case statement for ' + str(nodeId) + ' broke after reaching successful case of ' + str(successfulCase))
     #sys.stdout.write('MENDCASE')
     return node
 
@@ -598,12 +621,14 @@ def f_case(node):
 def f_mbreak(node):
     global breakCalled
     breakCalled = True
+    print('Results: Breaking control of execution.')
     return node
 
 # Expected Structure:
 # Type: MEXIT
 # Children: none
 def f_mexit(node):
+    print('Results: Exiting operation.')
     exit()
 
 # Expected Structure:
