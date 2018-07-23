@@ -55,7 +55,8 @@ action_def ::=  SET name_ref  EQUOP expr
     | DISPLAY name_ref
     | INCREMENT name_ref
     | DECREMENT name_ref
-    | CALL name_ref pusing_ref
+    | CALL IDENTIFIER pusing_ref
+    | RETURN expr
     | IF pcondition THEN pactions ptest_elsif  [ELSE pactions] ENDIF
     | FOR name_ref EQUOP expr ( TO | DOWNTO) expr DO pactions ENDFOR
     | REPEAT pactions UNTIL pcondition ENDREPEAT

@@ -10,6 +10,7 @@ variableStack = [scl_var_table.VarTable()]
 isConst = False
 breakCalled = False
 elseRun = False
+returnValue = None
 
 # Main interpreter function
 # Name: processNode(node)
@@ -574,7 +575,13 @@ def f_pcase_def(node):
 #             callValue = main_vars.getValue(node.children[0])
 #             print(callValue)
 #     return node
-# Logic functions (descending from pcondition)
+
+def f_return(node):
+    global returnValue
+    returnValue = processNode('expr')
+    return returnValue
+
+# Logic operator functions (descending from pcondition)
 
 # Type AND
 # Children: pcond1 and pcond 1
@@ -854,7 +861,8 @@ interpreterDict = {
     'CHAR' : f_tstring,
     'IDENTIFIER' : f_identifier,
     'ARRAY_VAL' : f_array_val,
-    'ARG_LIST' : f_arg_list
+    'ARG_LIST' : f_arg_list,
+    'RETURN' : f_return
 }
 
 #for functions:
