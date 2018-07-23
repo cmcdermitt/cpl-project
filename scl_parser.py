@@ -106,14 +106,14 @@ def oper_type():
     global current_statement
     node = Node('oper_type')
     if scanner.lex[lex_en['value']] == 'RETURN':
-        current_statement += 'RETURN '
+        current_statement = current_statement + 'RETURN '
         scanner.next()
         if scanner.lex[lex_en['value']] == 'ARRAY':
             scanner.next()
-            current_statement += 'ARRAY '
+            current_statement = current_statement + 'ARRAY '
             node.children.append(plist_const())
         if scanner.lex[lex_en['value']] == 'TYPE':
-            current_statement += 'TYPE '
+            current_statement = current_statement + 'TYPE '
             scanner.next()
             node.children.append(data_type())
         else:
@@ -133,7 +133,7 @@ def f_globals():
     if scanner.lex[lex_en['value']] == 'GLOBAL':
         scanner.next()
         if(scanner.lex[lex_en['value']] == 'DECLARATIONS'):
-            current_statement += 'GLOBAL DECLARATIONS'
+            current_statement = current_statement + 'GLOBAL DECLARATIONS'
             scanner.next()
             node.statement = current_statement
             current_statement = ''
@@ -148,7 +148,7 @@ def const_dec():
     global current_statement
     node = Node('const_dec')
     if scanner.lex[lex_en['value']] == 'CONSTANTS':
-        current_statement += 'CONSTANTS'
+        current_statement = current_statement + 'CONSTANTS'
         node.statement = current_statement
         current_statement = ''
         scanner.next()
@@ -161,7 +161,7 @@ def var_dec():
     global current_statement
     node = Node('var_dec')
     if scanner.lex[lex_en['value']] == 'VARIABLES':
-        current_statement += scanner.lex[lex_en['value']]
+        current_statement = current_statement + scanner.lex[lex_en['value']]
         node.statement = current_statement
         current_statement = ''
         scanner.next()
@@ -178,7 +178,7 @@ def data_declarations():
     node = Node('data_declarations')
     if scanner.lex[lex_en['value']] == 'DEFINE': #check validity before starting while loop
         while(scanner.lex[lex_en['value']] == 'DEFINE'):
-            current_statement += scanner.lex[lex_en['value']]
+            current_statement = current_statement + scanner.lex[lex_en['value']]
             scanner.next()
             node.children.append(data_declaration())
             node.statement = current_statement
@@ -196,13 +196,13 @@ def data_declaration():
     node = Node('data_declaration')
     if scanner.lex[lex_en['type']] == 'IDENTIFIER':
         node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
-        current_statement += scanner.lex[lex_en['value']]
+        current_statement = current_statement + scanner.lex[lex_en['value']]
         scanner.next()
     else:
         error('IDENTIFIER', 'data_declaration')
     node.children.append(parray_dec())
     if(scanner.lex[lex_en['value']] == 'OF'):
-        current_statement += scanner.lex[lex_en['value']]
+        current_statement = current_statement + scanner.lex[lex_en['value']]
         scanner.next()
     else:
         error('OF', 'data_declaration')
@@ -215,7 +215,7 @@ def parray_dec():
     global current_statement
     node = Node('parray_dec')
     if(scanner.lex[lex_en['value']] == 'ARRAY'):
-        current_statement += scanner.lex[lex_en['value']]
+        current_statement = current_statement + scanner.lex[lex_en['value']]
         scanner.next()
         node.children.append(plist_const())
         #node.children.append(popt_array_val())
@@ -227,31 +227,31 @@ def plist_const():
     global current_statement
     node = Node('plist_const')
     if scanner.lex[lex_en['value']] == 'LB':
-        current_statement += scanner.lex[lex_en['value']]
+        current_statement = current_statement + scanner.lex[lex_en['value']]
         scanner.next()
     if(scanner.lex[lex_en['type']] == 'IDENTIFIER' or scanner.lex[lex_en['type']] == 'ICON'):
-        current_statement += scanner.lex[lex_en['value']]
+        current_statement = current_statement + scanner.lex[lex_en['value']]
         node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
         scanner.next()
     else:
         error('IDENTIFIER or ICON', 'plist_const')
     if(scanner.lex[lex_en['value']] == 'RB'):
-        current_statement += scanner.lex[lex_en['value']]
+        current_statement = current_statement + scanner.lex[lex_en['value']]
         scanner.next()
     else:
         error('RB', 'plist_const')
     while(scanner.lex[lex_en['value']] == 'LB'):
-        current_statement += scanner.lex[lex_en['value']]
+        current_statement = current_statement + scanner.lex[lex_en['value']]
         scanner.next()
         if(scanner.lex[lex_en['type']] == 'IDENTIFIER' or scanner.lex[lex_en['type']] == 'ICON'):
-            current_statement += scanner.lex[lex_en['value']]
+            current_statement = current_statement + scanner.lex[lex_en['value']]
             node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
             scanner.next()
         else:
             # Append error message if case specific grammar not found
             error('IDENTIFIER or ICON', 'plist_const')
         if (scanner.lex[lex_en['value']] == 'RB'):
-            current_statement += scanner.lex[lex_en['value']]
+            current_statement = current_statement + scanner.lex[lex_en['value']]
             scanner.next()
         else:
             error('RB', 'plist_const')
@@ -264,7 +264,7 @@ def popt_array_val():
     # Append function header to output list
     node = Node('popt_array_val')
     if scanner.lex[lex_en['value']] == 'VALUE' or scanner.lex[lex_en['value']] == 'EQUOP':
-        current_statement += scanner.lex[lex_en['value']]
+        current_statement = current_statement + scanner.lex[lex_en['value']]
         scanner.next()
         node.children.append(array_val())
     return node
@@ -276,13 +276,13 @@ def array_val():
     # Append function header to output list
     node = Node('array_val')
     if scanner.lex[lex_en['value']] == 'LB':
-        current_statement += scanner.lex[lex_en['value']]
+        current_statement = current_statement + scanner.lex[lex_en['value']]
         scanner.next()
     else:
         error('LB', 'array_val')
     node.children.append(arg_list())
     if(scanner.lex[lex_en['value']] == 'RB'):
-        current_statement += scanner.lex[lex_en['value']]
+        current_statement = current_statement + scanner.lex[lex_en['value']]
         scanner.next()
     else:
         error('RB', 'array_val')
@@ -296,7 +296,7 @@ def arg_list():
     node = Node('arg_list')
     node.children.append(expr())
     while (scanner.lex[lex_en['value']] == 'COMMA'):
-        current_statement += scanner.lex[lex_en['value']]
+        current_statement = current_statement + scanner.lex[lex_en['value']]
         scanner.next()
         node.children.append(expr())
     return node
@@ -339,11 +339,11 @@ def expr():
     this_lex = scanner.lex[lex_en['value']]
     if (this_lex == 'PLUS' or this_lex == 'MINUS' or this_lex == 'BAND' or this_lex == 'BOR' or this_lex == 'BXOR'):
        
-        current_statement += ' '
+        current_statement = current_statement + ' '
         node = Node(this_lex)
         node.children.append(first_term)
         scanner.next()
-        current_statement += this_lex
+        current_statement = current_statement + this_lex
         node.children.append(term())
     else:
         node = first_term
@@ -361,7 +361,7 @@ def term():
     if (this_lex == 'STAR' or this_lex == 'DIVOP' or this_lex == 'MOD' or this_lex == 'LSHIFT' or this_lex == 'RSHIFT'):
         node = Node(this_lex)
         node.children.append(first_punary)
-        current_statement += this_lex + ' '
+        current_statement = current_statement + this_lex + ' '
         scanner.next()
 
         node.children.append(punary())
@@ -377,7 +377,7 @@ def punary():
     if scanner.lex[lex_en['value']] == 'NEGATE':
         node = Node(scanner.lex[lex_en['value']])
         scanner.next()
-        current_statement += 'NEGATE '
+        current_statement = current_statement + 'NEGATE '
         node.children.append(element())
     else:
         node = element()
@@ -407,16 +407,16 @@ def element():
             node = func_ref()
         else:
             node = Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']])
-            current_statement += str(scanner.lex[lex_en['value']]) + ' ' 
+            current_statement = current_statement + str(scanner.lex[lex_en['value']]) + ' ' 
             scanner.next()
         return node
     elif scanner.lex[lex_en['type']] in valid_types: #needs additional code for identifier if using arrays
         node = Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']])
-        current_statement += str(scanner.lex[lex_en['value']]) + ' ' 
+        current_statement = current_statement + str(scanner.lex[lex_en['value']]) + ' ' 
         scanner.next()
     elif scanner.lex[lex_en['value']] in valid_values:
         node = Node('BOOL', scanner.lex[lex_en['value']])
-        current_statement += str(scanner.lex[lex_en['value']]) + ' ' 
+        current_statement = current_statement + str(scanner.lex[lex_en['value']]) + ' ' 
         scanner.next()
     else:
         # Append error message if case specific grammar not found
@@ -560,7 +560,7 @@ def pcondition():
     word = scanner.lex[lex_en['value']]
     if word == 'OR' or word == 'AND':
         node = Node(scanner.lex[lex_en['value']])
-        current_statement += str(scanner.lex[lex_en['value']]) + ' '
+        current_statement = current_statement + str(scanner.lex[lex_en['value']]) + ' '
         node.children.append(first_pcond1)
         scanner.next()
         node.children.append(pcond1())
@@ -573,7 +573,7 @@ def pcondition():
 def pcond1():
     global current_statement
     if scanner.lex[lex_en['value']] == 'NOT':
-        current_statement += 'NOT '
+        current_statement = current_statement + 'NOT '
         node = Node(scanner.lex[lex_en['value']])
         scanner.next()
         node.children.append(pcond2())
@@ -591,11 +591,11 @@ def pcond2():
     # For LP pcondition RP case
     global current_statement
     if scanner.lex[lex_en['value']] == 'LP':
-        current_statement += 'LP '
+        current_statement = current_statement + 'LP '
         scanner.next()  
         node = pcondition()
         if scanner.lex[lex_en['value']] == 'RP':
-            current_statement += 'RP '
+            current_statement = current_statement + 'RP '
             scanner.next()
         else:
             error('RP', 'pcond2')
@@ -610,7 +610,7 @@ def pcond2():
             error('MTRUE or MFALSE', 'pcond2')
 
     elif scanner.lex[lex_en['value']] == 'MTRUE' or scanner.lex[lex_en['value']] == 'MFALSE':
-        current_statement += scanner.lex[lex_en['value']] + ' '
+        current_statement = current_statement + scanner.lex[lex_en['value']] + ' '
         node = Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']])
         scanner.next()
 
@@ -636,19 +636,19 @@ def eq_v():
     global current_statement
     word = scanner.lex[lex_en['value']]
     if(word == 'EQUALS'):
-        current_statement += 'EQUALS '
+        current_statement = current_statement + 'EQUALS '
         node = Node('EQUALS')
         scanner.next()
     elif(word == 'GREATER' or word == 'LESS'):
         scanner.next()
         if(scanner.lex[lex_en['value']] == 'THAN'):
-            current_statement += word + ' ' + scanner.lex[lex_en['value']] + ' '
+            current_statement = current_statement + word + ' ' + scanner.lex[lex_en['value']] + ' '
             node = Node (word + ' ' + scanner.lex[lex_en['value']])
             scanner.next()
         elif scanner.lex[lex_en['value']] == 'OR':
             scanner.next()
             if scanner.lex[lex_en['value']] == 'EQUAL':
-                current_statement += word + ' ' + scanner.lex[lex_en['value']] + ' '
+                current_statement = current_statement + word + ' ' + scanner.lex[lex_en['value']] + ' '
                 node = Node (word + ' OR ' + scanner.lex[lex_en['value']])
                 scanner.next()
             else:
@@ -897,7 +897,7 @@ def name_ref():
     # Append function header to output list
     print(scanner.lex[lex_en['value']])
     if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-        current_statement +=  scanner.lex[lex_en['value']] + ' '
+        current_statement = current_statement +  scanner.lex[lex_en['value']] + ' '
         node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
         scanner.next()
         if (scanner.lex[lex_en['value']] == 'LB'):
@@ -913,11 +913,11 @@ def func_ref():
         node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
         scanner.next()
         if (scanner.lex[lex_en['value']] == 'LP'):
-            current_statement += 'LP '
+            current_statement = current_statement + 'LP '
             scanner.next()
             node.children.append(arg_list())
             if scanner.lex[lex_en['value']] == 'RP':
-                current_statement += 'RP '
+                current_statement = current_statement + 'RP '
                 scanner.next()
                 return node
             else:
@@ -932,7 +932,7 @@ def pusing_ref():
     global current_statement
     node = Node('pusing_ref')
     if scanner.lex[lex_en['value']] == 'USING':
-        current_statement += 'USING '
+        current_statement = current_statement + 'USING '
         scanner.next()
         node.children.append(arg_list())
     elif scanner.lex[lex_en['value']] == 'LP':
