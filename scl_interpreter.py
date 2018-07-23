@@ -109,8 +109,8 @@ def startFunction(func, actual_params):
     global returnValue
     if func.children[0].type == 'IDENTIFIER' or func.children[0].value == 'MAIN':
         iden = func.children[0].value
-        print('BEGIN')
-        sys.stdout.write(iden + 'DESCRIPTION IS ')
+        #print('BEGIN')
+        #ys.stdout.write(iden + 'DESCRIPTION IS ')
     oper_type = processNode(func.children[1])
 
     # Assign params here -> 
@@ -129,7 +129,7 @@ def startFunction(func, actual_params):
         processNode(func.children[3]) # If there are no variables declared just process pactions
         if func.children[4].value != iden:
             error('ENDFUN with correct function not found')
-    print('Statement recognized: ENDFUN ' + iden)
+    #print('Statement recognized: ENDFUN ' + iden)
     temp = returnValue
     # if temp != None:
     #     t = type(temp)
@@ -254,7 +254,7 @@ def f_const_dec(node):
     global isConst
     if node.children: #if node.children is not empty
         isConst = True #set flag marking descendent variables as const
-        print('CONSTANTS')
+        #print('CONSTANTS')
         processNode(node.children[0])
         isConst = False #unset flag
 
@@ -262,7 +262,7 @@ def f_const_dec(node):
 # Type var_dec
 # Children: data_declarations
 def f_var_dec(node):
-    print('Statement recognized: VARIABLES')
+    #print('Statement recognized: VARIABLES')
     processNode(node.children[0])
 
 # Expected structure:
@@ -282,7 +282,7 @@ def f_data_declaration(node):
         declare(getName(node.children[0]), data_type, array) # Append variable to proper table
     else:
         declare(getName(node.children[0]), data_type) # Append variable to proper table
-    print('Statement recognized: DEFINE ' + node.children[0].value + " OF " + str(data_type))
+    #print('Statement recognized: DEFINE ' + node.children[0].value + " OF " + str(data_type))
 
 # Expected Structure:
 # Type array_dec
@@ -372,7 +372,7 @@ def f_input(node):
     # Add identifier to variable table
     assign(getName(node.children[0]), processNode(tempNode), getIndices(node.children[0]))
     # output results
-    print('Statement recognized: INPUT ' + str(getName(node.children[0])))
+    #print('Statement recognized: INPUT ' + str(getName(node.children[0])))
     # Return node to processNode
     return node
 
@@ -384,7 +384,7 @@ def f_display(node):
     # Change actual output after debuging
     pNode = processNode(node.children[0])
     print(pNode)
-    print('Statement recognized: DISPLAY ' + str(pNode))
+    #print('Statement recognized: DISPLAY ' + str(pNode))
     return node
 
 # Expected Structure:
@@ -400,7 +400,7 @@ def f_increment(node):
     # Increment and assign
     val = val + 1
     assign(var, val, indices)
-    print('Statement recognized: INCREMENT ' + var)
+    #print('Statement recognized: INCREMENT ' + var)
     return node
 
 # Expected Structure:
@@ -416,7 +416,7 @@ def f_decrement(node):
     # Increment and assign
     val = val - 1
     assign(var, val, indices)
-    print('Statement recognized: DECREMENT ' + var)
+    #print('Statement recognized: DECREMENT ' + var)
     return node
 
 # Expected Structure:
@@ -424,18 +424,18 @@ def f_decrement(node):
 # Children: pcondition, pactions, ptest_elsif, {pactions}
 def f_ifelse(node):
     global elseRun
-    print('Statement recognized: IF ')
+    #print('Statement recognized: IF ')
     if processNode(node.children[0]):
-        print('THEN  ', end = '')
+        #print('THEN  ', end = '')
         processNode(node.children[1])
         return node
     else:
         elseRun = not processNode(node.children[2]) and len(node.children) == 4 # Check if else stmt exists
     if elseRun == True:
         elseRun = False
-        print('ELSE ', end = '')
+        #print('ELSE ', end = '')
         processNode(node.children[3])
-    print('ENDIF', end = '')
+    #print('ENDIF', end = '')
     return node
 
 # Expected Structure:
@@ -443,10 +443,10 @@ def f_ifelse(node):
 # Children: pcondition, pactions
 def f_ptest_elsif(node):
     cond = False
-    print('ELSE IF ')
+    #print('ELSE IF ')
     for i in range(0, len(node.children), 2):
         cond = processNode(node.children[i])
-        print(str(cond) + ' ')
+        #print(str(cond) + ' ')
         if cond == True:
             processNode(node.children[i + 1])
     return cond
@@ -464,7 +464,7 @@ def f_for(node):
     # Get indices for potential array
     indices = getIndices(node.children[0])
     # Assign initial value to IDENTIFIER
-    print('Statement recognized: FOR ' + getName(node.children[0]) + ' EQUOP ' + str(expr1) + str(dir) + str(expr2) + 'DO ')
+    #print('Statement recognized: FOR ' + getName(node.children[0]) + ' EQUOP ' + str(expr1) + str(dir) + str(expr2) + 'DO ')
     assign(getName(node.children[0]), expr1, indices)
     # Perform for loop up or down
     var = processNode(node.children[0])
@@ -501,7 +501,7 @@ def f_for(node):
                 return node
             # Decrement and assign
 
-    sys.stdout.write('ENDFOR')
+    #sys.stdout.write('ENDFOR')
     return node
 
 # Expected Structure:
@@ -513,7 +513,7 @@ def f_repeat(node):
     # and repeating in while loop until conditional is false
     #
     # Perform initial pactions statement
-    print('Statement recognized: REPEAT ')
+    #print('Statement recognized: REPEAT ')
     p = processNode(node.children[0])
     # Get pcondition
     cond = processNode(node.children[1])
@@ -525,7 +525,7 @@ def f_repeat(node):
             breakCalled = False
             return node
         cond = processNode(node.children[1])
-    sys.stdout.write('UNTIL ' + str(cond) + 'ENDREPEAT')
+    #sys.stdout.write('UNTIL ' + str(cond) + 'ENDREPEAT')
     return node
 
 # Expected Structure:
@@ -535,7 +535,7 @@ def f_while(node):
     global breakCalled
     # Get pcondition
     cond = processNode(node.children[0])
-    print('Statement recognized: WHILE CONDITION DO')
+    #print('Statement recognized: WHILE CONDITION DO')
     # Start while loop
     while cond:
         p = processNode(node.children[1])
@@ -543,7 +543,7 @@ def f_while(node):
             breakCalled = False
             return node
         cond = processNode(node.children[0])
-    sys.stdout.write('ENDWHILE')
+    #sys.stdout.write('ENDWHILE')
     return node
 
 # Expected Structure:
@@ -555,13 +555,13 @@ def f_case(node):
     nodeId = processNode(node.children[0])
     if not isInteger(nodeId):
         error('Type error: case ID must be an integer')
-    print('Statement recognized: CASE ' + str(nodeId) + ' ')
+    #print('Statement recognized: CASE ' + str(nodeId) + ' ')
     successfulCase = f_pcase_val(nodeId, node.children[1])
     if breakCalled == True:
         breakCalled = False
     if(not successfulCase and len(node.children) == 3):
         f_pcase_def(node.children[2])
-    sys.stdout.write('MENDCASE')
+    #sys.stdout.write('MENDCASE')
     return node
 
 # Expected Structure:
@@ -626,7 +626,7 @@ def f_pcase_val(node, identifier = ()):
     # evaluate pactions call associated with index
     for i in range(0, len(identifier.children), 2):
         exprResult = processNode(identifier.children[i])
-        print('MWHEN ' + str(exprResult) + ' COLON ')
+        #print('MWHEN ' + str(exprResult) + ' COLON ')
         # Check identifier case against expression value
         if exprResult == caseCheck:
             caseRan = True
