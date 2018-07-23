@@ -41,7 +41,9 @@ def lookup(var_name, arr_pos = []):
     global variableStack
     if var_name[0] == '\"':
         return var_name
-
+    if var_name in functionNames:
+        var_name = functionNames[var_name]
+        return startFunction(var_name, arr_pos)
     if variableStack[-1].isDeclared(var_name):
         return variableStack[-1].getValue(var_name, arr_pos)
     if variableStack[0].isDeclared(var_name):
@@ -573,7 +575,7 @@ def f_pcase_def(node):
 
 def f_return(node):
     global returnValue
-    returnValue = processNode('expr')
+    returnValue = processNode(node.children[0])
     return returnValue
 
 # Logic operator functions (descending from pcondition)
@@ -799,8 +801,6 @@ def f_call(node):
     else:
         error('Function not in function names')
     params = processNode(node.children[1])
-    if func in functionNames:
-        func = functionNames[func]
     return startFunction(func, params)
 
 # Replacement for pother_oper_def
@@ -811,19 +811,20 @@ def startFunction(func, actual_params):
         iden = func.children[0].value
         print('BEGIN')
         sys.stdout.write(iden + 'DESCRIPTION IS ')
-    formal_params = processNode(func.children[1])
+    oper_type = processNode(func.children[1])
+    formal_params = processNode(func.children[2])
     assignParams(formal_params, actual_params)
     # Assign params here -> 
-    if (func.children[2].type == 'const_var_struct'): # If the function has variables
+    if (func.children[3].type == 'const_var_struct'): # If the function has variables
         variableStack.append(scl_var_table.VarTable()) # Add new variable stack
-        processNode(func.children[2])
         processNode(func.children[3])
+        processNode(func.children[4])
         variableStack.pop() # Pop off stack when the pactions are done
-        if func.children[4].value != iden:
+        if func.children[5].value != iden:
             error('ENDFUN with correct function not found')
     else:
-        processNode(func.children[2]) # If there are no variables declared just process pactions
-        if func.children[3].value != iden:
+        processNode(func.children[3]) # If there are no variables declared just process pactions
+        if func.children[4].value != iden:
             error('ENDFUN with correct function not found')
     print('Statement recognized: ENDFUN ' + iden)
     temp = returnValue
