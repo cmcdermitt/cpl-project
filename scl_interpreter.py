@@ -212,7 +212,6 @@ def f_funct_list(node):
         functionNames[child.children[0].value] = child
     return node
 
-<<<<<<< HEAD
 # Expected Structure:
 # Type: pother_oper_def
 # Children: parameters, [const_var_struct], pactions
@@ -232,7 +231,7 @@ def f_pother_oper_def(node):
             error('ENDFUN with correct function not found')
     print('Statement recognized: ENDFUN ' + iden)
     return node
-=======
+
 # # Expected Structure:
 # # Type: pother_oper_def
 # # Children: parameters, [const_var_struct], pactions
@@ -253,7 +252,6 @@ def f_pother_oper_def(node):
 #             error('ENDFUN with correct function not found')
 #     print('Statement recognized: ENDFUN ' + iden)
 #     return node
->>>>>>> fdf22c65b98f5c0bf9995e4c21b8c9e86f92466c
 
 # Expected Structure
 # Type: parameters
@@ -460,7 +458,7 @@ def f_ifelse(node):
     if processNode(node.children[0]):
         #print('THEN  ', end = '')
         processNode(node.children[1])
-        print('Results: If condition met with result ' + node.value)
+        print('Results: If condition met with result ' + str(node.value))
         return node
     else:
         elseRun = not processNode(node.children[2]) and len(node.children) == 4 # Check if else stmt exists
@@ -581,7 +579,7 @@ def f_while(node):
             breakCalled = False
             return node
         cond = processNode(node.children[0])
-    print('Results: Repeated ' + str(p.value) + ' in while loop until ' + str(cond) + ' evaluated to True.')
+    print('Results: Repeated ' + str(p) + ' in while loop until ' + str(cond) + ' evaluated to True.')
     #sys.stdout.write('ENDWHILE')
     return node
 
@@ -599,7 +597,10 @@ def f_case(node):
     if breakCalled == True:
         breakCalled = False
     if(not successfulCase and len(node.children) == 3):
-        f_pcase_def(node.children[2])
+        default = f_pcase_def(node.children[2])
+        print('Results: The default case ' + default + ' for ' + nodeId + ' was reached and executed')
+    else:
+        print('Results: Case statement for ' + str(nodeId) + ' broke after reaching successful case of ' + str(successfulCase))
     #sys.stdout.write('MENDCASE')
     return node
 
@@ -609,12 +610,14 @@ def f_case(node):
 def f_mbreak(node):
     global breakCalled
     breakCalled = True
+    print('Results: Breaking control of execution.')
     return node
 
 # Expected Structure:
 # Type: MEXIT
 # Children: none
 def f_mexit(node):
+    print('Results: Exiting operation.')
     exit()
 
 # Expected Structure:
