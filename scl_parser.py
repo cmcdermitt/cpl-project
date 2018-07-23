@@ -674,8 +674,8 @@ def pactions():
 #						| POTCONDITION pcondition
 
 def action_def():
-    # Append function header to output list
-    
+    global current_statement
+
     # Valid types and values for following the expr() path
     valid_types = ['IDENTIFIER', 'STRING', 'LETTER', 'ICON', 'HCON', 'FCON']
     valid_values = ['MINUS', 'NEGATE', 'MTRUE', 'MFALSE', 'LP']
@@ -684,6 +684,7 @@ def action_def():
     # Following 'SET' path
     if scanner.lex[lex_en['value']] == 'SET':
         node = Node(scanner.lex[lex_en['value']])
+        current_statement = current_statement + scanner.lex[lex_en['value']] + ' '
         scanner.next()
         if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             node.children.append(name_ref())
@@ -691,6 +692,7 @@ def action_def():
             # Append error message if case specific grammar not found
             error('IDENTIFIER','action_def CASE SET')
         if scanner.lex[lex_en['value']] == 'EQUOP':
+            current_statement = current_statement + scanner.lex[lex_en['value']] + ' '
             scanner.next()
         else:
             # Append error message if case specific grammar not found
@@ -700,43 +702,57 @@ def action_def():
         else:
             # Append error message if case specific grammar not found
             error('expr keyword', 'action_def')
+        node.statement = current_statement
+        current_statement = ''
     # Following 'INPUT' path
     elif scanner.lex[lex_en['value']] == 'INPUT':
         node = Node(scanner.lex[lex_en['value']])
+        current_statement = current_statement + scanner.lex[lex_en['value']] + ' '
         scanner.next()
         if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             node.children.append(name_ref())
         else:
             # Append error message if case specific grammar not found
             error('IDENTIFIER', 'action_def')
+        node.statement = current_statement
+        current_statement = ''
     # Following 'DISPLAY' or 'DISPLAYN' path
     elif (scanner.lex[lex_en['value']] == 'DISPLAY'):
         node = Node(scanner.lex[lex_en['value']])
+        current_statement = current_statement + scanner.lex[lex_en['value']] + ' '
         scanner.next()
         if scanner.lex[lex_en['type']] == 'IDENTIFIER':
-            #node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
             node.children.append(name_ref())
         else:
             # Append error message if case specific grammar not found
             error('IDENTIFIER', 'DISPLAY in action_def')
+        node.statement = current_statement
+        current_statement = ''
     # Following 'INCREMENT' or 'DECREMENT' path
     elif (scanner.lex[lex_en['value']] == 'INCREMENT' or
             scanner.lex[lex_en['value']] == 'DECREMENT'):
         node = Node(scanner.lex[lex_en['value']])
+        current_statement = current_statement + scanner.lex[lex_en['value']] + ' '
         scanner.next()
         if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             node.children.append(name_ref())
         else:
             # Append error message if case specific grammar not found
             error('IDENTIFIER', 'action_def')
+        node.statement = current_statement
+        current_statement = ''
     # Following 'RETURN' path
     elif scanner.lex[lex_en['value']] == 'RETURN':
         node = Node(scanner.lex[lex_en['value']])
+        current_statement = current_statement + scanner.lex[lex_en['value']] + ' '
         scanner.next()
         node.children.append(expr())
+        node.statement = current_statement
+        current_statement = ''
     # Following 'CALL' path
     elif scanner.lex[lex_en['value']] == 'CALL':
         node = Node(scanner.lex[lex_en['value']])
+        current_statement = current_statement + scanner.lex[lex_en['value']] + ' '
         scanner.next()
         if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
@@ -744,12 +760,17 @@ def action_def():
         else:
             error('IDENTIFIER', 'action_def')
         node.children.append(pusing_ref())
+        node.statement = current_statement
+        current_statement = ''
     # Following 'IF' path
     elif scanner.lex[lex_en['value']] == 'IF':
         node = Node('IFELSE')
         scanner.next()
         node.children.append(pcondition())
         if scanner.lex[lex_en['value']] == 'THEN':
+            current_statement = current_statement + scanner.lex[lex_en['value']] + ' '
+            node.statement = current_statement + '<pactions> ' 
+            current_statement = ''
             scanner.next()
         else:
             # Append error message if case specific grammar not found
@@ -757,9 +778,11 @@ def action_def():
         node.children.append(pactions())
         node.children.append(ptest_elsif())
         if scanner.lex[lex_en['value']] == 'ELSE':
+            node.statement = node.statement + 'ELSE <pactions> '
             scanner.next()
             node.children.append(pactions())
         if scanner.lex[lex_en['value']] == 'ENDIF':
+            node.statement = node.statement + 'ENDIF'
             scanner.next()
         else:
             # Append error message if case specific grammar not found
@@ -767,6 +790,7 @@ def action_def():
     # Following 'FOR' path
     elif scanner.lex[lex_en['value']] == 'FOR':
         node = Node(scanner.lex[lex_en['value']])
+        current_statement = current_statement + scanner.lex[lex_en['value']] + ' '
         scanner.next()
         if scanner.lex[lex_en['type']] == 'IDENTIFIER':
             node.children.append(name_ref())
@@ -774,6 +798,7 @@ def action_def():
             # Append error message if case specific grammar not found
             error('IDENTIFIER', 'action_def')
         if scanner.lex[lex_en['value']] == 'EQUOP':
+            current_statement = current_statement + scanner.lex[lex_en['value']] + ' '
             scanner.next()
         else:
             # Append error message if case specific grammar not found
@@ -785,6 +810,7 @@ def action_def():
             error('expr keyword', 'action_def')
 
         if scanner.lex[lex_en['value']] == 'DOWNTO' or scanner.lex[lex_en['value']] == 'TO':
+            current_statement = current_statement + scanner.lex[lex_en['value']] + ' '
             node.children.append(Node(scanner.lex[lex_en['value']], 'KEYWORD'))
             scanner.next()
 
@@ -794,10 +820,14 @@ def action_def():
             # Append error message if case specific grammar not found
             error('expr keyword', 'action_def')
         if scanner.lex[lex_en['value']] == 'DO':
+            current_statement = current_statement + scanner.lex[lex_en['value']] + ' '
             scanner.next()
         else:
             # Append error message if case specific grammar not found
             error('DO', 'action_def')
+
+        node.statement = current_statement + 'ENDFOR'
+        current_statement = ''
         node.children.append(pactions())
         if scanner.lex[lex_en['value']] == 'ENDFOR':
             scanner.next()
@@ -810,12 +840,14 @@ def action_def():
         scanner.next()
         node.children.append(pactions())
         if scanner.lex[lex_en['value']] == 'UNTIL':
+            current_statement = 'REPEAT ' + scanner.lex[lex_en['value']] + ' '
             scanner.next()
         else:
             # Append error message if case specific grammar not found
             error('UNTIL', 'action_def')
         node.children.append(pcondition())
         if scanner.lex[lex_en['value']] == 'ENDREPEAT':
+            current_statement = current_statement + scanner.lex[lex_en['value']] + ' '
             scanner.next()
         else:
             # Append error message if case specific grammar not found
@@ -823,10 +855,14 @@ def action_def():
     # Following 'WHILE' path
     elif scanner.lex[lex_en['value']] == 'WHILE':
         node = Node(scanner.lex[lex_en['value']])
+        current_statement = current_statement + scanner.lex[lex_en['value']] + ' '
         scanner.next()
         node.children.append(pcondition())
         if scanner.lex[lex_en['value']] == 'DO':
+            current_statement = current_statement + scanner.lex[lex_en['value']] + ' '
             scanner.next()
+            node.statement = current_statement + 'ENDWHILE'
+            current_statement = ''
         else:
             # Append error message if case specific grammar not found
             error('DO', 'action_def')
@@ -838,10 +874,14 @@ def action_def():
             error('ENDWHILE', 'action_def')
     # Following 'CASE' path
     elif scanner.lex[lex_en['value']] == 'CASE':
+        current_statement = current_statement + scanner.lex[lex_en['value']] + ' '
         node = Node(scanner.lex[lex_en['value']])
         scanner.next()
         if scanner.lex[lex_en['type']] == 'IDENTIFIER':
+            current_statement = current_statement + scanner.lex[lex_en['value']] + ' '
             node.children.append(name_ref())
+            node.statement = current_statement + 'MENDCASE'
+            current_statement = ''
         else:
             # Append error message if case specific grammar not found
             error('IDENTIFIER', 'action_def')
