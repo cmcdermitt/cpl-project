@@ -889,7 +889,8 @@ interpreterDict = {
     'IDENTIFIER' : f_identifier,
     'ARRAY_VAL' : f_array_val,
     'ARG_LIST' : f_arg_list,
-    'RETURN' : f_return
+    'RETURN' : f_return,
+    'CALL' : f_call
 }
 
 #for functions:
