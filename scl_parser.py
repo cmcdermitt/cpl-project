@@ -338,12 +338,12 @@ def expr():
     #check whether there are multiple terms
     this_lex = scanner.lex[lex_en['value']]
     if (this_lex == 'PLUS' or this_lex == 'MINUS' or this_lex == 'BAND' or this_lex == 'BOR' or this_lex == 'BXOR'):
-        current_statement += this_lex
+       
         current_statement += ' '
         node = Node(this_lex)
         node.children.append(first_term)
         scanner.next()
-
+        current_statement += this_lex
         node.children.append(term())
     else:
         node = first_term
@@ -360,8 +360,8 @@ def term():
     this_lex = scanner.lex[lex_en['value']]
     if (this_lex == 'STAR' or this_lex == 'DIVOP' or this_lex == 'MOD' or this_lex == 'LSHIFT' or this_lex == 'RSHIFT'):
         node = Node(this_lex)
-        current_statement += this_lex + ' '
         node.children.append(first_punary)
+        current_statement += this_lex + ' '
         scanner.next()
 
         node.children.append(punary())
@@ -441,23 +441,24 @@ def element():
 
 # CASE: parguments
 # GRAMMAR: LP arg_list RP
-def parguments():
-    # Append function header to output list
-    lex_list = ['parguments']
-    if scanner.lex[lex_en['value']] == 'LP':
-        lex_list.append(tuple(scanner.lex))
-        scanner.next()
-    else:
-        # Append error message if case specific grammar not found
-        lex_list.append(error('LP', 'parguments'))
-    lex_list.append(arg_list())
-    if scanner.lex[lex_en['value']] == 'RP':
-        lex_list.append(tuple(scanner.lex))
-        scanner.next()
-    else:
-        # Append error message if case specific grammar not found
-        lex_list.append(error('RP', 'parguments'))
-    return lex_list
+# def parguments():
+#     global current_statement
+#     # Append function header to output list
+#     lex_list = ['parguments']
+#     if scanner.lex[lex_en['value']] == 'LP':
+#         lex_list.append(tuple(scanner.lex))
+#         scanner.next()
+#     else:
+#         # Append error message if case specific grammar not found
+#         lex_list.append(error('LP', 'parguments'))
+#     lex_list.append(arg_list())
+#     if scanner.lex[lex_en['value']] == 'RP':
+#         lex_list.append(tuple(scanner.lex))
+#         scanner.next()
+#     else:
+#         # Append error message if case specific grammar not found
+#         lex_list.append(error('RP', 'parguments'))
+#     return lex_list
 
 # CASE: implement
 # GRAMMAR: implement ::= IMPLEMENTATIONS [MAIN DESCRIPTION parameters] funct_list
@@ -553,11 +554,13 @@ def const_var_struct():
 #CASE pcondition
 #GRAMMAR pcond1 [(OR | AND) pcond1]
 def pcondition():
+    global current_statement
     # Append function header to output list
     first_pcond1 = pcond1()
     word = scanner.lex[lex_en['value']]
     if word == 'OR' or word == 'AND':
         node = Node(scanner.lex[lex_en['value']])
+        current_statement += str(scanner.lex[lex_en['value']]) + ' '
         node.children.append(first_pcond1)
         scanner.next()
         node.children.append(pcond1())
@@ -568,7 +571,9 @@ def pcondition():
 #CASE pcond1
 #GRAMMAR [NOT] pcond2
 def pcond1():
+    global current_statement
     if scanner.lex[lex_en['value']] == 'NOT':
+        current_statement += 'NOT '
         node = Node(scanner.lex[lex_en['value']])
         scanner.next()
         node.children.append(pcond2())
@@ -584,13 +589,13 @@ def pcond1():
 def pcond2():
     # Append function header to output list
     # For LP pcondition RP case
+    global current_statement
     if scanner.lex[lex_en['value']] == 'LP':
-        scanner.next()
-        
-        print(scanner.lex[lex_en['value']])
+        current_statement += 'LP '
+        scanner.next()  
         node = pcondition()
-        print(scanner.lex[lex_en['value']])
         if scanner.lex[lex_en['value']] == 'RP':
+            current_statement += 'RP '
             scanner.next()
         else:
             error('RP', 'pcond2')
@@ -605,6 +610,7 @@ def pcond2():
             error('MTRUE or MFALSE', 'pcond2')
 
     elif scanner.lex[lex_en['value']] == 'MTRUE' or scanner.lex[lex_en['value']] == 'MFALSE':
+        current_statement += scanner.lex[lex_en['value']] + ' '
         node = Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']])
         scanner.next()
 
@@ -627,18 +633,22 @@ def pcond2():
 #			| GREATER OR EQUAL
 #			| LESS OR EQUAL
 def eq_v():
+    global current_statement
     word = scanner.lex[lex_en['value']]
     if(word == 'EQUALS'):
+        current_statement += 'EQUALS '
         node = Node('EQUALS')
         scanner.next()
     elif(word == 'GREATER' or word == 'LESS'):
         scanner.next()
         if(scanner.lex[lex_en['value']] == 'THAN'):
+            current_statement += word + ' ' + scanner.lex[lex_en['value']] + ' '
             node = Node (word + ' ' + scanner.lex[lex_en['value']])
             scanner.next()
         elif scanner.lex[lex_en['value']] == 'OR':
             scanner.next()
             if scanner.lex[lex_en['value']] == 'EQUAL':
+                current_statement += word + ' ' + scanner.lex[lex_en['value']] + ' '
                 node = Node (word + ' OR ' + scanner.lex[lex_en['value']])
                 scanner.next()
             else:
@@ -882,10 +892,12 @@ def action_def():
 #CASE name_ref
 #GRAMMAR name_ref ::= IDENTIFIER [array_val]
 def name_ref():
+    global current_statement
     node = Node('name_ref')
     # Append function header to output list
     print(scanner.lex[lex_en['value']])
     if scanner.lex[lex_en['type']] == 'IDENTIFIER':
+        current_statement +=  scanner.lex[lex_en['value']] + ' '
         node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
         scanner.next()
         if (scanner.lex[lex_en['value']] == 'LB'):
@@ -895,14 +907,17 @@ def name_ref():
     return node
 
 def func_ref():
+    global current_statement
     node = Node('FUNC_REF')
     if scanner.lex[lex_en['type']] == 'IDENTIFIER':
         node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
         scanner.next()
         if (scanner.lex[lex_en['value']] == 'LP'):
+            current_statement += 'LP '
             scanner.next()
             node.children.append(arg_list())
             if scanner.lex[lex_en['value']] == 'RP':
+                current_statement += 'RP '
                 scanner.next()
                 return node
             else:
@@ -914,8 +929,10 @@ def func_ref():
 #CASE pusing_ref
 #GRAMMAR pusing_ref ::= [( USING arg_list | LP arg_list RP)]
 def pusing_ref():
+    global current_statement
     node = Node('pusing_ref')
     if scanner.lex[lex_en['value']] == 'USING':
+        current_statement += 'USING '
         scanner.next()
         node.children.append(arg_list())
     elif scanner.lex[lex_en['value']] == 'LP':
