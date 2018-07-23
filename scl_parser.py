@@ -554,9 +554,11 @@ def pcond2():
     # For LP pcondition RP case
     global current_statement
     if scanner.lex[lex_en['value']] == 'LP':
+        current_statement += 'LP '
         scanner.next()  
         node = pcondition()
         if scanner.lex[lex_en['value']] == 'RP':
+            current_statement += 'RP '
             scanner.next()
         else:
             error('RP', 'pcond2')
@@ -868,14 +870,17 @@ def name_ref():
     return node
 
 def func_ref():
+    global current_statement
     node = Node('FUNC_REF')
     if scanner.lex[lex_en['type']] == 'IDENTIFIER':
         node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
         scanner.next()
         if (scanner.lex[lex_en['value']] == 'LP'):
+            current_statement += 'LP '
             scanner.next()
             node.children.append(arg_list())
             if scanner.lex[lex_en['value']] == 'RP':
+                current_statement += 'RP '
                 scanner.next()
                 return node
             else:
@@ -887,8 +892,10 @@ def func_ref():
 #CASE pusing_ref
 #GRAMMAR pusing_ref ::= [( USING arg_list | LP arg_list RP)]
 def pusing_ref():
+    global current_statement
     node = Node('pusing_ref')
     if scanner.lex[lex_en['value']] == 'USING':
+        current_statement += 'USING '
         scanner.next()
         node.children.append(arg_list())
     elif scanner.lex[lex_en['value']] == 'LP':
