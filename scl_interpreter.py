@@ -10,7 +10,8 @@ variableStack = [scl_var_table.VarTable()]
 isConst = False
 breakCalled = False
 elseRun = False
-
+returnValue = None
+interPrint = ''
 # Main interpreter function
 # Name: processNode(node)
 # Summary: The processNode function is invoked by the main file after the parser has
@@ -26,7 +27,13 @@ def processNode(node):
         nodeType = node.value.upper() #for MTRUE and MFALSE
     if nodeType in interpreterDict:
         funct = interpreterDict[nodeType]
-        node = funct(node)
+        if node.statement:
+            if isinstance(node.statement, list):
+                for statement in node.statement:
+                     print('Statement recognized: ' + statement)
+            else:
+                print('Statement recognized: ' + node.statement)
+        node = funct(node)    
     return node
 
 def error(msg, location = ''):
@@ -40,7 +47,9 @@ def lookup(var_name, arr_pos = []):
     global variableStack
     if var_name[0] == '\"':
         return var_name
-
+    if var_name in functionNames:
+        var_name = functionNames[var_name]
+        return startFunction(var_name, arr_pos)
     if variableStack[-1].isDeclared(var_name):
         return variableStack[-1].getValue(var_name, arr_pos)
     if variableStack[0].isDeclared(var_name):
@@ -100,14 +109,83 @@ def isNumber(value):
 def isInteger(value):
     return type(value) == int
 
+# Replacement for pother_oper_def
+# Takes a function and runs it with parameters
+def startFunction(func, actual_params):
+    global returnValue
+    if func.children[0].type == 'IDENTIFIER' or func.children[0].value == 'MAIN':
+        iden = func.children[0].value
+        #print('BEGIN')
+        #ys.stdout.write(iden + 'DESCRIPTION IS ')
+    oper_type = processNode(func.children[1])
+
+    # Assign params here -> 
+    if (func.children[3].type == 'const_var_struct'): # If the function has variables
+        variableStack.append(scl_var_table.VarTable()) # Add new variable stack
+        formal_params = processNode(func.children[2])
+        assignParams(formal_params, actual_params)
+        processNode(func.children[3])
+        processNode(func.children[4])
+        variableStack.pop() # Pop off stack when the pactions are done
+        if func.children[5].value != iden:
+            error('ENDFUN with correct function not found')
+    else:
+        formal_params = processNode(func.children[2])
+        assignParams(formal_params, actual_params)
+        processNode(func.children[3]) # If there are no variables declared just process pactions
+        if func.children[4].value != iden:
+            error('ENDFUN with correct function not found')
+    #print('Statement recognized: ENDFUN ' + iden)
+    temp = returnValue
+    # if temp != None:
+    #     t = type(temp)
+    #     if type(temp) != oper_type:
+    #         error('opertype does not return correct type')
+
+
+    returnValue = None
+    return temp
+
+def f_oper_type(node):
+    return processNode(node.children[0])
+
+
+
+def assignParams(formal_params, actual_params):
+    global variableStack
+    for count, param in  enumerate(formal_params):
+        indices = variableStack[-1].getSize(param)
+        if indices == None:
+            assign(param, actual_params[count],[])
+        else:
+            temp_param = actual_params[count]
+            for index in indices:
+                if isinstance(temp_param, list):
+                    if len(temp_param) == index:
+                        temp_param = temp_param[0]
+                    else:
+                        error('List does not have correct length')
+                else:
+                    error('List does not have enough dimensions')
+            variableStack[-1].assignWholeArray(param, actual_params[count])
+
 
 # Expected Structure:
 # Type program
 # Children: func_main, f_globals, implement
 def f_program(node):
+    #process func_main
     processNode(node.children[0])
+    #process globals
     processNode(node.children[1])
+    #process implement
     processNode(node.children[2])
+
+    #start main function
+    if 'MAIN' in functionNames:
+        startFunction(functionNames['MAIN'], [])
+    else:
+        error('Main function not found')
 
 # Expected Structure:
 # Type func_main
@@ -115,8 +193,6 @@ def f_program(node):
 def f_func_main(node):
     #func_main should already be verified by the parser and does not do anything
     funcName = node.children[0]
-    #functionNames.append(funcName)
-    print('Statement recognized: FUNCTION ' + str(funcName.value) + ' RETURN MVOID')
     return
 
 # Expected Structure:
@@ -124,7 +200,6 @@ def f_func_main(node):
 # Children: funct_list
 def f_implement(node):
     # Remainder of statement printed by f_funct_list children
-    print('Statement recognized: IMPLEMENTATIONS ')
     processNode(node.children[0])
     return node
 
@@ -135,11 +210,9 @@ def f_funct_list(node):
     global functionNames
     for child in node.children:
         functionNames[child.children[0].value] = child
-    if 'MAIN' in functionNames:
-        main = functionNames['MAIN']
-        processNode(main)
     return node
 
+<<<<<<< HEAD
 # Expected Structure:
 # Type: pother_oper_def
 # Children: parameters, [const_var_struct], pactions
@@ -159,20 +232,43 @@ def f_pother_oper_def(node):
             error('ENDFUN with correct function not found')
     print('Statement recognized: ENDFUN ' + iden)
     return node
+=======
+# # Expected Structure:
+# # Type: pother_oper_def
+# # Children: parameters, [const_var_struct], pactions
+# def f_pother_oper_def(node):
+#     global returnValue
+#     if node.children[0].type == 'IDENTIFIER' or node.children[0].value == 'MAIN':
+#         iden = node.children[0].value
+#         print('BEGIN')
+#         sys.stdout.write(iden + 'DESCRIPTION IS ')
+#     processNode(node.children[1])
+#     processNode(node.children[2])
+#     if (node.children[2].type == 'const_var_struct'):
+#         processNode(node.children[3])
+#         if node.children[4].value != iden:
+#             error('ENDFUN with correct function not found')
+#     else:
+#         if node.children[3].value != iden:
+#             error('ENDFUN with correct function not found')
+#     print('Statement recognized: ENDFUN ' + iden)
+#     return node
+>>>>>>> fdf22c65b98f5c0bf9995e4c21b8c9e86f92466c
 
 # Expected Structure
 # Type: parameters
 # Children: [data_declaration, {data_declaration}]
 def f_parameters(node):
+    param_list = []
     for dec in node.children:
-        processNode(dec)
-    return node
+        processNode(dec) #declare the parameters
+        param_list.append(getName(dec.children[0])) #add the name of each identifier being declared
+    return param_list #return list of parameters to start_function
 
 # Expected Structure:
 # Type f_globals
 # Children: const_dec, var_dec
 def f_f_globals(node):
-    print('Statement recognized: GLOBAL DECLARATIONS')
     processNode(node.children[0])
     #variableStack[-1] = main_vars #switch to main function scope uncomment when adding multiple functions
 
@@ -183,15 +279,15 @@ def f_const_dec(node):
     global isConst
     if node.children: #if node.children is not empty
         isConst = True #set flag marking descendent variables as const
-        print('CONSTANTS')
+        #print('CONSTANTS')
         processNode(node.children[0])
+
         isConst = False #unset flag
 
 # Expected Structure:
 # Type var_dec
 # Children: data_declarations
 def f_var_dec(node):
-    print('Statement recognized: VARIABLES')
     processNode(node.children[0])
 
 # Expected structure:
@@ -211,7 +307,7 @@ def f_data_declaration(node):
         declare(getName(node.children[0]), data_type, array) # Append variable to proper table
     else:
         declare(getName(node.children[0]), data_type) # Append variable to proper table
-    print('Statement recognized: DEFINE ' + node.children[0].value + " OF " + str(data_type))
+    #print('Statement recognized: DEFINE ' + node.children[0].value + " OF " + str(data_type))
 
 # Expected Structure:
 # Type array_dec
@@ -266,21 +362,25 @@ def f_data_type(node):
 # Children: action_def { action_def }
 def f_pactions(node):
     for action in node.children:
-        processNode(action)
+        if returnValue == None:
+            processNode(action)
+        else:
+            return returnValue
 
 # Begin action_def functions
 # Expected Structure
 # Type: SET
 # Children: name_ref, expr
 def f_set(node):
+    global interPrint
     # Get identifier tuple
     identifier = getName(node.children[0])
     exprValue = processNode(node.children[1])
     indices = getIndices(node.children[0])
     assign(identifier, exprValue, indices)
     # output results
-    print('Statement recognized: SET ' + identifier + ' EQUOP ' + str(exprValue))
     print('Result: ' + identifier + ' set equal to ' + str(exprValue))
+    #print('Statement recognized: SET ' + identifier + ' EQUOP ' + str(exprValue))
     return node
 
 # Expected Structure:
@@ -302,6 +402,7 @@ def f_input(node):
     id = str(getName(node.children[0]))
     print('Statement recognized: INPUT ' + id)
     print('Results: User input assigned the value of ' + str(input_val[0]) + ' to identifier ' + id + '.')
+    #print('Statement recognized: INPUT ' + str(getName(node.children[0])))
     # Return node to processNode
     return node
 
@@ -312,8 +413,8 @@ def f_display(node):
     #print the value of the IDENTIFIER's variable
     # Change actual output after debuging
     pNode = processNode(node.children[0])
-    print('Statement recognized: DISPLAY ' + str(pNode))
     print('Results: ' + str(pNode) + ' printed to console.')
+    #print('Statement recognized: DISPLAY ' + str(pNode))
     return node
 
 # Expected Structure:
@@ -329,8 +430,8 @@ def f_increment(node):
     # Increment and assign
     val = val + 1
     assign(var, val, indices)
-    print('Statement recognized: INCREMENT ' + var)
     print('Results: Identifier ' + var + ' incremented by one.')
+    #print('Statement recognized: INCREMENT ' + var)
     return node
 
 # Expected Structure:
@@ -346,8 +447,8 @@ def f_decrement(node):
     # Increment and assign
     val = val - 1
     assign(var, val, indices)
-    print('Statement recognized: DECREMENT ' + var)
     print('Results: Identifier ' + var + ' decremented by one.')
+    #print('Statement recognized: DECREMENT ' + var)
     return node
 
 # Expected Structure:
@@ -355,9 +456,9 @@ def f_decrement(node):
 # Children: pcondition, pactions, ptest_elsif, {pactions}
 def f_ifelse(node):
     global elseRun
-    print('Statement recognized: IF ')
+    #print('Statement recognized: IF ')
     if processNode(node.children[0]):
-        print('THEN  ', end = '')
+        #print('THEN  ', end = '')
         processNode(node.children[1])
         print('Results: If condition met with result ' + node.value)
         return node
@@ -365,10 +466,10 @@ def f_ifelse(node):
         elseRun = not processNode(node.children[2]) and len(node.children) == 4 # Check if else stmt exists
     if elseRun == True:
         elseRun = False
-        print('ELSE ', end = '')
+        #print('ELSE ', end = '')
         processNode(node.children[3])
         print('Results: Executed else statment with result ' + node.value)
-    print('ENDIF', end = '')
+    #print('ENDIF', end = '')
     return node
 
 # Expected Structure:
@@ -376,10 +477,10 @@ def f_ifelse(node):
 # Children: pcondition, pactions
 def f_ptest_elsif(node):
     cond = False
-    print('ELSE IF ')
+    #print('ELSE IF ')
     for i in range(0, len(node.children), 2):
         cond = processNode(node.children[i])
-        print(str(cond) + ' ')
+        #print(str(cond) + ' ')
         if cond == True:
             processNode(node.children[i + 1])
     return cond
@@ -397,7 +498,7 @@ def f_for(node):
     # Get indices for potential array
     indices = getIndices(node.children[0])
     # Assign initial value to IDENTIFIER
-    print('Statement recognized: FOR ' + getName(node.children[0]) + ' EQUOP ' + str(expr1) + str(dir) + str(expr2) + 'DO ')
+    #print('Statement recognized: FOR ' + getName(node.children[0]) + ' EQUOP ' + str(expr1) + str(dir) + str(expr2) + 'DO ')
     assign(getName(node.children[0]), expr1, indices)
     # Perform for loop up or down
     var = processNode(node.children[0])
@@ -409,11 +510,12 @@ def f_for(node):
             error('var should be less than expr')
         while var < expr2:
             # Process pactions each time
+            processNode(node.children[4])
             var = processNode(node.children[0])
             var += 1
             assign(getName(node.children[0]), var, indices)
             
-            processNode(node.children[4])
+            
             if breakCalled == True:
                 breakCalled = False
                 return node
@@ -422,19 +524,20 @@ def f_for(node):
         while var > expr2:
             if var < expr2: 
                 error('var should be greater than expr')
+            processNode(node.children[4])    
             var = processNode(node.children[0])
             var -= 1
             assign(getName(node.children[0]), var, indices)
         
-            processNode(node.children[4])
+           
             if breakCalled == True:
                 breakCalled = False
                 return node
             # Decrement and assign
 
-    print('ENDFOR')
     print('Results: For loop used ' + getName(node.children[0]) + ' to iterate from ' +
           str(expr1) + ' ' + str(dir) + ' ' + str(expr2) + '.')
+    #sys.stdout.write('ENDFOR')
     return node
 
 # Expected Structure:
@@ -446,7 +549,7 @@ def f_repeat(node):
     # and repeating in while loop until conditional is false
     #
     # Perform initial pactions statement
-    print('Statement recognized: REPEAT ')
+    #print('Statement recognized: REPEAT ')
     p = processNode(node.children[0])
     sys.stdout.write(str(p.value))
     # Get pcondition
@@ -459,8 +562,8 @@ def f_repeat(node):
             breakCalled = False
             return node
         cond = processNode(node.children[1])
-    sys.stdout.write(' UNTIL ' + str(cond) + 'ENDREPEAT\n')
     print('Results: Repeated ' + p.value + ' until ' + str(cond) + ' evaluated to True.')
+    #sys.stdout.write('UNTIL ' + str(cond) + 'ENDREPEAT')
     return node
 
 # Expected Structure:
@@ -470,7 +573,7 @@ def f_while(node):
     global breakCalled
     # Get pcondition
     cond = processNode(node.children[0])
-    print('Statement recognized: WHILE CONDITION DO')
+    #print('Statement recognized: WHILE CONDITION DO')
     # Start while loop
     while cond:
         p = processNode(node.children[1])
@@ -478,8 +581,8 @@ def f_while(node):
             breakCalled = False
             return node
         cond = processNode(node.children[0])
-    sys.stdout.write('ENDWHILE\n')
     print('Results: Repeated ' + str(p.value) + ' in while loop until ' + str(cond) + ' evaluated to True.')
+    #sys.stdout.write('ENDWHILE')
     return node
 
 # Expected Structure:
@@ -491,13 +594,13 @@ def f_case(node):
     nodeId = processNode(node.children[0])
     if not isInteger(nodeId):
         error('Type error: case ID must be an integer')
-    print('Statement recognized: CASE ' + str(nodeId) + ' ')
+    #print('Statement recognized: CASE ' + str(nodeId) + ' ')
     successfulCase = f_pcase_val(nodeId, node.children[1])
     if breakCalled == True:
         breakCalled = False
     if(not successfulCase and len(node.children) == 3):
         f_pcase_def(node.children[2])
-    sys.stdout.write('MENDCASE')
+    #sys.stdout.write('MENDCASE')
     return node
 
 # Expected Structure:
@@ -528,6 +631,15 @@ def f_name_ref(node):
         indices =  processNode(node.children[1])
         return lookup(name, indices)
 
+# Expected Structure:
+# Type: func_ref
+# Children: Identifier, arg_list
+# Returns: value of evaluated function
+def f_func_ref(node):
+    func = functionNames[getName(node.children[0])]
+    params = processNode(node.children[1])
+    return startFunction(func, params)
+
 def getIndices(name_ref):
     if len(name_ref.children) > 1:
         return processNode(name_ref.children[1])
@@ -553,7 +665,7 @@ def f_pcase_val(node, identifier = ()):
     # evaluate pactions call associated with index
     for i in range(0, len(identifier.children), 2):
         exprResult = processNode(identifier.children[i])
-        print('MWHEN ' + str(exprResult) + ' COLON ')
+        #print('MWHEN ' + str(exprResult) + ' COLON ')
         # Check identifier case against expression value
         if exprResult == caseCheck:
             caseRan = True
@@ -572,20 +684,24 @@ def f_pcase_def(node):
         p = processNode(node.children[0])
     return node
 
-# Expected Structure:
-# Type: CALL
-# Children: name_ref => IDENTIFIER
-# def f_call(node):
-#     # Get node type
-#     nodeType = node.type
-#     for child in node.children:
-#         if isinstance(child, node):
-#             processNode(child)
-#         else:
-#             callValue = main_vars.getValue(node.children[0])
-#             print(callValue)
-#     return node
-# Logic functions (descending from pcondition)
+def f_call(node):
+    func = getName(node.children[0])
+    if func in functionNames:
+        func = functionNames[func]
+    else:
+        error('Function not in function names')
+    params = processNode(node.children[1])
+    return startFunction(func, params)
+
+def f_pusing_ref(node):
+    return processNode(node.children[0])
+
+def f_return(node):
+    global returnValue
+    returnValue = processNode(node.children[0])
+    return returnValue
+
+# Logic operator functions (descending from pcondition)
 
 # Type AND
 # Children: pcond1 and pcond 1
@@ -800,6 +916,9 @@ def f_arg_list(node):
     for child in node.children:
         indices.append(processNode(child))
     return indices
+
+
+    
 #dictionary associating node types with functions
 interpreterDict = {
     'INPUT': f_input,
@@ -855,7 +974,6 @@ interpreterDict = {
     'IMPLEMENT' : f_implement,
     'FUNC_MAIN' : f_func_main,
     'FUNCT_LIST' : f_funct_list,
-    'POTHER_OPER_DEF' : f_pother_oper_def,
     'PARAMETERS' : f_parameters,
     'SET' : f_set,
     'FCON' : f_fcon,
@@ -865,7 +983,12 @@ interpreterDict = {
     'CHAR' : f_tstring,
     'IDENTIFIER' : f_identifier,
     'ARRAY_VAL' : f_array_val,
-    'ARG_LIST' : f_arg_list
+    'ARG_LIST' : f_arg_list,
+    'RETURN' : f_return,
+    'CALL' : f_call,
+    'PUSING_REF' : f_pusing_ref,
+    'FUNC_REF' : f_func_ref,
+    'OPER_TYPE' : f_oper_type
 }
 
 #for functions:

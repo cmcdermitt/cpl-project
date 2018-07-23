@@ -1,6 +1,6 @@
 func_main ::= FUNCTION IDENTIFIER oper_type
             | MAIN
-oper_type ::= RETURN [ARRAY array_dim_list] TYPE data_type
+oper_type ::= RETURN [ARRAY plist_const] TYPE data_type
 globals ::= [GLOBAL DECLARATIONS const_var_struct]
 const_var_struct ::= const_dec var_dec
 const_dec ::= [CONSTANTS data_declarations]
@@ -24,7 +24,7 @@ array_val ::= LB arg_list RB
 arg_list ::= expr { COMMA expr }
 implement ::= IMPLEMENTATIONS funct_list
 funct_list ::= FUNCTION pother_oper_def { FUNCTION pother_oper_def }
-pother_oper_def ::= (MAIN | IDENTIFIER) DESCRIPTION parameters IS [const_var_struct] BEGIN pactions ENDFUN IDENTIFIER
+pother_oper_def ::= (MAIN | IDENTIFIER) DESCRIPTION oper_type parameters IS [const_var_struct] BEGIN pactions ENDFUN IDENTIFIER
 parameters ::= [PARAMETERS data_declaration {COMMA data_declaration}]
 pcondition ::= pcond1 [(OR | AND) pcond1]
 pcond1 ::= [NOT] pcond2
@@ -40,7 +40,8 @@ eq_v ::= EQUALS
 expr ::= term [ (PLUS | MINUS | BAND | BOR | BXOR) term ]
 term ::= punary [ (STAR | DIVOP | MOD | LSHIFT | RSHIFT) punary]
 punary ::= [NEGATE] element
-element ::= IDENTIFER popt_ref
+element ::= name_ref
+    | func_ref
     | STRING
     | LETTER
     | ICON
@@ -49,13 +50,15 @@ element ::= IDENTIFER popt_ref
     | MTRUE
     | MFALSE
     | LP expr RP
+func_ref ::= IDENTIFIER LP arg_list RP
 pactions ::= action_def { action_def }
 action_def ::=  SET name_ref  EQUOP expr
     | INPUT name_ref
     | DISPLAY name_ref
     | INCREMENT name_ref
     | DECREMENT name_ref
-    | CALL name_ref pusing_ref
+    | CALL IDENTIFIER pusing_ref
+    | RETURN expr
     | IF pcondition THEN pactions ptest_elsif  [ELSE pactions] ENDIF
     | FOR name_ref EQUOP expr ( TO | DOWNTO) expr DO pactions ENDFOR
     | REPEAT pactions UNTIL pcondition ENDREPEAT
@@ -67,7 +70,6 @@ ptest_elsif ::= { ELSEIF pcondition THEN pactions }
 pusing_ref ::= [( USING arg_list | LP arg_list RP)]
 pcase_val ::= MWHEN expr COLON pactions {MWHEN expr COLON pactions}
 pcase_def ::= [DEFAULT COLON pactions]
-popt_ref ::= [(array_val | LP arg_list RP)]
 name_ref ::= IDENTIFIER [array_val]
 
 
