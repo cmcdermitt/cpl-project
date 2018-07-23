@@ -128,10 +128,10 @@ def startFunction(func, actual_params):
             error('ENDFUN with correct function not found')
     print('Statement recognized: ENDFUN ' + iden)
     temp = returnValue
-    if temp != None:
-        t = type(temp)
-        if type(temp) != oper_type:
-            error('opertype does not return correct type')
+    # if temp != None:
+    #     t = type(temp)
+    #     if type(temp) != oper_type:
+    #         error('opertype does not return correct type')
 
 
     returnValue = None
