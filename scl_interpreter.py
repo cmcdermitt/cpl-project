@@ -115,7 +115,7 @@ def f_program(node):
 
     #start main function
     if 'MAIN' in functionNames:
-        startFunction(functionNames['MAIN'])
+        startFunction(functionNames['MAIN'], [])
     else:
         error('Main function not found')
 
@@ -802,12 +802,13 @@ def f_call(node):
 
 # Replacement for pother_oper_def
 # Takes a function and runs it with parameters
-def startFunction(func, params):
+def startFunction(func, actual_params):
     if func.children[0].type == 'IDENTIFIER' or func.children[0].value == 'MAIN':
         iden = func.children[0].value
         print('BEGIN')
         sys.stdout.write(iden + 'DESCRIPTION IS ')
     formal_params = processNode(func.children[1])
+    assignParams(formal_params, actual_params)
     # Assign params here -> 
     if (func.children[2].type == 'const_var_struct'): # If the function has variables
         variableStack.append(scl_var_table.VarTable()) # Add new variable stack
@@ -822,6 +823,27 @@ def startFunction(func, params):
             error('ENDFUN with correct function not found')
     print('Statement recognized: ENDFUN ' + iden)
     return func
+
+def assignParams(formal_params, actual_params):
+    global variableStack
+    count = 0
+    for count, param in  enumerate(formal_params):
+        indices = variableStack[-1].getSize(param)
+        if indices == None:
+            assign(param, actual_params[count],[])
+        else:
+            temp_params = actual_params
+            for index in indices:
+                if isinstance(temp_params, list):
+                    if len(temp_params) == index:
+                        temp_params = temp_params[0]
+                    else:
+                        error('List does not have correct length')
+                else:
+                    error('List does not have enough dimensions')
+            variableStack[-1].assignWholeArray(param, actual_params[count])
+
+
     
 #dictionary associating node types with functions
 interpreterDict = {
