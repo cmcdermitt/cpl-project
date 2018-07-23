@@ -806,18 +806,24 @@ def f_call(node):
         error('Function does not exist')
     return startFunction(func, params)
 
+# Replacement for pother_oper_def
+# Takes a function and runs it with parameters
 def startFunction(func, params):
     if func.children[0].type == 'IDENTIFIER' or func.children[0].value == 'MAIN':
         iden = func.children[0].value
         print('BEGIN')
         sys.stdout.write(iden + 'DESCRIPTION IS ')
     formal_params = processNode(func.children[1])
-    processNode(func.children[2])
-    if (func.children[2].type == 'const_var_struct'):
+    # Assign params here -> 
+    if (func.children[2].type == 'const_var_struct'): # If the function has variables
+        variableStack.append(scl_var_table.VarTable()) # Add new variable stack
+        processNode(func.children[2])
         processNode(func.children[3])
+        variableStack.pop() # Pop off stack when the pactions are done
         if func.children[4].value != iden:
             error('ENDFUN with correct function not found')
     else:
+        processNode(func.children[2]) # If there are no variables declared just process pactions
         if func.children[3].value != iden:
             error('ENDFUN with correct function not found')
     print('Statement recognized: ENDFUN ' + iden)
