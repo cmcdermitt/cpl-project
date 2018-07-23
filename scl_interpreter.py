@@ -106,9 +106,18 @@ def isInteger(value):
 # Type program
 # Children: func_main, f_globals, implement
 def f_program(node):
+    #process func_main
     processNode(node.children[0])
+    #process globals
     processNode(node.children[1])
+    #process implement
     processNode(node.children[2])
+
+    #start main function
+    if 'MAIN' in functionNames:
+        startFunction(functionNames['MAIN'])
+    else:
+        error('Main function not found')
 
 # Expected Structure:
 # Type func_main
@@ -116,7 +125,6 @@ def f_program(node):
 def f_func_main(node):
     #func_main should already be verified by the parser and does not do anything
     funcName = node.children[0]
-    #functionNames.append(funcName)
     print('Statement recognized: FUNCTION ' + str(funcName.value) + ' RETURN MVOID')
     return
 
@@ -136,9 +144,6 @@ def f_funct_list(node):
     global functionNames
     for child in node.children:
         functionNames[child.children[0].value] = child
-    if 'MAIN' in functionNames:
-        main = functionNames['MAIN']
-        processNode(main)
     return node
 
 # Expected Structure:
