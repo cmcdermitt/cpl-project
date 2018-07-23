@@ -47,6 +47,7 @@ class VarTable:
             print("Error: you can only assign lists as arrays.")
             exit()
 
+
     def getWholeArray(self, varName):
         if isinstance(self.variables[varName], list):
             return deepcopy(self.variables[varName])
