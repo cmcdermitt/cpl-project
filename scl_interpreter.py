@@ -796,6 +796,33 @@ def f_arg_list(node):
     for child in node.children:
         indices.append(processNode(child))
     return indices
+
+def f_call(node):
+    func = processNode(node.children[0])
+    params = processNode(node.children[1])
+    if func in functionNames:
+        func = functionNames[func]
+    else:
+        error('Function does not exist')
+    return startFunction(func, params)
+
+def startFunction(func, params):
+    if func.children[0].type == 'IDENTIFIER' or func.children[0].value == 'MAIN':
+        iden = func.children[0].value
+        print('BEGIN')
+        sys.stdout.write(iden + 'DESCRIPTION IS ')
+    formal_params = processNode(func.children[1])
+    processNode(func.children[2])
+    if (func.children[2].type == 'const_var_struct'):
+        processNode(func.children[3])
+        if func.children[4].value != iden:
+            error('ENDFUN with correct function not found')
+    else:
+        if func.children[3].value != iden:
+            error('ENDFUN with correct function not found')
+    print('Statement recognized: ENDFUN ' + iden)
+    return func
+    
 #dictionary associating node types with functions
 interpreterDict = {
     'INPUT': f_input,
