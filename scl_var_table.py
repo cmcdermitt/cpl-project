@@ -1,3 +1,5 @@
+from copy import deepcopy
+
 class Variable:
     def __init__(self, var_type, var_value, var_is_const):
         self.type = var_type
@@ -36,6 +38,20 @@ class VarTable:
             print("Error in array assignment; not enough indices")
             exit()
         array[indices[len(indices) - 1]] = value 
+    
+    def assignWholeArray(self, varName, value):
+        if value instanceof(list):
+            self.variables[varName] = deepcopy(value)
+        else:
+            print("Error: you can only assign lists as arrays.")
+            exit()
+
+    def getWholeArray(self, varName):
+        if instanceof(self.variables[varName], list):
+            return deepcopy(self.variables[varName])
+        else:
+            print('Error: you can only get an array if there\'s an array to get')
+            exit()
 
 
     def assign(self, var, value, indices = []):
