@@ -1,6 +1,6 @@
 func_main ::= FUNCTION IDENTIFIER oper_type
             | MAIN
-oper_type ::= RETURN [ARRAY array_dim_list] TYPE data_type
+oper_type ::= RETURN [ARRAY plist_const] TYPE data_type
 globals ::= [GLOBAL DECLARATIONS const_var_struct]
 const_var_struct ::= const_dec var_dec
 const_dec ::= [CONSTANTS data_declarations]
