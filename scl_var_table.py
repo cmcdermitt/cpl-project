@@ -42,15 +42,15 @@ class VarTable:
     
     def assignWholeArray(self, varName, value):
         if  isinstance(value, list):
-            self.variables[varName] = deepcopy(value)
+            self.variables[varName].value = deepcopy(value)
         else:
             print("Error: you can only assign lists as arrays.")
             exit()
 
 
     def getWholeArray(self, varName):
-        if isinstance(self.variables[varName], list):
-            return deepcopy(self.variables[varName])
+        if isinstance(self.variables[varName].value, list):
+            return deepcopy(self.variables[varName].value)
         else:
             print('Error: you can only get an array if there\'s an array to get')
             exit()
@@ -103,6 +103,8 @@ class VarTable:
             #return var
             if isinstance(var_value, list): # value will be a list if a variable is declared as an array
                 if isinstance(pos, list): # checking that optional param pos was passed in as list
+                    if not pos:
+                        return self.getWholeArray(var)
                     currList = var_value
                     for i, x in enumerate(pos):
                         if i < len(pos) - 1:
