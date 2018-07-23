@@ -294,13 +294,15 @@ def data_type():
 # GRAMMAR: expr ::= term [ (PLUS | MINUS | BAND | BOR | BXOR) term ]
 
 def expr():
+    global current_statement
     #process the first <term>, but don't add it to a node yet
     first_term = term() 
 
     #check whether there are multiple terms
     this_lex = scanner.lex[lex_en['value']]
     if (this_lex == 'PLUS' or this_lex == 'MINUS' or this_lex == 'BAND' or this_lex == 'BOR' or this_lex == 'BXOR'):
-
+        current_statement += this_lex
+        current_statement += ' '
         node = Node(this_lex)
         node.children.append(first_term)
         scanner.next()
@@ -315,13 +317,13 @@ def expr():
 # CASE: term
 # GRAMMAR: term ::= punary [ (STAR | DIVOP | MOD | LSHIFT | RSHIFT) punary]
 def term():
-
+    global current_statement
     # Append function header to output list
     first_punary = punary()
     this_lex = scanner.lex[lex_en['value']]
     if (this_lex == 'STAR' or this_lex == 'DIVOP' or this_lex == 'MOD' or this_lex == 'LSHIFT' or this_lex == 'RSHIFT'):
         node = Node(this_lex)
-
+        current_statement += this_lex + ' '
         node.children.append(first_punary)
         scanner.next()
 
@@ -333,11 +335,12 @@ def term():
 # CASE: punary
 # GRAMMAR: punary ::= [NEGATE] element
 def punary():
-
+    global current_statement
     # Append function header to output list
     if scanner.lex[lex_en['value']] == 'NEGATE':
         node = Node(scanner.lex[lex_en['value']])
         scanner.next()
+        current_statement += 'NEGATE '
         node.children.append(element())
     else:
         node = element()
@@ -356,6 +359,7 @@ def punary():
 #     | MFALSE
 #     | LP expr RP
 def element():
+    global current_statement
     # Append function header to output list
     valid_types = ['STRING', 'LETTER', 'ICON', 'HCON', 'FCON', 'IDENTIFIER']
     valid_values = ['MTRUE', 'MFALSE']
@@ -366,13 +370,16 @@ def element():
             node = func_ref()
         else:
             node = Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']])
+            current_statement += str(scanner.lex[lex_en['value']]) + ' ' 
             scanner.next()
         return node
     elif scanner.lex[lex_en['type']] in valid_types: #needs additional code for identifier if using arrays
         node = Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']])
+        current_statement += str(scanner.lex[lex_en['value']]) + ' ' 
         scanner.next()
     elif scanner.lex[lex_en['value']] in valid_values:
         node = Node('BOOL', scanner.lex[lex_en['value']])
+        current_statement += str(scanner.lex[lex_en['value']]) + ' ' 
         scanner.next()
     else:
         # Append error message if case specific grammar not found
