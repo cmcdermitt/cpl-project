@@ -128,11 +128,15 @@ def oper_type():
 # GRAMMAR: globals ::= [GLOBAL DECLARATIONS const_var_struct]
 # named f_globals() instead of globals() due to name conflicts
 def f_globals():
+    global current_statement
     node = Node('f_globals')
     if scanner.lex[lex_en['value']] == 'GLOBAL':
         scanner.next()
         if(scanner.lex[lex_en['value']] == 'DECLARATIONS'):
+            current_statement += 'GLOBAL DECLARATIONS'
             scanner.next()
+            node.statement = current_statement
+            current_statement = ''
         else:
             error('DECLARATIONS', 'f_globals')
         node.children.append(const_var_struct())
@@ -280,11 +284,13 @@ def arg_list():
 #						 | TBOOL
 #						 | TBYTE
 def data_type():
+    global current_statement
     node = Node('data_type')
     valid_types = ['TUNSIGNED', 'CHAR', 'INTEGER', 'MVOID', 'DOUBLE', 'LONG',
                     'SHORT', 'FLOAT', 'REAL', 'TSTRING', 'TBOOL', 'TBYTE']
     if scanner.lex[lex_en['value']] in valid_types:
         node.value = scanner.lex[lex_en['value']]
+        current_statement = scanner.lex[lex_en['value']]
         scanner.next()
     else:
         error('valid type', 'data_type')
