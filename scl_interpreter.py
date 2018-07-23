@@ -128,8 +128,18 @@ def startFunction(func, actual_params):
             error('ENDFUN with correct function not found')
     print('Statement recognized: ENDFUN ' + iden)
     temp = returnValue
+    if temp != None:
+        if getType(temp) != oper_type:
+            error('opertype does not return correct type')
+
+
     returnValue = None
     return temp
+
+def f_oper_type(node):
+    return processNode(node.children[0])
+
+
 
 def assignParams(formal_params, actual_params):
     global variableStack
@@ -461,11 +471,12 @@ def f_for(node):
             error('var should be less than expr')
         while var < expr2:
             # Process pactions each time
+            processNode(node.children[4])
             var = processNode(node.children[0])
             var += 1
             assign(getName(node.children[0]), var, indices)
             
-            processNode(node.children[4])
+            
             if breakCalled == True:
                 breakCalled = False
                 return node
@@ -474,11 +485,12 @@ def f_for(node):
         while var > expr2:
             if var < expr2: 
                 error('var should be greater than expr')
+            processNode(node.children[4])    
             var = processNode(node.children[0])
             var -= 1
             assign(getName(node.children[0]), var, indices)
         
-            processNode(node.children[4])
+           
             if breakCalled == True:
                 breakCalled = False
                 return node
@@ -581,7 +593,7 @@ def f_name_ref(node):
 # Returns: value of evaluated function
 def f_func_ref(node):
     func_name = getName(node.children[0])
-    params = processNode(node.children[2])
+    params = processNode(node.children[1])
     return startFunction(func_name, params)
 
 def getIndices(name_ref):
@@ -930,7 +942,9 @@ interpreterDict = {
     'ARG_LIST' : f_arg_list,
     'RETURN' : f_return,
     'CALL' : f_call,
-    'PUSING_REF' : f_pusing_ref
+    'PUSING_REF' : f_pusing_ref,
+    'FUNC_REF' : f_func_ref,
+    'OPER_TYPE' : f_oper_type
 }
 
 #for functions:
