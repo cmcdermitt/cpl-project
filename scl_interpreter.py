@@ -793,12 +793,14 @@ def f_arg_list(node):
     return indices
 
 def f_call(node):
-    func = processNode(node.children[0])
-    params = processNode(node.children[1])
+    func = getName(node.children[0])
     if func in functionNames:
         func = functionNames[func]
     else:
-        error('Function does not exist')
+        error('Function not in function names')
+    params = processNode(node.children[1])
+    if func in functionNames:
+        func = functionNames[func]
     return startFunction(func, params)
 
 # Replacement for pother_oper_def

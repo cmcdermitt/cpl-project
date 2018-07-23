@@ -40,14 +40,14 @@ class VarTable:
         array[indices[len(indices) - 1]] = value 
     
     def assignWholeArray(self, varName, value):
-        if value instanceof(list):
+        if  isinstance(value, list):
             self.variables[varName] = deepcopy(value)
         else:
             print("Error: you can only assign lists as arrays.")
             exit()
 
     def getWholeArray(self, varName):
-        if instanceof(self.variables[varName], list):
+        if isinstance(self.variables[varName], list):
             return deepcopy(self.variables[varName])
         else:
             print('Error: you can only get an array if there\'s an array to get')
