@@ -27,7 +27,9 @@ def processNode(node):
         nodeType = node.value.upper() #for MTRUE and MFALSE
     if nodeType in interpreterDict:
         funct = interpreterDict[nodeType]
-        node = funct(node)
+        if node.statement:
+            print('Statement recognized: ' + node.statement)
+        node = funct(node)    
     return node
 
 def error(msg, location = ''):
@@ -187,7 +189,6 @@ def f_program(node):
 def f_func_main(node):
     #func_main should already be verified by the parser and does not do anything
     funcName = node.children[0]
-    print('Statement recognized: ' + node.statement)
     return
 
 # Expected Structure:
@@ -195,7 +196,6 @@ def f_func_main(node):
 # Children: funct_list
 def f_implement(node):
     # Remainder of statement printed by f_funct_list children
-    print('Statement recognized: IMPLEMENTATIONS ')
     processNode(node.children[0])
     return node
 
@@ -243,7 +243,6 @@ def f_parameters(node):
 # Type f_globals
 # Children: const_dec, var_dec
 def f_f_globals(node):
-    print('Statement recognized: GLOBAL DECLARATIONS')
     processNode(node.children[0])
     #variableStack[-1] = main_vars #switch to main function scope uncomment when adding multiple functions
 
@@ -256,13 +255,13 @@ def f_const_dec(node):
         isConst = True #set flag marking descendent variables as const
         #print('CONSTANTS')
         processNode(node.children[0])
+
         isConst = False #unset flag
 
 # Expected Structure:
 # Type var_dec
 # Children: data_declarations
 def f_var_dec(node):
-    #print('Statement recognized: VARIABLES')
     processNode(node.children[0])
 
 # Expected structure:
