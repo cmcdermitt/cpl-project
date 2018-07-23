@@ -269,7 +269,10 @@ def f_data_type(node):
 # Children: action_def { action_def }
 def f_pactions(node):
     for action in node.children:
-        processNode(action)
+        if returnValue != None:
+            processNode(action)
+        else:
+            return returnValue
 
 # Begin action_def functions
 # Expected Structure
@@ -561,20 +564,6 @@ def f_pcase_def(node):
     if len(node.children) == 1:
         p = processNode(node.children[0])
     return node
-
-# Expected Structure:
-# Type: CALL
-# Children: name_ref => IDENTIFIER
-# def f_call(node):
-#     # Get node type
-#     nodeType = node.type
-#     for child in node.children:
-#         if isinstance(child, node):
-#             processNode(child)
-#         else:
-#             callValue = main_vars.getValue(node.children[0])
-#             print(callValue)
-#     return node
 
 def f_return(node):
     global returnValue
