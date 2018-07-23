@@ -40,7 +40,7 @@ class VarTable:
         array[indices[len(indices) - 1]] = value 
     
     def assignWholeArray(self, varName, value):
-        if value instanceof(list):
+        if  isinstance(value, list):
             self.variables[varName] = []
             self.variables[varName].extend(value) #use extend to copy instead of assigning reference
         else:
@@ -49,7 +49,7 @@ class VarTable:
 
     def getWholeArray(self, varName):
         returnList = []
-        if instanceof(self.variables[varName], list):
+        if isinstance(self.variables[varName], list):
             return returnList.extend(self.variables[varName]) #use extend to copy instead of assigning reference to list
         else:
             print('Error: you can only get an array if there\'s an array to get')

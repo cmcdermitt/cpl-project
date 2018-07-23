@@ -115,7 +115,7 @@ def f_program(node):
 
     #start main function
     if 'MAIN' in functionNames:
-        startFunction(functionNames['MAIN'])
+        startFunction(functionNames['MAIN'], [])
     else:
         error('Main function not found')
 
@@ -825,6 +825,7 @@ def startFunction(func, actual_params):
     return func
 
 def assignParams(formal_params, actual_params):
+    global variableStack
     count = 0
     for count, param in  enumerate(formal_params):
         indices = variableStack[-1].getSize(param)
@@ -840,7 +841,7 @@ def assignParams(formal_params, actual_params):
                         error('List does not have correct length')
                 else:
                     error('List does not have enough dimensions')
-            assignWholeArray(param, actual_params[count])
+            variableStack[-1].assignWholeArray(param, actual_params[count])
 
 
     
