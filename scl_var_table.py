@@ -1,4 +1,5 @@
 from copy import deepcopy
+# Var_Table instances are used to store variables in a dictionary by the interpreter
 
 class Variable:
     def __init__(self, var_type, var_value, var_is_const):
@@ -23,14 +24,15 @@ class VarTable:
         else:
             return False
 
-    # Hi
+    # Adds a variable to the dictionary with all its relevant information
     def declare(self, var, var_type, is_const = False, value = None):
-        if var in self.variables.keys():
+        if var in self.variables.keys(): # Check if it is already there
             print("Error in declare(): variable {} has already been declared".format(var))
             exit()
         else:
-            self.variables[var] = Variable(var_type, value, is_const)
-
+            self.variables[var] = Variable(var_type, value, is_const) # Add variable to dictionary
+    
+    # Used by assign to assign variables at specific indesx. I.E. c at index 2 COMMA 3
     def arrayA(self, var, value, indices):
         array = self.variables[var].value
         for x in range(0,len(indices) -1):
@@ -40,6 +42,8 @@ class VarTable:
             exit()
         array[indices[len(indices) - 1]] = value 
     
+    # Assigns whole array to a variable. This should only be used after checking the dimensions of the array
+    # Additionally this should only be used when returning an array from a function
     def assignWholeArray(self, varName, value):
         if  isinstance(value, list):
             self.variables[varName].value = deepcopy(value)
@@ -47,7 +51,7 @@ class VarTable:
             print("Error: you can only assign lists as arrays.")
             exit()
 
-
+    # When passing an array into a function, getWholeArray uses the function deepcopy to get a copy of the array and passes it in
     def getWholeArray(self, varName):
         if isinstance(self.variables[varName].value, list):
             return deepcopy(self.variables[varName].value)
@@ -55,7 +59,10 @@ class VarTable:
             print('Error: you can only get an array if there\'s an array to get')
             exit()
 
-
+    # Assign is the general method used for reassigning variables. var is the name of the variable.
+    # value is the new value. 
+    # If the value is being assigned to an array, indices will be present. Otherwise, the indices will 
+    # be equivalent to an empty list
     def assign(self, var, value, indices = []):
         if var not in self.variables.keys():
             print("Error in assign(): Undeclared variable {} cannot be assigned a value".format(var))
@@ -90,7 +97,8 @@ class VarTable:
             else:
                 print('Error in assign(): {} variable {} cannot be assigned a {}'.format(self.variables[var].type, var, type(value)))
                 exit()
-            
+    
+    # Gets the value of a variable or the value of an array at a given index
     def getValue(self, var, pos = []):
         if var not in self.variables.keys():
             print('Error in getValue(): variable {} has not been declared'.format(var))
@@ -133,6 +141,7 @@ class VarTable:
     # Gets dimensions of array
     # If the variable is not an array, None is returned
     # Otherwise, the dimensions are returned in a list
+    # This function is used by passing in the name of the variable
     def getSize(self, varName):
         indices = []
         varActual = self.variables[varName].value
@@ -143,7 +152,9 @@ class VarTable:
                 indices.append(len(varActual))
                 varActual = varActual[0]
             return indices
-            
+
+    # Same function as getSize except a list is passed in. 
+    # No lookup is required      
     def getArraySize(self, arr):
         indices = []
         while isinstance(arr, list):
@@ -151,7 +162,7 @@ class VarTable:
             arr = arr[0]
         return indices
 
-
+    # Returns the type of the variable 
     def getType(self, var, pos = []):
         if var not in self.variables.keys():
             print('Error in get(): variable {} has not been declared'.format(var))
@@ -163,6 +174,3 @@ class VarTable:
         for name in self.variables:
             out = out + 'Name: {} {}\n'.format(name, self.variables[name])
         return out
-
-    def dump(self):
-        print(self.variables)
