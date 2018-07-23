@@ -33,7 +33,7 @@ class VarTable:
     def arrayA(self, var, value, indices):
         array = self.variables[var].value
         for x in range(0,len(indices) -1):
-            array = array[x]
+            array = array[indices[x]]
         if isinstance(array[indices[len(indices) - 1]], list):
             print("Error in array assignment; not enough indices")
             exit()
