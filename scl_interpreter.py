@@ -129,7 +129,8 @@ def startFunction(func, actual_params):
     print('Statement recognized: ENDFUN ' + iden)
     temp = returnValue
     if temp != None:
-        if getType(temp) != oper_type:
+        t = type(temp)
+        if type(temp) != oper_type:
             error('opertype does not return correct type')
 
 
