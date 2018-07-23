@@ -853,10 +853,12 @@ def action_def():
 #CASE name_ref
 #GRAMMAR name_ref ::= IDENTIFIER [array_val]
 def name_ref():
+    global current_statement
     node = Node('name_ref')
     # Append function header to output list
     print(scanner.lex[lex_en['value']])
     if scanner.lex[lex_en['type']] == 'IDENTIFIER':
+        current_statement +=  scanner.lex[lex_en['value']] + ' '
         node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
         scanner.next()
         if (scanner.lex[lex_en['value']] == 'LB'):
