@@ -164,9 +164,11 @@ def f_pother_oper_def(node):
 # Type: parameters
 # Children: [data_declaration, {data_declaration}]
 def f_parameters(node):
+    param_list = []
     for dec in node.children:
-        processNode(dec)
-    return node
+        processNode(dec) #declare the parameters
+        param_list.append(getName(dec.children[0])) #add the name of each identifier being declared
+    return param_list #return list of parameters to start_function
 
 # Expected Structure:
 # Type f_globals
