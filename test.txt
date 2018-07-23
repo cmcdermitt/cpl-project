@@ -32,8 +32,6 @@ INPUT num2
 UNTIL num2 LESS THAN 5 STAR 6 PLUS 2
 ENDREPEAT
 
-
-
 SET prompt EQUOP "Is num1 or num2 bigger?"
 DISPLAY prompt
 IF num1 GREATER THAN num2 THEN
