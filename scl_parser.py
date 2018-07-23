@@ -454,6 +454,7 @@ def pother_oper_def():
     else:
         error('DESCRIPTION', 'pother_oper_def')
 
+    node.children.append(oper_type())
     node.children.append(parameters())
 
     if scanner.lex[lex_en['value']] == 'IS':
