@@ -146,8 +146,8 @@ def f_funct_list(node):
 def f_pother_oper_def(node):
     if node.children[0].type == 'IDENTIFIER' or node.children[0].value == 'MAIN':
         iden = node.children[0].value
-        print('BEGIN')
-        sys.stdout.write(iden + 'DESCRIPTION IS ')
+        print ('Statement recognized: FUNCTION ' + iden + ' DESCRIPTION IS ')
+        print('Statement recognized: BEGIN')
     processNode(node.children[1])
     processNode(node.children[2])
     if (node.children[2].type == 'const_var_struct'):
@@ -278,7 +278,9 @@ def f_set(node):
     exprValue = processNode(node.children[1])
     indices = getIndices(node.children[0])
     assign(identifier, exprValue, indices)
+    # output results
     print('Statement recognized: SET ' + identifier + ' EQUOP ' + str(exprValue))
+    print('Result: ' + identifier + ' set equal to ' + str(exprValue))
     return node
 
 # Expected Structure:
@@ -297,7 +299,9 @@ def f_input(node):
     # Add identifier to variable table
     assign(getName(node.children[0]), processNode(tempNode), getIndices(node.children[0]))
     # output results
-    print('Statement recognized: INPUT ' + str(getName(node.children[0])))
+    id = str(getName(node.children[0]))
+    print('Statement recognized: INPUT ' + id)
+    print('Results: User input assigned the value of ' + str(input_val[0]) + ' to identifier ' + id + '.')
     # Return node to processNode
     return node
 
@@ -308,8 +312,8 @@ def f_display(node):
     #print the value of the IDENTIFIER's variable
     # Change actual output after debuging
     pNode = processNode(node.children[0])
-    print(pNode)
     print('Statement recognized: DISPLAY ' + str(pNode))
+    print('Results: ' + str(pNode) + ' printed to console.')
     return node
 
 # Expected Structure:
@@ -326,6 +330,7 @@ def f_increment(node):
     val = val + 1
     assign(var, val, indices)
     print('Statement recognized: INCREMENT ' + var)
+    print('Results: Identifier ' + var + ' incremented by one.')
     return node
 
 # Expected Structure:
@@ -342,6 +347,7 @@ def f_decrement(node):
     val = val - 1
     assign(var, val, indices)
     print('Statement recognized: DECREMENT ' + var)
+    print('Results: Identifier ' + var + ' decremented by one.')
     return node
 
 # Expected Structure:
@@ -353,6 +359,7 @@ def f_ifelse(node):
     if processNode(node.children[0]):
         print('THEN  ', end = '')
         processNode(node.children[1])
+        print('Results: If condition met with result ' + node.value)
         return node
     else:
         elseRun = not processNode(node.children[2]) and len(node.children) == 4 # Check if else stmt exists
@@ -360,6 +367,7 @@ def f_ifelse(node):
         elseRun = False
         print('ELSE ', end = '')
         processNode(node.children[3])
+        print('Results: Executed else statment with result ' + node.value)
     print('ENDIF', end = '')
     return node
 
@@ -424,7 +432,9 @@ def f_for(node):
                 return node
             # Decrement and assign
 
-    sys.stdout.write('ENDFOR')
+    print('ENDFOR')
+    print('Results: For loop used ' + getName(node.children[0]) + ' to iterate from ' +
+          str(expr1) + ' ' + str(dir) + ' ' + str(expr2) + '.')
     return node
 
 # Expected Structure:
@@ -438,6 +448,7 @@ def f_repeat(node):
     # Perform initial pactions statement
     print('Statement recognized: REPEAT ')
     p = processNode(node.children[0])
+    sys.stdout.write(str(p.value))
     # Get pcondition
     cond = processNode(node.children[1])
     
@@ -448,7 +459,8 @@ def f_repeat(node):
             breakCalled = False
             return node
         cond = processNode(node.children[1])
-    sys.stdout.write('UNTIL ' + str(cond) + 'ENDREPEAT')
+    sys.stdout.write(' UNTIL ' + str(cond) + 'ENDREPEAT\n')
+    print('Results: Repeated ' + p.value + ' until ' + str(cond) + ' evaluated to True.')
     return node
 
 # Expected Structure:
@@ -466,7 +478,8 @@ def f_while(node):
             breakCalled = False
             return node
         cond = processNode(node.children[0])
-    sys.stdout.write('ENDWHILE')
+    sys.stdout.write('ENDWHILE\n')
+    print('Results: Repeated ' + str(p.value) + ' in while loop until ' + str(cond) + ' evaluated to True.')
     return node
 
 # Expected Structure:
