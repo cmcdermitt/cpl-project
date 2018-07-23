@@ -455,10 +455,11 @@ def f_decrement(node):
 def f_ifelse(node):
     global elseRun
     #print('Statement recognized: IF ')
+    result = processNode(node.children[0])
     if processNode(node.children[0]):
         #print('THEN  ', end = '')
         processNode(node.children[1])
-        print('Results: If condition met with result ' + str(node.value))
+        print('Results: If condition met with result ' + str(result))
         return node
     else:
         elseRun = not processNode(node.children[2]) and len(node.children) == 4 # Check if else stmt exists
@@ -573,13 +574,15 @@ def f_while(node):
     cond = processNode(node.children[0])
     #print('Statement recognized: WHILE CONDITION DO')
     # Start while loop
+    p = None
     while cond:
         p = processNode(node.children[1])
         if breakCalled == True:
             breakCalled = False
             return node
         cond = processNode(node.children[0])
-    print('Results: Repeated ' + str(p) + ' in while loop until ' + str(cond) + ' evaluated to True.')
+    if p != None:
+        print('Results: Repeated ' + str(p.value) + ' in while loop until ' + str(cond) + ' evaluated to True.')
     #sys.stdout.write('ENDWHILE')
     return node
 
