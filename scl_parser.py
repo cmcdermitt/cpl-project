@@ -836,7 +836,7 @@ def name_ref():
     return node
 
 def func_ref():
-    node = Node('FUNCT_REF')
+    node = Node('FUNC_REF')
     if scanner.lex[lex_en['type']] == 'IDENTIFIER':
         node.children.append(Node(scanner.lex[lex_en['type']], scanner.lex[lex_en['value']]))
         scanner.next()
