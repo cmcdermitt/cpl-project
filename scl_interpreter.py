@@ -435,10 +435,11 @@ def f_decrement(node):
 def f_ifelse(node):
     global elseRun
     #print('Statement recognized: IF ')
+    result = processNode(node.children[0])
     if processNode(node.children[0]):
         #print('THEN  ', end = '')
         processNode(node.children[1])
-        print('Results: If condition met with result ' + node.value)
+        print('Results: If condition met with result ' + str(result))
         return node
     else:
         elseRun = not processNode(node.children[2]) and len(node.children) == 4 # Check if else stmt exists
