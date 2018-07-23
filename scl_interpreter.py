@@ -670,7 +670,7 @@ def f_pcase_val(node, identifier = ()):
     if identifier == ():
         error('pcase_val needs an identifier', 'pcase_val')
     # Value of identifier parameter will be our case to check against
-    caseCheck = lookup(node.value)
+    caseCheck = processNode(identifier.children[0])
     if isInteger(caseCheck) and isInteger(identifier[0]):
         error('All cases must be integers')
 
@@ -980,6 +980,7 @@ interpreterDict = {
     'WHILE' : f_while,
     'CASE' : f_case,
     'REPEAT' : f_repeat,
+    
     'PCASE_VAL' : f_pcase_val,
     'PCASE_DEF' : f_pcase_def,
     'NAME_REF' : f_name_ref,

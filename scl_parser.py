@@ -886,7 +886,7 @@ def action_def():
         else:
             # Append error message if case specific grammar not found
             error('IDENTIFIER', 'action_def')
-        node.type = current_statement
+        node.statement = current_statement
         node.children.append(pcase_val())
         
         node.children.append(pcase_def())
