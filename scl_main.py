@@ -44,25 +44,29 @@ def main():
 # 	return tree
 
 def printTree(tree, tab = 0, out_string = ''):
-    if isinstance(tree, str):
-        out_string = out_string + returnTabs(tab) + tree + '\n'
-        return out_string
-    elif isinstance(tree, int):
-        out_string = out_string + returnTabs(tab) + str(tree) + '\n'
-        return out_string
-    elif isinstance(tree,list):
-        print(tree)
+    try:
+        if isinstance(tree, str):
+            out_string = out_string + returnTabs(tab) + tree + '\n'
+            return out_string
+        elif isinstance(tree, int):
+            out_string = out_string + returnTabs(tab) + str(tree) + '\n'
+            return out_string
+        elif isinstance(tree,list):
+            print(tree)
 
-    elif (tree.value is not None):
-        out_string = out_string + returnTabs(tab) + tree.type + ', ' + tree.value + '\n' # Print out the first item in the list; this is the parent node
-    else:
-        print(tree.type)
-        out_string = out_string + returnTabs(tab) + tree.type + ', None\n' # Print out the first item in the list; this is the parent node
-    if(len(tree.children) == 0):
+        elif (tree.value is not None):
+            out_string = out_string + returnTabs(tab) + tree.type + ', ' + tree.value + '\n' # Print out the first item in the list; this is the parent node
+        else:
+            print(tree.type)
+            out_string = out_string + returnTabs(tab) + tree.type + ', None\n' # Print out the first item in the list; this is the parent node
+        if(len(tree.children) == 0):
+            return out_string
+        for child in tree.children: # Print out all of its children
+            out_string = printTree(child, tab + 1, out_string)
         return out_string
-    for child in tree.children: # Print out all of its children
-        out_string = printTree(child, tab + 1, out_string)
-    return out_string
+    except:
+        print(out_string)
+        print('This is an exception')
 
 # Prints out the tree using tabs to represent children
 # def printTree(tree_list, tab, out_string = ''):

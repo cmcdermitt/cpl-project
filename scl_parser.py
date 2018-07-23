@@ -106,6 +106,7 @@ def oper_type():
             error('TYPE', 'oper_type')
     else:
         error('RETURN', 'oper_type')
+    return node
 
 
 
