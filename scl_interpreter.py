@@ -593,9 +593,9 @@ def f_name_ref(node):
 # Children: Identifier, arg_list
 # Returns: value of evaluated function
 def f_func_ref(node):
-    func_name = getName(node.children[0])
+    func = functionNames[getName(node.children[0])]
     params = processNode(node.children[1])
-    return startFunction(func_name, params)
+    return startFunction(func, params)
 
 def getIndices(name_ref):
     if len(name_ref.children) > 1:
