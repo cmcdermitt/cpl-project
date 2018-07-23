@@ -833,7 +833,6 @@ def startFunction(func, actual_params):
 
 def assignParams(formal_params, actual_params):
     global variableStack
-    count = 0
     for count, param in  enumerate(formal_params):
         indices = variableStack[-1].getSize(param)
         if indices == None:
