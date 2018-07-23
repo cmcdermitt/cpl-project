@@ -41,14 +41,16 @@ class VarTable:
     
     def assignWholeArray(self, varName, value):
         if value instanceof(list):
-            self.variables[varName] = deepcopy(value)
+            self.variables[varName] = []
+            self.variables[varName].extend(value) #use extend to copy instead of assigning reference
         else:
             print("Error: you can only assign lists as arrays.")
             exit()
 
     def getWholeArray(self, varName):
+        returnList = []
         if instanceof(self.variables[varName], list):
-            return deepcopy(self.variables[varName])
+            return returnList.extend(self.variables[varName]) #use extend to copy instead of assigning reference to list
         else:
             print('Error: you can only get an array if there\'s an array to get')
             exit()
