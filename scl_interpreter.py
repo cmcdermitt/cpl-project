@@ -149,11 +149,11 @@ def assignParams(formal_params, actual_params):
         if indices == None:
             assign(param, actual_params[count],[])
         else:
-            temp_params = actual_params
+            temp_param = actual_params[count]
             for index in indices:
-                if isinstance(temp_params, list):
-                    if len(temp_params) == index:
-                        temp_params = temp_params[0]
+                if isinstance(temp_param, list):
+                    if len(temp_param) == index:
+                        temp_param = temp_param[0]
                     else:
                         error('List does not have correct length')
                 else:

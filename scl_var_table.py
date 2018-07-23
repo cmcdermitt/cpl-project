@@ -135,7 +135,7 @@ class VarTable:
     # Otherwise, the dimensions are returned in a list
     def getSize(self, varName):
         indices = []
-        varActual = self.variables[varName]
+        varActual = self.variables[varName].value
         if not isinstance(varActual, list):
             return None
         else:
@@ -147,7 +147,7 @@ class VarTable:
     def getArraySize(self, arr):
         indices = []
         while isinstance(arr, list):
-            arr.append(len(arr))
+            indices.append(len(arr))
             arr = arr[0]
         return indices
 
