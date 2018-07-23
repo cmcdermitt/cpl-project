@@ -75,15 +75,24 @@ class VarTable:
             print('Error in getValue(): variable {} has not been assigned a value'.format(var))
             exit()
         else: 
-            var = self.variables[var].value
+            var_value = self.variables[var].value
             #return var
-            if isinstance(var, list): # value will be a list if a variable is declared as an array
+            if isinstance(var_value, list): # value will be a list if a variable is declared as an array
                 if isinstance(pos, list): # checking that optional param pos was passed in as list
-                    currList = var
-                    for x in pos:
-                        if x >= 0 and x < len(pos):
-                            currList = currList[x] #set the current list to the list stored at each position
-                        
+                    currList = var_value
+                    for i, x in enumerate(pos):
+                        if i < len(pos) - 1:
+                            if x >= 0 and x < len(currList[x]):
+                                currList = currList[x] #set the current list to the list stored at each position
+                            else:
+                                print('Error in getValue(): array index {} out of bounds'.format(pos))
+                        else:
+                            currList = currList[x]
+
+                    if currList is None:
+                        print('Error in getValue(): variable {} at {} has not been assigned a value'.format(var, pos))
+                        exit()
+
                     if isinstance(currList, list):
                         print('Error in getValue(): not enough indices for {}'.format(var))
                         exit()
@@ -93,7 +102,7 @@ class VarTable:
                     print('Error in getValue(): array {} has no indices'.format(var))
                     exit()
             else:
-                return var # For non arrays
+                return var_value # For non arrays
 
 
     def getType(self, var, pos = []):

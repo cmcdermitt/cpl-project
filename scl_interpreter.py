@@ -41,44 +41,32 @@ def lookup(var_name, arr_pos = []):
     if var_name[0] == '\"':
         return var_name
 
-    if variableStack[-1] is not None:
-        if variableStack[-1].isDeclared(var_name):
-            return variableStack[-1].getValue(var_name, arr_pos)
-        if variableStack[0].isDeclared(var_name):
-            return variableStack[0].getValue(var_name, arr_pos)
-        else:
-            error('variable {} is undeclared and cannnot be looked up'.format(var_name), 'lookup')
-    elif variableStack[0].isDeclared(var_name):
+    if variableStack[-1].isDeclared(var_name):
+        return variableStack[-1].getValue(var_name, arr_pos)
+    if variableStack[0].isDeclared(var_name):
         return variableStack[0].getValue(var_name, arr_pos)
     else:
         error('variable {} is undeclared and cannnot be looked up'.format(var_name), 'lookup')
+    
 
 def lookupType(var_name, arr_pos = 0):
     global variableStack
-    variableStack[-1] = variableStack[-1]
-    if variableStack[-1] is not None:
-        if variableStack[-1].isDeclared(var_name):
-            return variableStack[-1].getType(var_name, arr_pos)
-        if variableStack[0].isDeclared(var_name):
-            return variableStack[0].getType(var_name, arr_pos)
-        else:
-            error('variable {} is undeclared and cannnot be looked up'.format(var_name), 'lookup type')
-    elif variableStack[0].isDeclared(var_name):
+    if variableStack[-1].isDeclared(var_name):
+        return variableStack[-1].getType(var_name, arr_pos)
+    if variableStack[0].isDeclared(var_name):
         return variableStack[0].getType(var_name, arr_pos)
     else:
-        error('variable {} is undeclared and cannot be looked up'.format(var_name), 'lookupType')
+        error('variable {} is undeclared and cannnot be looked up'.format(var_name), 'lookup type')
 
 #declare a variable
 def declare(name, var_type, val = None):
     global variableStack
-    variableStack[-1] = variableStack[-1]
     global isConst
     variableStack[-1].declare(name, var_type, isConst, val) 
 
 #assign a variable a value
 def assign(name, value, indices = []):
     global variableStack
-    variableStack[-1] = variableStack[-1]
     if variableStack[-1] is not None:
         if variableStack[-1].isDeclared(name):
             variableStack[-1].assign(name, value, indices)
@@ -99,12 +87,12 @@ def getType (node):
 
 # Get the ID value name of a name_ref or identifier node
 def getName (node):
-    if node.type == 'name_ref':
+    if node.type == 'name_ref' or node.type == 'func_ref':
         return node.children[0].value
     if node.type == 'IDENTIFIER':
         return node.value
     else:
-        error('getName only takes name_ref or IDENTIFIER on the input data.')
+        error('getName only takes name_ref, func_ref, or IDENTIFIER on the input data.')
 
 def isNumber(value):
     return type(value) == int or type(value) == float
@@ -217,7 +205,6 @@ def f_data_declarations(node):
 # Type: data_declaration
 # Children: identifier, parray_dec, data_type
 def f_data_declaration(node):
-    global variableStack
     array = processNode(node.children[1]) # list
     data_type = processNode(node.children[2]) # Data type of variable
     if array:
@@ -296,7 +283,7 @@ def f_set(node):
 
 # Expected Structure:
 # Type: INPUT
-# Children: IDENTIFIER
+# Children: name_ref
 def f_input(node):
     global main_vars
     # Get input
@@ -310,13 +297,13 @@ def f_input(node):
     # Add identifier to variable table
     assign(getName(node.children[0]), processNode(tempNode), getIndices(node.children[0]))
     # output results
-    print('Statement recognized: INPUT ' + str(node.children[0].value))
+    print('Statement recognized: INPUT ' + str(getName(node.children[0])))
     # Return node to processNode
     return node
 
 # Expected Structure:
 # Type: DISPLAY or DISPLAYN
-# Children: IDENTIFIER
+# Children: name_ref
 def f_display(node):
     #print the value of the IDENTIFIER's variable
     # Change actual output after debuging
@@ -394,8 +381,6 @@ def f_ptest_elsif(node):
 # Children: name_ref, expr, ( TO | DOWNTO ), expr, pactions
 def f_for(node):
     global breakCalled
-    global variableStack
-    variableStack[-1] = variableStack[-1]
     expr1 = processNode(node.children[1])
     # Determine if direction is TO or DOWNTO
     dir = processNode(node.children[2]).type
@@ -405,7 +390,7 @@ def f_for(node):
     indices = getIndices(node.children[0])
     # Assign initial value to IDENTIFIER
     print('Statement recognized: FOR ' + getName(node.children[0]) + ' EQUOP ' + str(expr1) + str(dir) + str(expr2) + 'DO ')
-    variableStack[-1].assign(getName(node.children[0]), expr1, indices)
+    assign(getName(node.children[0]), expr1, indices)
     # Perform for loop up or down
     var = processNode(node.children[0])
     if not (isInteger(var) and isInteger(expr1) and isInteger(expr2)):
@@ -418,7 +403,7 @@ def f_for(node):
             # Process pactions each time
             var = processNode(node.children[0])
             var += 1
-            variableStack[-1].assign(getName(node.children[0]), var, indices)
+            assign(getName(node.children[0]), var, indices)
             
             processNode(node.children[4])
             if breakCalled == True:
@@ -431,7 +416,7 @@ def f_for(node):
                 error('var should be greater than expr')
             var = processNode(node.children[0])
             var -= 1
-            variableStack[-1].assign(getName(node.children[0]), var, indices)
+            assign(getName(node.children[0]), var, indices)
         
             processNode(node.children[4])
             if breakCalled == True:
