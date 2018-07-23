@@ -104,6 +104,21 @@ class VarTable:
             else:
                 return var_value # For non arrays
 
+    # Gets dimensions of array
+    # If the variable is not an array, None is returned
+    # Otherwise, the dimensions are returned in a list
+    def getSize(self, varName):
+        indices = []
+        varActual = self.variables[varName]
+        if not isinstance(varActual, list):
+            return None
+        else:
+            while isinstance(varActual, list):
+                indices.append(len(varActual))
+                varActual = varActual[0]
+            return indices
+            
+
 
     def getType(self, var, pos = []):
         if var not in self.variables.keys():
