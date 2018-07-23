@@ -11,7 +11,7 @@ isConst = False
 breakCalled = False
 elseRun = False
 returnValue = None
-
+interPrint = ''
 # Main interpreter function
 # Name: processNode(node)
 # Summary: The processNode function is invoked by the main file after the parser has
@@ -112,17 +112,20 @@ def startFunction(func, actual_params):
         print('BEGIN')
         sys.stdout.write(iden + 'DESCRIPTION IS ')
     oper_type = processNode(func.children[1])
-    formal_params = processNode(func.children[2])
-    assignParams(formal_params, actual_params)
+
     # Assign params here -> 
     if (func.children[3].type == 'const_var_struct'): # If the function has variables
         variableStack.append(scl_var_table.VarTable()) # Add new variable stack
+        formal_params = processNode(func.children[2])
+        assignParams(formal_params, actual_params)
         processNode(func.children[3])
         processNode(func.children[4])
         variableStack.pop() # Pop off stack when the pactions are done
         if func.children[5].value != iden:
             error('ENDFUN with correct function not found')
     else:
+        formal_params = processNode(func.children[2])
+        assignParams(formal_params, actual_params)
         processNode(func.children[3]) # If there are no variables declared just process pactions
         if func.children[4].value != iden:
             error('ENDFUN with correct function not found')
@@ -344,12 +347,13 @@ def f_pactions(node):
 # Type: SET
 # Children: name_ref, expr
 def f_set(node):
+    global interPrint
     # Get identifier tuple
     identifier = getName(node.children[0])
     exprValue = processNode(node.children[1])
     indices = getIndices(node.children[0])
     assign(identifier, exprValue, indices)
-    print('Statement recognized: SET ' + identifier + ' EQUOP ' + str(exprValue))
+    #print('Statement recognized: SET ' + identifier + ' EQUOP ' + str(exprValue))
     return node
 
 # Expected Structure:
