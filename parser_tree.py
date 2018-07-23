@@ -4,11 +4,11 @@ class Node:
         self.type = in_type
         self.value = in_value
         self.children = []
-        
+        self.statement = ''
 
     #returns the first child node with type = in_type
     def getChildOfType(self, in_type):
-        for i, child in enumerate(self.children):
+        for child in self.children:
             if isinstance(child, Node):
                 if child.type == in_type:
                     return child
@@ -17,7 +17,7 @@ class Node:
     #returns all child nodes with type = in_type
     def getChildrenOfType(self, in_type):
         targets = []
-        for i, child in enumerate(self.children):
+        for child in self.children:
             if child.type == in_type:
                 targets.append(child)
         return targets

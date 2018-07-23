@@ -24,10 +24,13 @@ from parser_tree import Node
 lex_en = {'type' : 1, 'value' : 0, 'line_num' : 2}
 scanner = Scanner(sys.argv[1])
 
+#where we build up statements
+current_statement = ''
+
 
 # Starting point for parser
 
-# In general, each function checks the unique case that defines its particular grammar as defined by the document
+# In general, each function checks the unique case that defines its particular grasmmar as defined by the document
 # The general structure instantiates a new instance of lex_list, and sets its initial value to the name of the function
 # This creates an easy to follow hierarchy and flow of function calls that can be read and debugged via the output
 # The function then retrieves each subsequent lexeme from the symbol table, checks its validity, and adds it to lex_list
@@ -76,6 +79,7 @@ def func_main():
     if(scanner.lex[lex_en['value']] == 'MAIN'):
         scanner.next()
         return node
+        node.statement = ('MAIN')
     elif(scanner.lex[lex_en['value']] == 'FUNCTION'):
         scanner.next()
         if(scanner.lex[lex_en['type']] == 'IDENTIFIER'):
